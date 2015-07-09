@@ -8,9 +8,10 @@ Created on Thu Jul  9 15:06:39 2015
 class footprint:
     """
     """
-    def __init__(self, cadPackage, fileName, name = ""):
+    def __init__(self, cadPackage, name, alternativeLibName = ""):
         self.cadPackage = cadPackage
-        self.fileName = fileName
+        self.name = name
+        self.alternativeLibName = alternativeLibName
         
 class sot23(footprint):
     """

@@ -38,32 +38,44 @@ class cadPackage:
     def __init__(self):
         pass
     
-    def line(self, layer, width, point1, point2):
-        pass
-    
-    def polygon(self, layer, width, points, filled = False):
-        pass
-    
-    def rectangle(self, layer, width, point1, point2, rotation = 0.0, filled = False):
-        pass
-    
-    def rectangle2(self, layer, width, position, dimensions, rotation=0.0, filled = False):
-        (point1, point2) = convertRectangleCenterToVertices(position, dimensions)
-        self.rectangle(layer, point1, point2, rotation, filled)
-    
-    def circle(self, layer, width, position, radius, filled = False):
-        pass
-    
-    def arc(self, layer, width, position, radius, angle1, angle2, filled = False):
-        pass
-    
-    def padSmdRect(self, layer, position, dimensions, rotation = 0.0, \
-    roundness = 0.0, maskClearance = None, pasteClearance = None, thermals = False):
-        pass
+############## Footprint primitives ##############
 
-    def padSmdRound(self, layer, position, radius, maskClearance = None, \
+    def pcbLine(self, layer, width, point1, point2):
+        return ""
+    
+    def pcbPolygon(self, layer, width, points, filled = False, closed = False):
+        return ""
+    
+    def pcbRectangle(self, layer, width, point1, point2, rotation = 0.0, filled = False):
+        return ""
+    
+    def pcbRectangle2(self, layer, width, position, dimensions, rotation=0.0, filled = False):
+        (point1, point2) = convertRectangleCenterToVertices(position, dimensions)
+        return self.rectangle(layer, point1, point2, rotation, filled)
+    
+    def pcbCircle(self, layer, width, position, radius, filled = False):
+        return ""
+    
+    def pcbArc(self, layer, width, position, radius, angle1, angle2, filled = False):
+        return ""
+    
+    def pcbSmdRect(self, layer, position, dimensions, rotation = 0.0, \
+    roundness = 0.0, maskClearance = None, pasteClearance = None, thermals = False):
+        return ""
+
+    def pcbSmdRound(self, layer, position, radius, maskClearance = None, \
     pasteClearance = None, thermals = False):
-        pass
+        return ""
+        
+    def pcbThtRound(self):
+        # TODO
+        return ""
+    
+    def pcbText(self):
+        # TODO
+        return ""
+
+############## file handling ##############
 
 class KiCad(cadPackage):
     """

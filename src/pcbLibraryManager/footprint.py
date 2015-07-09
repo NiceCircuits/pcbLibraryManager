@@ -12,9 +12,6 @@ class footprint:
         self.cadPackage = cadPackage
         self.fileName = fileName
         
-    def generate(self):
-        pass
-
 class sot23(footprint):
     """
     """

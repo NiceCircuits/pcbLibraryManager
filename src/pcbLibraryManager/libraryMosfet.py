@@ -11,7 +11,7 @@ class libraryMosfet(libraryClass):
     """
     def __init__(self):
         libraryClass.__init__(self, "niceMosfet")
-        self.parts.append()
+        self.parts["2N2007"]=None
 
 
 if __name__ == "__main__":

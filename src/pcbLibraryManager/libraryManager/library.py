@@ -14,5 +14,5 @@ class libraryClass:
     Create library files. Virtual class.
     """
     def __init__(self, name):
-        self.parts=[] # initialize array of parts to be filled by children
+        self.parts={} # initialize dictionary of parts to be filled by children
         

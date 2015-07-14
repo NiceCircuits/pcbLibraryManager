@@ -7,8 +7,10 @@ Created on Thu Jul  9 18:57:55 2015
 
 Assumptions:
 default units are mm and degrees
-
 """
+
+from libraryManager.library import  libraryClass
+import logging
 
 def convertRectangleCenterToVertices(position, dimensions):
     x1 = float(position(0)) - float(dimensions(0))/2.0
@@ -36,15 +38,20 @@ class cadPackage:
     """
     """
     def __init__(self):
-        pass
+        self.log = logging.getLogger("cadPackage")
     
-    def generateLibrary(self, library, path, name):
+    def generateLibrary(self, library, path):
         """
         Generate library from library class object
         path: path to top level library folder
-        name: library name
         """
-        pass
+        if not isinstance(library, libraryClass):
+            errMsg = "*generateLibrary*: *library* parameter is not an instance of *libraryClass*. " \
+                "It's *%s*." % library.__class__.__name__
+            self.log.error(errMsg)
+            raise TypeError(errMsg)
+        self.log.info("Generating library %s for %s in folder: \|%s\".", 
+            library.name ,self.__class__.__name__, path)
     
 ############## Footprint primitives ##############
 
@@ -85,15 +92,3 @@ class cadPackage:
 
 ############## file handling ##############
 
-class KiCad(cadPackage):
-    """
-    KiCad CAD package handling class
-    """
-    def __init__(self):
-        cadPackage.__init__(self)
-        
-
-
-if __name__ == "__main__":
-    a = KiCad()
-    print(a.rectangle)

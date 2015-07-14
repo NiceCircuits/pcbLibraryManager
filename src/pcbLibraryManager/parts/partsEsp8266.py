@@ -17,21 +17,21 @@ class footprintEsp07(footprint):
         """
         density: "L" - least, "N" - nominal, "M" - most
         """
-        super().__init__(self, name, alternativeLibName)
+        super().__init__(name, alternativeLibName)
 
 class symbolEsp07(symbol):
     """
     ESP-07 WiFi module
     """
     def __init__(self, name):
-        super().__init__(self, name)
+        super().__init__(name)
 
 class partEsp07(part):
     """
     ESP-07 WiFi module 
     """
     def __init__(self):
-        super().__init__(self, "ESP-07")
+        super().__init__("ESP-07")
         self.symbol = symbolEsp07("ESP-07")
         for density in ["L", "N", "M"]:
             self.footprints.append(footprintEsp07("ESP-07_" + density, \

@@ -5,6 +5,8 @@ Created on Thu Jul  9 15:06:39 2015
 @author: piotr at nicecircuits.com
 """
 
+import logging
+
 class footprint:
     """
     """
@@ -12,6 +14,8 @@ class footprint:
     layerBottomN=7    
     
     def __init__(self, name, alternativeLibName = ""):
+        self.log=logging.getLogger("footprint")
+        self.log.debug("Creating footprint %s.", name)
         self.name = name
         self.alternativeLibName = alternativeLibName
         

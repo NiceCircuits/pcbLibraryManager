@@ -9,11 +9,14 @@ Every part have one symbol
 Each part can have multiple footprints
 
 """
+import logging
 
 class part:
     """
     """
     def __init__(self, name):
+        self.log=logging.getLogger("part")
+        self.log.info("Creating part %s.", name)
         self.name = name
         self.symbol = None
         self.footprints = []

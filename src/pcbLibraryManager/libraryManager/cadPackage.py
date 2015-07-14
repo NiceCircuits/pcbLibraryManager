@@ -38,6 +38,14 @@ class cadPackage:
     def __init__(self):
         pass
     
+    def generateLibrary(self, library, path, name):
+        """
+        Generate library from library class object
+        path: path to top level library folder
+        name: library name
+        """
+        pass
+    
 ############## Footprint primitives ##############
 
     def pcbLine(self, layer, width, point1, point2):
@@ -79,9 +87,11 @@ class cadPackage:
 
 class KiCad(cadPackage):
     """
+    KiCad CAD package handling class
     """
     def __init__(self):
         cadPackage.__init__(self)
+        
 
 
 if __name__ == "__main__":

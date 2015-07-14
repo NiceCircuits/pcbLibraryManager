@@ -11,6 +11,8 @@ default units are mm and degrees
 
 from libraryManager.library import  libraryClass
 import logging
+import os.path
+from libraryManager.common import *
 
 def convertRectangleCenterToVertices(position, dimensions):
     x1 = float(position(0)) - float(dimensions(0))/2.0
@@ -52,6 +54,22 @@ class cadPackage:
             raise TypeError(errMsg)
         self.log.info("Generating library %s for %s in folder: \|%s\".", 
             library.name ,self.__class__.__name__, path)
+    
+    def openFile(self, path):
+        """
+        Create library file. If file exists, copy it to subfolder
+        """
+        if os.path.isfile(path):
+            (directory, fileName) = os.path.split(path)
+            oldDir = os.path.join(directory, "old")
+            movePath = os.path.join(oldDir, fileName + "_" + timestamp())
+            if not os.path.exists(oldDir):
+                os.makedirs(oldDir)
+            os.rename(path, movePath)
+            self.log.warning("Library %s exists. Old version moved to *old* directory.",\
+                fileName)
+        return open(path, mode="w")
+
     
 ############## Footprint primitives ##############
 

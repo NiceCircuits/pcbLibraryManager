@@ -7,6 +7,8 @@ Created on Tue Jul 14 21:10:58 2015
 
 from libraryManager.cadPackage import cadPackage
 from libraryManager.library import  libraryClass
+import os.path
+from libraryManager.common import *
 
 class KiCad(cadPackage):
     """
@@ -17,3 +19,5 @@ class KiCad(cadPackage):
         
     def generateLibrary(self, library, path):
         super().generateLibrary(library, path)
+        file = self.openFile(os.path.join(path, library.name + ".lib"))
+            

@@ -18,25 +18,11 @@ class footprint:
         self.log.debug("Creating footprint %s.", name)
         self.name = name
         self.alternativeLibName = alternativeLibName
+        # fields to store name and value text objects
+        self.nameObject = []
+        self.valueObject = []
+        # initialize empty list for storing primitives
+        self.primitives = []
         
-        ##############
-        #initialize empty list for storing primitives
-        # generate (layerBottomN+1) empty lists for copper layers (excluding pads)
-        self.copperLayers = [[] for x in range(self.layerBottomN + 1)]
-        # top and bottom pad layers
-        self.padLayers = [[], []]
-        # top and bottom silkscreen layers
-        self.silkLayers = [[], []]
-        # top and bottom solder mask layers
-        self.maskLayers = [[], []]
-        # top and bottom Assembly drawings layers
-        self.assemblyLayers = [[], []]
-        # top and bottom solder paste layers
-        self.pasteLayers = [[], []]
-        # top and bottom glue layers
-        self.glueLayers = [[], []]
-        # top and bottom placement courtyard layers
-        self.courtyardLayers = [[], []]
-
 if __name__ == "__main__":
-    print(sot23(None,None,3))
+    pass

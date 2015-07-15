@@ -8,6 +8,7 @@ Created on Tue Jul 14 20:29:13 2015
 from libraryManager.footprint import footprint
 from libraryManager.part import part
 from libraryManager.symbol import symbol
+from libraryManager.footprintPrimitive import *
 
 class footprintEsp07(footprint):
     """
@@ -18,6 +19,7 @@ class footprintEsp07(footprint):
         density: "L" - least, "N" - nominal, "M" - most
         """
         super().__init__(name, alternativeLibName)
+        self.primitives.append(pcbLine(pcbLayer.topSilk, 0.15, -10, -10, -10, 10))
 
 class symbolEsp07(symbol):
     """

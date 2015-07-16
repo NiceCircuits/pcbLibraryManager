@@ -5,7 +5,6 @@ Created on Tue Jul 14 20:56:14 2015
 @author: piotr at nicecircuits.com
 """
 
-import libraryManager
 from libraries import libraryModules
 from libraryManager import cadPackageKiCad
 import logging

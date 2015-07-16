@@ -14,6 +14,12 @@ class pcbLayer:
         topRestrict, bottomRestrict, thtRestrict, thtHoles, topAssembly,\
         bottomAssembly, topDocumentation, bottomDocumentation = range(1, 28)
 
+class textAlign:
+    """
+    """
+    center, centerLeft, centerRight, topCenter, topLeft, topRight,\
+        bottomCenter, bottomLeft, bottomRight = range(9)
+
 class pcbPrimitive:
     """
     """
@@ -48,13 +54,13 @@ class pcbLine(pcbPolyline):
 class pcbRectangle(pcbPrimitive):
     """
     """
-    def __init__(self, layer, width, position = [], dimensions = [], rotation = 0.0,\
-        points = [], x1 = None, y1 = None, x2 = None, y2 = None):
+    def __init__(self, layer, width, x1 = None, y1 = None, x2 = None, y2 = None,\
+        position = [], dimensions = [], rotation = 0.0, points = []):
         """
         Initialize with one of options:
-        * position and dimensions 
-        * points
-        * x1, y1, x2, y2
+         * position and dimensions 
+         * points
+         * x1, y1, x2, y2
         """
         if not position:
             if points:
@@ -62,3 +68,45 @@ class pcbRectangle(pcbPrimitive):
             position = [(x1 + x2)/2, (y1 + y2)/2]
             dimensions = [abs(x1-x2), abs(y1-y2)]
         super().__init__(layer, width, position, dimensions, rotation=rotation)
+
+class pcbText(pcbPrimitive):
+    """
+    """
+    def __init__(self, layer, width, text, position, height, rotation = 0.0,\
+        align=textAlign.center, mirror=False):
+        """
+        """
+        self.text = text
+        self.align = align
+        self.mirror = mirror
+        self.height = height
+        super().__init__(layer, width, position, rotation=rotation)
+        
+class pcbSmtPad(pcbPrimitive):
+    """
+    """
+    def __init__(self, layer, position, dimensions, name, rotation = 0.0):
+        """
+        """
+        super().__init__(layer, width=0, position=position, dimensions=dimensions,\
+            rotation=rotation, filled=True)
+        self.name=name
+
+class pcbCircle(pcbPrimitive):
+    """
+    """
+    def __init__(self, layer, width, position, radius, filled=False):
+        """
+        """
+        super().__init__(layer, width, position, filled=filled)
+        self.radius=radius
+
+class pcbArc(pcbPrimitive):
+    """
+    """
+    def __init__(self, layer, width, position, radius, angles):
+        """
+        """
+        super().__init__(layer, width, position)
+        self.radius=radius
+        self.angles=angles

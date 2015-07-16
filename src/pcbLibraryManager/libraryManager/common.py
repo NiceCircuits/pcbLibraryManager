@@ -16,6 +16,9 @@ def rectangleToPolyLinePoints(position, dimensions, rotation=0.0):
     points = [[-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5], [-0.5, -0.5]]
     return translatePoints(scalePoints(rotatePoints(points, rotation), dimensions), position)
 
+def polylinePointsToLines(points):
+    return [[points[i], points[i+1]] for i in range(len(points)-1)]
+
 def scalePoints(points, scale):
     if not type(scale) is list:
         scale = [scale, scale]

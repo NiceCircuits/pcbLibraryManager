@@ -8,6 +8,4 @@ Created on Thu Jul  9 10:46:18 2015
 from libraryManager.common import *
 import math
 
-points = [[-0.5, -0.5], [-0.5, 0.5], [0.5, 0.5], [0.5, -0.5], [-0.5, -0.5]]
-
-print(polylinePointsToLines(points))
+print(-90 % 360)

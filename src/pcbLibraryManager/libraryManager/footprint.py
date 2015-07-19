@@ -16,7 +16,7 @@ class footprint:
     layerTopN=0
     layerBottomN=7    
     
-    def __init__(self, name, alternativeLibName = "", originMarkSize=0):
+    def __init__(self, name, alternativeLibName, originMarkSize=0):
         """
         """
         self.log=logging.getLogger("footprint")

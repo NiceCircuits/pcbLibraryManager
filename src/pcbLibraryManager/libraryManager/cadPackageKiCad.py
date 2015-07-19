@@ -96,14 +96,23 @@ class KiCad(cadPackage):
     def generatePcbArc(self, primitive, file):
         """
         """
+        # calculate KiCad coordinates of arc: start point, end point and angle
+        # ensure angles are in 0..360* range
+        angles = [x % 360 for x in primitive.angles]
+        end =[cos(angles[1])*primitive.radius + primitive.position[0],\
+            sin(angles[1])*primitive.radius + primitive.position[1]]
+        angle = (angles[1]-angles[0])%360
+        print(r"  (fp_arc (start %1.3f %1.3f) (end %1.3f %1.3f) (angle %1.1f) (layer %s) (width %1.3f))"%\
+            (primitive.position[0], -primitive.position[1], end[0], -end[1], angle,\
+            self.layerNames[primitive.layer], primitive.width), file=file)
         pass
 
     def generatePcbCircle(self, primitive, file):
         """
         """
         print(r"  (fp_circle (center %1.3f %1.3f) (end %1.3f %1.3f) (layer %s) (width %1.3f))"%\
-            (primitive.dimensions[0], primitive.dimensions[1],\
-            primitive.dimensions[0]+primitive.radius, primitive.dimensions[1],\
+            (primitive.position[0], -primitive.position[1],\
+            primitive.position[0]+primitive.radius, -primitive.position[1],\
             self.layerNames[primitive.layer], primitive.width), file=file)
 
     def generatePcbSmtPad(self, primitive, file):

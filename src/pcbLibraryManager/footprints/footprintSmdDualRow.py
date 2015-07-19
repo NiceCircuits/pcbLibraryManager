@@ -6,19 +6,66 @@ Created on Fri Jul 10 06:37:54 2015
 """
 
 from libraryManager.footprint import footprint
+from libraryManager.footprintPrimitive import *
+from libraryManager.defaults import defaults
 
 class footprintSmdDualRow(footprint):
+    """
+    Footprint generator for dual row SMD packages. Generate only pads
+    First pin in bottom left corner. 
+    """
+    def __init__(self, name, alternativeLibName, pinCount, pitch, padSpan, padDimensions, 
+        offset = [0, 0], originMarkSize=0):
+        super().__init__(name, alternativeLibName=alternativeLibName, originMarkSize=originMarkSize)
+        x1 = pitch * (pinCount/4 - 0.5)
+        for y in [-1, 1]:
+            for x in range(int(pinCount/2)):
+                self.primitives.append(pcbSmtPad(pcbLayer.topCopper, position=\
+                    [(x1-pitch*x)*y+offset[0], padSpan/2*y+offset[1]],dimensions=padDimensions,\
+                    name=str(int(x+1 if y<0 else x+pinCount/2+1)),rotation=0 if y<0 else 180))
+
+
+class footprintSmdDualRowLeaded(footprintSmdDualRow):
     """
     Footprint generator for dual row SMD packages: SOIC, TSSOP, SOT23 etc.
     First pin in bottom left corner. 
     """
-    def __init__(self, name, pinCount, pitch, padSpan, padDimensions, \
-    bodyDimensions, leadDimensions, alternativeLibName = ""):
-        if not alternativeLibName:
-            alternativeLibName = "niceSemiconductors"
-        super().__init__(self, name, alternativeLibName)
+    def __init__(self, name, alternativeLibName, pinCount, pitch, padSpan, padDimensions, 
+        bodyDimensions, leadDimensions):
+        originMarkSize = min(defaults.originMarkSize, bodyDimensions[0]*0.5, bodyDimensions[1]*0.5)
+        # pads
+        super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=pitch,
+            padSpan=padSpan, padDimensions=padDimensions, originMarkSize=originMarkSize)
+        # body
+        self.primitives.append(pcbRectangle(pcbLayer.topAssembly,defaults.documentationWidth,\
+            position=[0,0], dimensions=bodyDimensions))
+        arcRadius=min(1,bodyDimensions[1]*0.2)
+        self.primitives.append(pcbArc(pcbLayer.topAssembly,defaults.documentationWidth,\
+            position=[-bodyDimensions[0]/2,0],radius=arcRadius, angles=[-90,90]))
+        # leads
+        for y in [-1, 1]:
+            for x in range(int(pinCount/2)):
+                x1 = pitch * (pinCount/4 - 0.5)
+                y1 = bodyDimensions[1]/2+leadDimensions[1]/2
+                self.primitives.append(pcbRectangle(pcbLayer.topAssembly,defaults.documentationWidth,\
+                    position=[(x1-pitch*x)*y,y*y1],dimensions=leadDimensions))
 
-class footprintSot23(footprintSmdDualRow):
+
+class footprintSoic(footprintSmdDualRowLeaded):
+    """
+    Sot23 footprint for reflow soldering. Based on http://www.nxp.com/packages/SOT23.html
+    """
+    def __init__(self, pinCount, name="", alternativeLibName="", density="N", wide=False):
+        if not name:
+            name="SOIC-%d_%s"%(pinCount,density)
+        if not alternativeLibName:
+            alternativeLibName="niceSemiconductors"
+        bodyDimensions=[pinCount/2*1.27,4.04]
+        super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=1.27,\
+            padSpan=5.2,padDimensions=[0.6,2.2], bodyDimensions=bodyDimensions,\
+            leadDimensions=[0.41,1.3])
+
+class footprintSot23(footprintSmdDualRowLeaded):
     """
     Sot23 footprint for reflow soldering. Based on http://www.nxp.com/packages/SOT23.html
     """

@@ -10,8 +10,9 @@ from libraryManager.part import part
 from libraryManager.symbol import symbol
 from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import defaults
+from footprints.footprintSmdDualRow import footprintSmdDualRow
 
-class footprintEsp07(footprint):
+class footprintEsp07(footprintSmdDualRow):
     """
     ESP-07 WiFi module
     """
@@ -19,16 +20,16 @@ class footprintEsp07(footprint):
         """
         density: "L" - least, "N" - nominal, "M" - most
         """
-        super().__init__(name, alternativeLibName,originMarkSize=defaults.originMarkSize)
+        # pads
+        padSizes={"L":[1.1, 1.6], "N":[1.2, 2.0], "M":[1.3, 2.2]}
+        padSpan={"L":15.6, "N":16.0, "M":16.2}
+        super().__init__( name, alternativeLibName=alternativeLibName, pinCount=16, pitch=2,\
+            padSpan=padSpan[density], padDimensions=padSizes[density],
+            offset = [-2, 0], originMarkSize=defaults.originMarkSize)
         self.nameObject.position=[-12.5, 0]
         self.nameObject.rotation=270
         self.valueObject.position=[9,0]
         self.valueObject.rotation=270
-        # pads
-        for y in [-1, 1]:
-            for x in range(8):
-                self.primitives.append(pcbSmtPad(pcbLayer.topCopper, position=\
-                [(7.0-2.0*x)*y-2.0, 8.0*y],dimensions=[1.2, 2], name=str(x+1 if y<0 else x+9)))
         # body
         self.primitives.append(pcbRectangle(pcbLayer.topAssembly,\
             defaults.documentationWidth, position=[0,0], dimensions=[22.0, 16.0]))
@@ -58,5 +59,5 @@ class partEsp07(part):
         self.symbol = symbolEsp07("ESP-07")
         for density in ["L", "N", "M"]:
             self.footprints.append(footprintEsp07("ESP-07_" + density, \
-            density = density, alternativeLibName = "niceModules"))
+                density = density, alternativeLibName = "niceModules"))
 

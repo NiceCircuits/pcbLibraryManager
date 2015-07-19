@@ -5,7 +5,7 @@ Created on Tue Jul 14 20:56:14 2015
 @author: piotr at nicecircuits.com
 """
 
-from libraries import libraryModules
+from libraries import libraryModules, librarySemiconductors
 from libraryManager import cadPackageKiCad
 import logging
 
@@ -16,10 +16,12 @@ if __name__ == "__main__":
     logging.addLevelName(logging.DEBUG-1, "DEBUG1")
     logging.addLevelName(logging.DEBUG-2, "DEBUG2")
     logging.addLevelName(logging.DEBUG-3, "DEBUG3")
-    logging.getLogger().setLevel(logging.DEBUG-3)
+    logging.getLogger().setLevel(logging.DEBUG)
     # create CAD package
     CP = cadPackageKiCad.KiCad()
     # generate libraries
     niceModules = libraryModules.libraryModules()
     CP.generateLibrary(niceModules, r"D:\test\kicadLib")
     
+    niceSemiconductors = librarySemiconductors.librarySemiconductors()
+    CP.generateLibrary(niceSemiconductors, r"D:\test\kicadLib")

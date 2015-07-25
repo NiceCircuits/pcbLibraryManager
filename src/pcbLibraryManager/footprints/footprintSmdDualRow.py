@@ -53,7 +53,7 @@ class footprintSmdDualRowLeaded(footprintSmdDualRow):
 
 class footprintSoic(footprintSmdDualRowLeaded):
     """
-    Sot23 footprint for reflow soldering. Based on http://www.nxp.com/packages/SOT23.html
+    
     """
     def __init__(self, pinCount, name="", alternativeLibName="", density="N", wide=False):
         if not name:
@@ -67,8 +67,12 @@ class footprintSoic(footprintSmdDualRowLeaded):
 
 class footprintSot23(footprintSmdDualRowLeaded):
     """
-    Sot23 footprint for reflow soldering. Based on http://www.nxp.com/packages/SOT23.html
+    
     """
-    def __init__(self, name, pinCount = 3, alternativeLibName = ""):
-        footprintSmdDualRow.__init__(name, pinCount, pitch = 0.95, 
-        padSpan = 2.0, padDimensions = (0.6, 0.7))
+    def __init__(self, pinCount = 3, name = "", alternativeLibName = "", density="N"):
+        if not name:
+            name="SOT23-%d_%s"%(pinCount,density)
+        if not alternativeLibName:
+            alternativeLibName="niceSemiconductors"
+        super().__init__(name, alternativeLibName, pinCount, pitch = 0.95,\
+            padSpan = 2.0, padDimensions = (0.6, 0.7))

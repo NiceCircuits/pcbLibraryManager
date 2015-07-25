@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul  9 23:50:39 2015
+Created on Sat Jul 25 16:13:24 2015
 
 @author: piotr at nicecircuits.com
 """
 
 from libraryManager.symbol import symbol
 
-class symbolMosfet(symbol):
+class symbolR(symbol):
     """
-    Standard symbol for mosfet (3 pin with diode)
+    Resistor symbol
     """
     def __init__(self, name):
         super().__init__(name)
+

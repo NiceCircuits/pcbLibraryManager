@@ -13,10 +13,8 @@ from libraryManager.common import *
 class footprint:
     """
     """
-    layerTopN=0
-    layerBottomN=7    
     
-    def __init__(self, name, alternativeLibName, originMarkSize=0):
+    def __init__(self, name, alternativeLibName, originMarkSize=0, textOnSilk=False):
         """
         """
         self.log=logging.getLogger("footprint")
@@ -24,10 +22,16 @@ class footprint:
         self.name = name
         self.alternativeLibName = alternativeLibName
         # fields to store name and value text objects - can be changed later
-        self.nameObject = pcbText(pcbLayer.topNames, defaults.silkWidth, "REF**",\
-            [0, defaults.textHeight * 2], defaults.textHeight, align = textAlign.center)
-        self.valueObject = pcbText(pcbLayer.topValues, defaults.silkWidth, name,\
-            [0, 0], defaults.textHeight, align = textAlign.center)
+        if textOnSilk:
+            textHeight = defaults.silkTextHeight
+            width = defaults.silkWidth
+        else:
+            textHeight = defaults.documentationTextHeight
+            width = defaults.documentationWidth
+        self.nameObject = pcbText(pcbLayer.topNames, width, "REF**",\
+            [0, textHeight * 2], textHeight, align = textAlign.center)
+        self.valueObject = pcbText(pcbLayer.topValues, width, name,\
+            [0, 0], textHeight, align = textAlign.center)
         # initialize empty list for storing primitives
         self.primitives = []
         if originMarkSize:

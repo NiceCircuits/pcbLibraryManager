@@ -5,6 +5,8 @@ Created on Sun Jul 12 21:27:32 2015
 @author: piotr at nicecircuits.com
 """
 
+from libraryManager.common import textAlign
+
 class pcbLayer:
     """
     """
@@ -13,12 +15,6 @@ class pcbLayer:
         topPaste, bottomPaste, topGlue, bottomGlue, topKeepout, bottomKeepout,\
         topRestrict, bottomRestrict, thtRestrict, thtHoles, topAssembly,\
         bottomAssembly, topDocumentation, bottomDocumentation = range(1, 28)
-
-class textAlign:
-    """
-    """
-    center, centerLeft, centerRight, topCenter, topLeft, topRight,\
-        bottomCenter, bottomLeft, bottomRight = range(9)
 
 class pcbPrimitive:
     """

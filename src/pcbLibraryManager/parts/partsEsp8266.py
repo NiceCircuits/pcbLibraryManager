@@ -55,7 +55,7 @@ class partEsp07(part):
     ESP-07 WiFi module 
     """
     def __init__(self):
-        super().__init__("ESP-07")
+        super().__init__("ESP-07", defaults.icRefDes)
         self.symbol = symbolEsp07("ESP-07")
         for density in ["L", "N", "M"]:
             self.footprints.append(footprintEsp07("ESP-07_" + density, \

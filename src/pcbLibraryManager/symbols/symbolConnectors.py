@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Jul  9 23:50:39 2015
+Created on Sun Jul 19 23:09:31 2015
 
 @author: piotr at nicecircuits.com
 """
 
 from libraryManager.symbol import symbol
 
-class symbolMosfet(symbol):
+class symbolConnector(symbol):
     """
-    Standard symbol for mosfet (3 pin with diode)
+    Standard symbol for button
     """
-    def __init__(self, name):
+    def __init__(self, name, circuits):
         super().__init__(name)

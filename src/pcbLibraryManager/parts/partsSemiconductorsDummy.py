@@ -23,8 +23,11 @@ class partSemiconductorsDummy(part):
     """
     """
     def __init__(self):
-        super().__init__("dummy")
+        super().__init__("dummy", defaults.icRefDes)
         self.symbol = symbolDummy("dummy")
         for density in ["L", "N", "M"]:
             for pinCount in [8,14]:
                 self.footprints.append(footprintSoic(pinCount,density=density))
+        for density in ["L", "N", "M"]:
+            for pinCount in [3,4,5,6,8]:
+                self.footprints.append(footprintSot23(pinCount,density=density))

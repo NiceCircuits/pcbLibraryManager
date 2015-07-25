@@ -14,9 +14,12 @@ import logging
 class part:
     """
     """
-    def __init__(self, name):
+    def __init__(self, name, refDes):
         self.log=logging.getLogger("part")
         self.log.info("Creating part %s.", name)
         self.name = name
-        self.symbol = None
+        self.refDes=refDes
+        # can have many symbols (gates)
+        self.symbols = []
+        # can have many footprints
         self.footprints = []

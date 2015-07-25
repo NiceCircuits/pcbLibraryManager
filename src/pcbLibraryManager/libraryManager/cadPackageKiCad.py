@@ -27,7 +27,16 @@ class KiCad(cadPackage):
         super().generateLibrary(library, path)
         ################# Symbol library #################
         f = self.openFile(os.path.join(path, library.name + ".lib"))
-        # TODO: symbol library
+        # library header
+        print(r"""EESchema-LIBRARY Version 2.3
+#encoding utf-8""", file=f)
+        for part in library.parts:
+            self.log.debug("Creating part %s in library %s.", part.name, library.name)
+        
+        # library footer
+        print(r"""#
+#End Library
+""",file=f)
         f.close()
         ################# footprint library #################
         for part in library.parts:
@@ -151,7 +160,7 @@ class KiCad(cadPackage):
         pcbLayer.topSilk:"F.SilkS", pcbLayer.bottomSilk:"B.SilkS", \
         pcbLayer.topMask:"F.Mask", pcbLayer.bottomMask:"B.Mask",\
         pcbLayer.thtPads:None, pcbLayer.thtVias:None, pcbLayer.edges:None,\
-        pcbLayer.topNames:"F.SilkS", pcbLayer.bottomNames:"B.SilkS", \
+        pcbLayer.topNames:"F.Fab", pcbLayer.bottomNames:"B.Fab", \
         pcbLayer.topValues:"F.Fab", pcbLayer.bottomValues:"B.Fab",\
         pcbLayer.topPaste:"F.Paste", pcbLayer.bottomPaste:"B.Paste",\
         pcbLayer.topGlue:"F.Adhes", pcbLayer.bottomGlue:"B.Adhes",\

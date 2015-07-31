@@ -16,7 +16,7 @@ if __name__ == "__main__":
     logging.addLevelName(logging.DEBUG-1, "DEBUG1")
     logging.addLevelName(logging.DEBUG-2, "DEBUG2")
     logging.addLevelName(logging.DEBUG-3, "DEBUG3")
-    logging.getLogger().setLevel(logging.DEBUG)
+    logging.getLogger().setLevel(logging.WARNING)
     # create CAD package
     CP = cadPackageKiCad.KiCad()
     # generate libraries
@@ -26,8 +26,8 @@ if __name__ == "__main__":
     niceModules = libraryModules.libraryModules()
     CP.generateLibrary(niceModules, r"D:\test\kicadLib")
     
-#    niceSemiconductors = librarySemiconductors.librarySemiconductors()
-#    CP.generateLibrary(niceSemiconductors, r"D:\test\kicadLib")
+    niceSemiconductors = librarySemiconductors.librarySemiconductors()
+    CP.generateLibrary(niceSemiconductors, r"D:\test\kicadLib")
     
     niceSwitches = librarySwitches.librarySwitches()
     CP.generateLibrary(niceSwitches, r"D:\test\kicadLib")

@@ -28,7 +28,7 @@ class partR(part):
     """
     def __init__(self):
         super().__init__("R", "R")
-        self.symbol = symbolR("R")
+        self.symbols.append(symbolR("R"))
         for size in ["0402", "0603", "0805", "1206", "1210", "2010", "2512"]:
             for density in ["L", "N", "M"]:
                 self.footprints.append(footprintSmdChip(size + "_" + density, \
@@ -38,8 +38,8 @@ class partResistorNetwork(part):
     """
     """
     def __init__(self):
-        super().__init__("rNetwork", "R")
-        self.symbol = symbolR("R")
+        super().__init__("R_Network_4", "R")
+        self.symbols.append(symbolR("R"))
         for size in ["0402", "0603"]:
             for density in ["L", "N", "M"]:
                 self.footprints.append(footprintResistorNetwork('4x' + size + "_" + density, \

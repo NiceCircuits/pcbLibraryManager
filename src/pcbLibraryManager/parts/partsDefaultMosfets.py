@@ -15,7 +15,7 @@ class partDefaultMosfetSot23(part):
     """
     def __init__(self):
         part.__init__(self, "NMOS", defaults.transistorRefDes)
-        self.symbol = symbolMosfet()
+        self.symbols.append(symbolMosfet())
     
 if __name__ == "__main__":
     partDefaultMosfetSot23()

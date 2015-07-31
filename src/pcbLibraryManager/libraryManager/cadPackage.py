@@ -65,7 +65,7 @@ class cadPackage:
             movePath = os.path.join(oldDir, fileName + "_" + timestamp())
             self.createFolder(oldDir)
             os.rename(path, movePath)
-            self.log.warning("Library %s exists. Old version moved to *old* directory.",\
+            self.log.info("Library %s exists. Old version moved to *old* directory.",\
                 fileName)
         return open(path, mode="w")
         

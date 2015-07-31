@@ -25,7 +25,7 @@ class partNS25_Straight():
     def __init__(self, circuits, rightAngle):
         name = "NS25-W%d%s" %(circuits, "K" if rightAngle else "P")
         super().__init__(name, defaults.conRefDes)
-        self.symbol = symbolConnector("CON%d" % circuits, circuits)
+        self.symbols.append(symbolConnector("CON%d" % circuits, circuits))
         self.footprints.append(footprintNS25Straight(name, circuits,\
             alternativeLibName = "niceConectorsWireToBoard"))
 

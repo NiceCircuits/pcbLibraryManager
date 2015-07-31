@@ -19,10 +19,14 @@ class footprintSmdDualRow(footprint):
         super().__init__(name, alternativeLibName=alternativeLibName, originMarkSize=originMarkSize)
         x1 = pitch * (pinCount/4 - 0.5)
         for y in [-1, 1]:
-            for x in range(int(pinCount/2)):
-                self.primitives.append(pcbSmtPad(pcbLayer.topCopper, position=\
-                    [(x1-pitch*x)*y+offset[0], padSpan/2*y+offset[1]],dimensions=padDimensions,\
-                    name=str(int(x+1 if y<0 else x+pinCount/2+1)),rotation=0 if y<0 else 180))
+            delta=0
+            if (pinCount%2 >0) and (y<0):
+                delta=1 # generate additional pin in first row of pins in 3 or 5 pin cases
+            for x in range(int((pinCount+delta)/2)):
+                pos = [(x1-pitch*x)*y+offset[0], padSpan/2*y+offset[1]]
+                self.primitives.append(pcbSmtPad(pcbLayer.topCopper, position=pos,\
+                    dimensions=padDimensions, name=str(int(x+1 if y<0 else x+pinCount/2+1)),\
+                    rotation=0 if y<0 else 180))
 
 
 class footprintSmdDualRowLeaded(footprintSmdDualRow):
@@ -75,4 +79,4 @@ class footprintSot23(footprintSmdDualRowLeaded):
         if not alternativeLibName:
             alternativeLibName="niceSemiconductors"
         super().__init__(name, alternativeLibName, pinCount, pitch = 0.95,\
-            padSpan = 2.0, padDimensions = (0.6, 0.7))
+            padSpan = 2.0, padDimensions = (0.6, 0.7), bodyDimensions=[3, 1.4], leadDimensions=[0.46, 0.6])

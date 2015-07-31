@@ -56,7 +56,7 @@ class partEsp07(part):
     """
     def __init__(self):
         super().__init__("ESP-07", defaults.icRefDes)
-        self.symbol = symbolEsp07("ESP-07")
+        self.symbols.append(symbolEsp07("ESP-07"))
         for density in ["L", "N", "M"]:
             self.footprints.append(footprintEsp07("ESP-07_" + density, \
                 density = density, alternativeLibName = "niceModules"))

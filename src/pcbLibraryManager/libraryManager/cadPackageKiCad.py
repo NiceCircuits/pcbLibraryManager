@@ -12,6 +12,12 @@ from libraryManager.common import *
 from libraryManager.footprintPrimitive import *
 import logging
 
+def boolToYN(x):
+    if x:
+        return "Y"
+    else:
+        return "N"
+
 class KiCad(cadPackage):
     """
     KiCad CAD package handling class
@@ -20,7 +26,9 @@ class KiCad(cadPackage):
         """
         """
         super().__init__()
-        
+    
+    scale=0.5
+            
     def generateLibrary(self, library, path):
         """
         """
@@ -32,7 +40,17 @@ class KiCad(cadPackage):
 #encoding utf-8""", file=f)
         for part in library.parts:
             self.log.debug("Creating part %s in library %s.", part.name, library.name)
-        
+            print(r"""#
+# %s
+#""" % part.name, file=f)
+            sym=part.symbols[0]
+            print(r"DEF %s %s 0 50 %s %s %d F N" %(part.name, part.refDes,\
+                boolToYN(sym.showPinNumbers), boolToYN(sym.showPinNames),\
+                len(part.symbols)), file=f)
+            self.generateSymbolTextSpecial(sym.nameObject,f,"F0")
+            self.generateSymbolTextSpecial(sym.valueObject,f,"F1")
+            #self.generateSymbolTextSpecial(footprintName,f,"F2")
+            #self.generateSymbolTextSpecial(datasheet,f,"F3")
         # library footer
         print(r"""#
 #End Library
@@ -52,6 +70,26 @@ class KiCad(cadPackage):
                 for primitive in footprint.primitives:
                     self.generatePcbPrimitive(primitive, f)
                 print(")", file = f)
+
+############## Symbol primitives ##############
+    def generateSymbolTextSpecial(self, primitive, file, textType):
+        """
+        """
+        p=primitive
+        if p.rotation>360-45:
+            rot="H"
+        elif p.rotation>180+45:
+            rot="V"
+        elif p.rotation>180-45:
+            rot="H"
+        elif p.rotation>45:
+            rot="V"
+        else:
+            rot="H"
+        print(r'%s "%s" %d %d %d %s %s %sNN' % (textType, p.text, p.position[0]*self.scale,\
+            p.position[1]*self.scale, p.height*self.scale, rot, "V" if p.visible else "I",\
+            self.textAlignsSch[p.align]), file=file)
+        # width, text, position, height, rotation = 0.0, align=textAlign.center, mirror=False):
                 
 ############## Footprint primitives ##############
     def generatePcbPrimitive(self, primitive, file):
@@ -144,7 +182,7 @@ class KiCad(cadPackage):
         """
         Generate PCB text
         """
-        alignText = self.textAligns[primitive.align]
+        alignText = self.textAlignsPcb[primitive.align]
         mirrorText = " mirror" if primitive.mirror else ""
         if alignText or mirrorText:
             justifyText = r" (justify" + alignText + mirrorText + ")"
@@ -170,8 +208,14 @@ class KiCad(cadPackage):
         pcbLayer.topAssembly:"F.Fab", pcbLayer.bottomAssembly:"B.Fab",\
         pcbLayer.topDocumentation:"F.Fab", pcbLayer.bottomDocumentation:"B.Fab"}
     
-    textAligns = {textAlign.center:"", textAlign.centerLeft:" left",\
+    textAlignsPcb = {textAlign.center:"", textAlign.centerLeft:" left",\
         textAlign.centerRight:" right", textAlign.topCenter:" top",\
         textAlign.topLeft:" left top", textAlign.topRight:" right top",\
         textAlign.bottomCenter:" bottom", textAlign.bottomLeft:" left bottom",\
         textAlign.bottomRight:" right bottom"}
+        
+    textAlignsSch = {textAlign.center:"C C", textAlign.centerLeft:"L C",\
+        textAlign.centerRight:"R C", textAlign.topCenter:"C T",\
+        textAlign.topLeft:"L T", textAlign.topRight:"R T",\
+        textAlign.bottomCenter:"C B", textAlign.bottomLeft:"L B",\
+        textAlign.bottomRight:"R B"}

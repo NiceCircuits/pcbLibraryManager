@@ -44,7 +44,7 @@ class partMicroswitchSmt(part):
     """
     def __init__(self):
         super().__init__("MicroswitchSmt", defaults.switchRefDes)
-        self.symbol = symbolButton("Button")
+        self.symbols.append(symbolButton("Button"))
         for density in ["L", "N", "M"]:
             self.footprints.append(footprintMicroswitchSmt("MicroswitchSmd_" + density, \
                 density = density, alternativeLibName = "niceSwitches"))

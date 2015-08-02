@@ -14,8 +14,9 @@ class defaults:
     originMarkSize = 1.0
     # symbol defaults
     symbolTextHeight = 100
+    symbolSmallTextHeight = 60
     symbolPinTextHeight = 60
-    symbolLineWidth = 10
+    symbolLineWidth = 20
     #symbolPinLineWidth = 6
     # reference designators
     icRefDes = "U"

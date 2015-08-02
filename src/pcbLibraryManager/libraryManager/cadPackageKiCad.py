@@ -10,6 +10,7 @@ from libraryManager.library import  libraryClass
 import os.path
 from libraryManager.common import *
 from libraryManager.footprintPrimitive import *
+from libraryManager.symbolPrimitive import *
 import logging
 
 def boolToYN(x):
@@ -44,6 +45,7 @@ class KiCad(cadPackage):
 # %s
 #""" % part.name, file=f)
             sym=part.symbols[0]
+            # part header
             print(r"DEF %s %s 0 50 %s %s %d F N" %(part.name, part.refDes,\
                 boolToYN(sym.showPinNumbers), boolToYN(sym.showPinNames),\
                 len(part.symbols)), file=f)
@@ -51,6 +53,16 @@ class KiCad(cadPackage):
             self.generateSymbolTextSpecial(sym.valueObject,f,"F1")
             #self.generateSymbolTextSpecial(footprintName,f,"F2")
             #self.generateSymbolTextSpecial(datasheet,f,"F3")
+            print("DRAW",file=f)
+            # symbols
+            for i in range(len(part.symbols)):
+                s=part.symbols[i]
+                for p in s.primitives:
+                    self.generateSymbolPrimitive(p, f, gateNumber=i+1)
+                for p in s.pins:
+                    self.generateSymbolPin(p, f, gateNumber=i+1)
+            # part footer
+            print("ENDDRAW\r\nENDDEF",file=f)
         # library footer
         print(r"""#
 #End Library
@@ -90,6 +102,42 @@ class KiCad(cadPackage):
             p.position[1]*self.scale, p.height*self.scale, rot, "V" if p.visible else "I",\
             self.textAlignsSch[p.align]), file=file)
         # width, text, position, height, rotation = 0.0, align=textAlign.center, mirror=False):
+
+    def generateSymbolPrimitive(self, primitive, file, gateNumber=1):
+        """
+        """
+        p = primitive
+        n = p.__class__.__name__
+        if n == "symbolLine":
+            pass
+        elif n == "symbolPolyline":
+            pass
+        elif n == "symbolRectangle":
+            if p.rotation != 0:
+                raise Exception("Not implemented yet")
+            c = rectangleCorners(p.position, p.dimensions)
+            print(r"S %d %d %d %d %d 1 %d %s"%(c[0][0]*self.scale, c[0][1]*self.scale,\
+                c[1][0]*self.scale, c[1][1]*self.scale, gateNumber, p.width*self.scale,\
+                self.symbolFillType[p.filled]), file=file)
+        elif n == "symbolArc":
+            pass
+        elif n == "symbolCircle":
+            pass
+        elif n == "symbolText":
+            pass
+        else:
+            text = "generateSymbolPrimitive: Invalid primitive class name: %s" % n
+            self.log.error(text)
+            raise TypeError(text)
+    
+    def generateSymbolPin(self, pin, file, gateNumber=1):
+        """
+        """
+        print(r"X %s %s %d %d %d %s %d %d %d 1 %s"%(pin.name, pin.number, pin.position[0]*self.scale,\
+            pin.position[1]*self.scale, pin.length*self.scale, self.symbolPinAngle[pin.rotation],\
+            pin.heightNumber*self.scale, pin.heightName*self.scale, gateNumber, self.symbolPinType[pin.type]), file=file)
+
+        
                 
 ############## Footprint primitives ##############
     def generatePcbPrimitive(self, primitive, file):
@@ -219,3 +267,10 @@ class KiCad(cadPackage):
         textAlign.topLeft:"L T", textAlign.topRight:"R T",\
         textAlign.bottomCenter:"C B", textAlign.bottomLeft:"L B",\
         textAlign.bottomRight:"R B"}
+        
+    symbolPinAngle={0:"R", 90:"U", 180:"L", 270:"D"}
+    
+    symbolPinType={pinType.input:"I", pinType.output:"O", pinType.IO:"B", pinType.tristate:"T",\
+        pinType.passive:"P", pinType.OC:"C", pinType.NC:"N", pinType.pwrIn:"W", pinType.pwrOut:"w"}
+    
+    symbolFillType={fillType.none:"N", fillType.background:"f", fillType.foreground:"F"}

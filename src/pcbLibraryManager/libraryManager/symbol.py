@@ -21,12 +21,13 @@ class symbol:
         self.showPinNames=showPinNames
         self.showPinNumbers=showPinNumbers
         # fields to store name and value text objects - can be changed later
-        self.nameObject = symbolText(defaults.silkWidth, refDes,\
-            [0, defaults.silkTextHeight * 2], defaults.silkTextHeight, align = textAlign.center)
-        self.valueObject = symbolText(defaults.silkWidth, name,\
-            [0, 0], defaults.silkTextHeight, align = textAlign.center)
-        # initialize empty list for storing primitives
+        self.nameObject = symbolText(refDes,\
+            [0, defaults.symbolTextHeight * 2], defaults.symbolTextHeight, align = textAlign.center)
+        self.valueObject = symbolText(name,\
+            [0, 0], defaults.symbolTextHeight, align = textAlign.center)
+        # initialize empty list for storing primitives and pins
         self.primitives = []
+        self.pins = []
 
 if __name__ == "__main__":
     pass

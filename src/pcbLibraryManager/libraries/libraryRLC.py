@@ -38,8 +38,10 @@ class partResistorNetwork(part):
     """
     """
     def __init__(self):
-        super().__init__("R_Network_4", "R")
-        self.symbols.append(symbolR("R"))
+        name = "R_Network_4"
+        super().__init__(name, "R")
+        for i in range(4):
+            self.symbols.append(symbolR(name, showPinNumbers=True, pinNumbers=[i+1, 8-i]))
         for size in ["0402", "0603"]:
             for density in ["L", "N", "M"]:
                 self.footprints.append(footprintResistorNetwork('4x' + size + "_" + density, \

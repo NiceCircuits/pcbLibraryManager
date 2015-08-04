@@ -8,7 +8,6 @@ Created on Mon Jul 13 21:45:08 2015
 from libraryManager.footprint import footprint
 from libraryManager.defaults import defaults
 from libraryManager.footprintPrimitive import *
-from math import ceil
 
 class footprintSmdChip(footprint):
     """
@@ -39,11 +38,9 @@ class footprintSmdChip(footprint):
         self.primitives.append(pcbRectangle(pcbLayer.topAssembly, width=defaults.documentationWidth,\
             position=[0,0], dimensions=dimensions[size]["chip"]))
         # courtyard
-        dim1 = [ceil((dimensions[size]["L"][density]+2*dimensions[size]["court"][density])*5)/5,\
-            ceil((max(dimensions[size]["pad"][density][1],dimensions[size]["chip"][1])\
-            +2*dimensions[size]["court"][density])*5)/5]
-        self.primitives.append(pcbRectangle(pcbLayer.topAssembly, width=defaults.documentationWidth,\
-            position=[0,0], dimensions=dim1))
+        dim1=self.addCourtyard([dimensions[size]["L"][density]+2*dimensions[size]["court"][density],\
+            max(dimensions[size]["pad"][density][1],dimensions[size]["chip"][1])+\
+            2*dimensions[size]["court"][density]])
         # name, value
         y = self.valueObject.height + dim1[1]/2
         self.valueObject.position = [0, -y]

@@ -15,7 +15,7 @@ class footprintSmdQuad(footprint):
     Footprint generator for quad SMD packages.
     """
     def __init__(self, name, alternativeLibName, pinCount, pitch, padSpan, padDimensions, 
-        bodyDimensions, leadDimensions=None, offset = [0, 0], originMarkSize=-1):
+        bodyDimensions, court, leadDimensions=None, offset = [0, 0], originMarkSize=-1):
         if originMarkSize<0:
             originMarkSize = min(defaults.originMarkSize, bodyDimensions[0]*0.3, bodyDimensions[1]*0.3)    
         super().__init__(name, alternativeLibName=alternativeLibName, originMarkSize=originMarkSize)
@@ -37,12 +37,13 @@ class footprintSmdQuad(footprint):
         radius = min(bodyDimensions[0]*0.05, bodyDimensions[1]*0.05, 0.5)
         self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
             rotatePoints(scalePoints([bodyDimensions], 0.4),90)[0], radius))
+        # courtyard
+        self.addCourtyard([s+max(padDimensions)+2*court for s in padSpan])
         # texts
         if originMarkSize:
             y = originMarkSize + defaults.documentationTextHeight
             self.nameObject.position=[0,y]
             self.valueObject.position=[0,-y]
-        # TODO: courtyard
 
 class footprintQfp(footprintSmdQuad):
     """
@@ -60,13 +61,20 @@ class footprintQfp(footprintSmdQuad):
             0.8:{32:[7.1,7.1], 44:[10.1,10.1], 52:[12.1,12.1], 64:[14.1,14.1]},\
             1.0:{36:[10.1,10.1], 44:[12.1,12.1], 52:[14.1,14.1]}}
         leadDimensions={0.5:[1,0.27], 0.65:[1, 0.38], 0.8:[1,0.45], 1.0:[1, 0.5]}
-        padSpan={0.5:{48:{"N":[8.4, 8.4]}, 64:{"N":[11.4, 11.4]}, 100:{"N":[15.4, 15.4]}},\
-            0.65:{80:{"N":[15.4, 15.4]}},\
-            0.8:{32:{"N":[8.4, 8.4]}, 44:{"N":[11.4, 11.4]}, 64:{"N":[15.4, 15.4]}}}
-        padDimensions={0.5:{"N":[1.5, 0.3]}, 0.65:{"N":[1.5, 0.45]}, 0.8:{"N":[1.5,0.55]}}
+        padSpan={0.5:{48:{"L":[8.4, 8.4], "N":[8.4, 8.4], "M":[8.4, 8.4]},\
+            64:{"L":[11.4, 11.4], "N":[11.4, 11.4], "M":[11.4, 11.4]},\
+            100:{"L":[15.4, 15.4], "N":[15.4, 15.4], "M":[15.4, 15.4]}},\
+            0.65:{80:{"L":[15.4, 15.4], "N":[15.4, 15.4], "M":[15.4, 15.4]}},\
+            0.8:{32:{"L":[8.4, 8.4], "N":[8.4, 8.4], "M":[8.4, 8.4]},\
+            44:{"L":[11.4, 11.4], "N":[11.4, 11.4], "M":[11.4, 11.4]},\
+            64:{"L":[15.4, 15.4], "N":[15.4, 15.4], "M":[15.4, 15.4]}}}
+        padDimensions={0.5:{"L":[1.5, 0.3], "N":[1.5, 0.3], "M":[1.5, 0.3]},\
+            0.65:{"L":[1.5, 0.45], "N":[1.5, 0.45], "M":[1.5, 0.45]},\
+            0.8:{"L":[1.5,0.55], "N":[1.5,0.55], "M":[1.5,0.55]}}
+        court = {'L':0.15, 'N':0.25, 'M':0.5}
         super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=pitch,\
             padSpan=padSpan[pitch][pinCount][density],\
             padDimensions=padDimensions[pitch][density],\
-            bodyDimensions=bodyDimensions[pitch][pinCount],\
+            bodyDimensions=bodyDimensions[pitch][pinCount], court = court[density],\
             leadDimensions=leadDimensions[pitch])
 

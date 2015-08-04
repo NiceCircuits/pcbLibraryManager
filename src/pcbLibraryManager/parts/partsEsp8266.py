@@ -42,6 +42,7 @@ class footprintEsp07(footprintSmdDualRow):
             for y in [-1, 1]:
                 self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
                     silkX*x, silkY*y, (silkX-3)*x-2, silkY*y))
+        # TODO: courtyard
 
 class symbolEsp07(symbol):
     """

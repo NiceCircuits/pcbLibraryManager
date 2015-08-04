@@ -35,7 +35,7 @@ class footprintSmdDualRowLeaded(footprintSmdDualRow):
     First pin in bottom left corner. 
     """
     def __init__(self, name, alternativeLibName, pinCount, pitch, padSpan, padDimensions, 
-        bodyDimensions, leadDimensions):
+        bodyDimensions, leadDimensions, court):
         originMarkSize = min(defaults.originMarkSize, bodyDimensions[0]*0.5, bodyDimensions[1]*0.5)
         # pads
         super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=pitch,
@@ -53,6 +53,8 @@ class footprintSmdDualRowLeaded(footprintSmdDualRow):
                 y1 = bodyDimensions[1]/2+leadDimensions[1]/2
                 self.primitives.append(pcbRectangle(pcbLayer.topAssembly,defaults.documentationWidth,\
                     position=[(x1-pitch*x)*y,y*y1],dimensions=leadDimensions))
+        # TODO: courtyard
+        self.addCourtyard([bodyDimensions[0]+2*court, padSpan+padDimensions[1]+2*court])
 
 
 class footprintSoic(footprintSmdDualRowLeaded):
@@ -67,7 +69,7 @@ class footprintSoic(footprintSmdDualRowLeaded):
         bodyDimensions=[pinCount/2*1.27,4.04]
         super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=1.27,\
             padSpan=5.2,padDimensions=[0.6,2.2], bodyDimensions=bodyDimensions,\
-            leadDimensions=[0.41,1.3])
+            leadDimensions=[0.41,1.3], court = 0.2)
 
 class footprintSot23(footprintSmdDualRowLeaded):
     """
@@ -79,4 +81,5 @@ class footprintSot23(footprintSmdDualRowLeaded):
         if not alternativeLibName:
             alternativeLibName="niceSemiconductors"
         super().__init__(name, alternativeLibName, pinCount, pitch = 0.95,\
-            padSpan = 2.0, padDimensions = (0.6, 0.7), bodyDimensions=[3, 1.4], leadDimensions=[0.46, 0.6])
+            padSpan = 2.0, padDimensions = (0.6, 0.7), bodyDimensions=[3, 1.4],\
+            leadDimensions=[0.46, 0.6], court = 0.2)

@@ -31,15 +31,15 @@ class partSemiconductorsDummy(part):
         super().__init__("dummy", defaults.icRefDes)
         self.symbols.append(symbolDummy("dummy"))
         for density in ["L", "N", "M"]:
+            self.log.debug("density %s" % density)
             for pinCount in [8,14]:
                 self.footprints.append(footprintSoic(pinCount,density=density))
-        for density in ["L", "N", "M"]:
             for pinCount in [3,4,5,6,8]:
                 self.footprints.append(footprintSot23(pinCount,density=density))
-        for n in [32, 44, 64]:
-            self.footprints.append(footprintQfp(n,0.8))
-        for n in [48, 64, 100]:
-            self.footprints.append(footprintQfp(n,0.5))
-        for n in [80]:
-            self.footprints.append(footprintQfp(n,0.65))
+            for n in [32, 44, 64]:
+                self.footprints.append(footprintQfp(n,0.8, density=density))
+            for n in [48, 64, 100]:
+                self.footprints.append(footprintQfp(n,0.5, density=density))
+            for n in [80]:
+                self.footprints.append(footprintQfp(n,0.65, density=density))
             

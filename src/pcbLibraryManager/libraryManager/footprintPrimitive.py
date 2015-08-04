@@ -14,7 +14,8 @@ class pcbLayer:
         thtPads, thtVias, edges, topNames, bottomNames, topValues, bottomValues,\
         topPaste, bottomPaste, topGlue, bottomGlue, topKeepout, bottomKeepout,\
         topRestrict, bottomRestrict, thtRestrict, thtHoles, topAssembly,\
-        bottomAssembly, topDocumentation, bottomDocumentation = range(1, 28)
+        bottomAssembly, topDocumentation, bottomDocumentation, topCourtyard,\
+        bottomCourtyard= range(1, 30)
 
 class pcbPrimitive:
     """

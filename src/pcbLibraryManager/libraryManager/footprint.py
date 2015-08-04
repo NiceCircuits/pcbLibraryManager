@@ -9,6 +9,7 @@ import logging
 from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import defaults
 from libraryManager.common import *
+from math import  ceil
 
 class footprint:
     """
@@ -45,6 +46,17 @@ class footprint:
                 points=scalePoints(rotatePoints([[-1,0],[1,0]], rotation),size)))
         self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
             [0, 0], size*0.7))
+    
+    def addCourtyard(self, dimensions):
+        """
+        Add courtyard, extend to fit in 0.1mm grid. Return courtyard size.
+        """
+        # (x-0.01) - to cut float rounding error
+        court = [ceil((x-0.01)*5)/5 for x in dimensions]
+        self.primitives.append(pcbRectangle(pcbLayer.topCourtyard, defaults.documentationWidth,\
+            position=[0,0], dimensions=court))
+        self.log.debug("Courtyard %s -> %s" %(dimensions, court))
+        return court
         
 if __name__ == "__main__":
     pass

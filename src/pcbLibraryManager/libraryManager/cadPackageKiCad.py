@@ -52,7 +52,10 @@ class KiCad(cadPackage):
                 len(part.symbols)), file=f)
             self.generateSymbolTextSpecial(sym.nameObject,f,"F0")
             self.generateSymbolTextSpecial(sym.valueObject,f,"F1")
-            #self.generateSymbolTextSpecial(footprintName,f,"F2")
+            footprint = symbolText(part.footprints[0].name if part.footprints else "",\
+                translatePoints([sym.valueObject.position],[0, -1.5*sym.valueObject.height])[0],\
+                defaults.symbolSmallTextHeight, visible=False)
+            self.generateSymbolTextSpecial(footprint,f,"F2")
             #self.generateSymbolTextSpecial(datasheet,f,"F3")
             print("DRAW",file=f)
             # symbols
@@ -256,7 +259,8 @@ class KiCad(cadPackage):
         pcbLayer.topRestrict:None, pcbLayer.bottomRestrict:None,\
         pcbLayer.thtRestrict:None, pcbLayer.thtHoles:None,\
         pcbLayer.topAssembly:"F.Fab", pcbLayer.bottomAssembly:"B.Fab",\
-        pcbLayer.topDocumentation:"F.Fab", pcbLayer.bottomDocumentation:"B.Fab"}
+        pcbLayer.topDocumentation:"F.Fab", pcbLayer.bottomDocumentation:"B.Fab",\
+        pcbLayer.topCourtyard:"F.CrtYd", pcbLayer.bottomCourtyard:"B.CrtYd"}
     
     textAlignsPcb = {textAlign.center:"", textAlign.centerLeft:" left",\
         textAlign.centerRight:" right", textAlign.topCenter:" top",\

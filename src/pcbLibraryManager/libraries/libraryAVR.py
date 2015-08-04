@@ -7,7 +7,7 @@ Created on Sun Aug  2 18:04:03 2015
 
 from libraryManager.library import libraryClass
 from libraryManager.part import part
-from libraryManager.footprint import footprint
+from footprints.footprintSmdQuad import footprintQfp
 from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import *
 from symbols.symbolsIC import symbolIC
@@ -29,11 +29,8 @@ class partAtmega48(part):
         name = name + "-" + version
         super().__init__(name, "U")
         self.symbols.append(symbolAtmega48(name, version))
-        for size in ["0402", "0603", "0805", "1206", "1210", "2010", "2512"]:
-            for density in ["L", "N", "M"]:
-                pass
-                #self.footprints.append(footprintSmdChip(size + "_" + density, \
-                 #   size = size, density = density, alternativeLibName = "niceRLC"))
+        for density in ["N", "L", "M"]:
+            self.footprints.append(footprintQfp(32, 0.8, density=density))
 
 class symbolAtmega48(symbolIC):
     """

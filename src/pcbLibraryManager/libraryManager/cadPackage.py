@@ -55,18 +55,21 @@ class cadPackage:
         self.log.info("Generating library %s for %s in folder: \|%s\".", 
             library.name ,self.__class__.__name__, path)
     
-    def openFile(self, path):
+    def openFile(self, path, preserveOld=False):
         """
         Create library file. If file exists, copy it to subfolder
         """
         if os.path.isfile(path):
-            (directory, fileName) = os.path.split(path)
-            oldDir = os.path.join(directory, "old")
-            movePath = os.path.join(oldDir, fileName + "_" + timestamp())
-            self.createFolder(oldDir)
-            os.rename(path, movePath)
-            self.log.info("Library %s exists. Old version moved to *old* directory.",\
-                fileName)
+            if preserveOld:
+                (directory, fileName) = os.path.split(path)
+                oldDir = os.path.join(directory, "old")
+                movePath = os.path.join(oldDir, fileName + "_" + timestamp())
+                self.createFolder(oldDir)
+                os.rename(path, movePath)
+                self.log.info("Library %s exists. Old version moved to *old* directory.",\
+                    fileName)
+            else:
+                os.remove(path)
         return open(path, mode="w")
         
     def createFolder(self, path):

@@ -13,10 +13,10 @@ class defaults:
     documentationTextHeight = 0.5
     originMarkSize = 1.0
     # symbol defaults
-    symbolTextHeight = 100
-    symbolSmallTextHeight = 60
+    symbolTextHeight = 60
+    symbolSmallTextHeight = 40
     symbolPinTextHeight = 60
-    symbolLineWidth = 20
+    symbolLineWidth = 10
     #symbolPinLineWidth = 6
     # reference designators
     icRefDes = "U"

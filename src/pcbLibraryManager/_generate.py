@@ -5,7 +5,7 @@ Created on Tue Jul 14 20:56:14 2015
 @author: piotr at nicecircuits.com
 """
 
-from libraries import libraryModules, librarySemiconductors, librarySwitches, libraryRLC
+from libraries import libraryModules, librarySemiconductors, librarySwitches, libraryRLC, libraryAVR
 from libraryManager import cadPackageKiCad
 import logging
 
@@ -19,17 +19,19 @@ if __name__ == "__main__":
     logging.getLogger().setLevel(logging.WARNING)
     # create CAD package
     CP = cadPackageKiCad.KiCad()
+    path = r"D:\test\kicadLib"
     # generate libraries
     niceRLC = libraryRLC.libraryRLC()
-    CP.generateLibrary(niceRLC, r"D:\test\kicadLib")
+    CP.generateLibrary(niceRLC, path)
 
     niceModules = libraryModules.libraryModules()
-    CP.generateLibrary(niceModules, r"D:\test\kicadLib")
+    CP.generateLibrary(niceModules, path)
     
     niceSemiconductors = librarySemiconductors.librarySemiconductors()
-    CP.generateLibrary(niceSemiconductors, r"D:\test\kicadLib")
+    CP.generateLibrary(niceSemiconductors, path)
     
     niceSwitches = librarySwitches.librarySwitches()
-    CP.generateLibrary(niceSwitches, r"D:\test\kicadLib")
+    CP.generateLibrary(niceSwitches, path)
     
-    
+    niceAVR = libraryAVR.libraryAVR()
+    CP.generateLibrary(niceAVR, path)

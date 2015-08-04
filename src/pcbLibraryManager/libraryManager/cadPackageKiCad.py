@@ -12,6 +12,7 @@ from libraryManager.common import *
 from libraryManager.footprintPrimitive import *
 from libraryManager.symbolPrimitive import *
 import logging
+import re
 
 def boolToYN(x):
     if x:
@@ -62,7 +63,7 @@ class KiCad(cadPackage):
                 for p in s.pins:
                     self.generateSymbolPin(p, f, gateNumber=i+1)
             # part footer
-            print("ENDDRAW\r\nENDDEF",file=f)
+            print("ENDDRAW\nENDDEF",file=f)
         # library footer
         print(r"""#
 #End Library
@@ -133,7 +134,8 @@ class KiCad(cadPackage):
     def generateSymbolPin(self, pin, file, gateNumber=1):
         """
         """
-        print(r"X %s %s %d %d %d %s %d %d %d 1 %s"%(pin.name, pin.number, pin.position[0]*self.scale,\
+        name = re.sub(r"\s", r"_", str(pin.name))
+        print(r"X %s %s %d %d %d %s %d %d %d 1 %s"%(name, pin.number, pin.position[0]*self.scale,\
             pin.position[1]*self.scale, pin.length*self.scale, self.symbolPinAngle[pin.rotation],\
             pin.heightNumber*self.scale, pin.heightName*self.scale, gateNumber, self.symbolPinType[pin.type]), file=file)
 

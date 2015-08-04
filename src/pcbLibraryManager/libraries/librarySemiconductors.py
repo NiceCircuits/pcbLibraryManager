@@ -7,6 +7,7 @@ Created on Sat Jul 18 09:41:04 2015
 
 from libraryManager.library import libraryClass
 from footprints.footprintSmdDualRow import *
+from footprints.footprintSmdQuad import *
 from libraryManager.symbol import symbol
 from libraryManager.part import part
 
@@ -35,3 +36,10 @@ class partSemiconductorsDummy(part):
         for density in ["L", "N", "M"]:
             for pinCount in [3,4,5,6,8]:
                 self.footprints.append(footprintSot23(pinCount,density=density))
+        for n in [32, 44, 64]:
+            self.footprints.append(footprintQfp(n,0.8))
+        for n in [48, 64, 100]:
+            self.footprints.append(footprintQfp(n,0.5))
+        for n in [80]:
+            self.footprints.append(footprintQfp(n,0.65))
+            

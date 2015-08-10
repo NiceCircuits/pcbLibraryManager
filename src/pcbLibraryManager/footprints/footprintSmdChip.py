@@ -37,20 +37,14 @@ class footprintSmdChip(footprint):
         # body
         self.primitives.append(pcbRectangle(pcbLayer.topAssembly, width=defaults.documentationWidth,\
             position=[0,0], dimensions=dimensions[size]["chip"]))
-        # courtyard
-        dim1=self.addCourtyard([dimensions[size]["L"][density]+2*dimensions[size]["court"][density],\
-            max(dimensions[size]["pad"][density][1],dimensions[size]["chip"][1])+\
-            2*dimensions[size]["court"][density]])
+        # courtyard and silk
+        [dim1, dim2]=self.addCourtyardAndSilk([dimensions[size]["L"][density],\
+            max(dimensions[size]["pad"][density][1],dimensions[size]["chip"][1])],\
+            dimensions[size]["court"][density])
         # name, value
         y = self.valueObject.height + dim1[1]/2
         self.valueObject.position = [0, -y]
         self.nameObject.position = [0, y]
-        # silkscreen
-        if dimensions[size]["court"][density]>defaults.silkWidth:
-            dim1 = [dimensions[size]["L"][density]+2*defaults.silkWidth,\
-                dimensions[size]["pad"][density][1]+2*defaults.silkWidth]
-            self.primitives.append(pcbRectangle(pcbLayer.topSilk, width=defaults.silkWidth,\
-                position=[0,0], dimensions=dim1))
         
 
 if __name__ == "__main__":

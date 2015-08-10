@@ -53,8 +53,7 @@ class footprintSmdDualRowLeaded(footprintSmdDualRow):
                 y1 = bodyDimensions[1]/2+leadDimensions[1]/2
                 self.primitives.append(pcbRectangle(pcbLayer.topAssembly,defaults.documentationWidth,\
                     position=[(x1-pitch*x)*y,y*y1],dimensions=leadDimensions))
-        # TODO: courtyard
-        self.addCourtyard([bodyDimensions[0]+2*court, padSpan+padDimensions[1]+2*court])
+        self.addCourtyardAndSilk([bodyDimensions[0], padSpan+padDimensions[1]], court)
 
 
 class footprintSoic(footprintSmdDualRowLeaded):

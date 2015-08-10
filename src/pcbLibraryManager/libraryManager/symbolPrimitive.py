@@ -49,7 +49,7 @@ class symbolPin(symbolPrimitive):
 class symbolPolyline(symbolPrimitive):
     """
     """
-    def __init__(self, width, points):
+    def __init__(self, width, points, filled=fillType.none):
         """
         """
         super().__init__(width, position = None)

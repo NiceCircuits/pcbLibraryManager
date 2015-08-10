@@ -38,7 +38,7 @@ class footprintSmdQuad(footprint):
         self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
             rotatePoints(scalePoints([bodyDimensions], 0.4),90)[0], radius))
         # courtyard
-        self.addCourtyard([s+max(padDimensions)+2*court for s in padSpan])
+        self.addCourtyardAndSilk([s+max(padDimensions) for s in padSpan], court, silk=False)
         # texts
         if originMarkSize:
             y = originMarkSize + defaults.documentationTextHeight

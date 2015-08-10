@@ -55,14 +55,16 @@ def pol2cart(rho, phi):
     x = rho * math.cos(math.radians(phi))
     y = rho * math.sin(math.radians(phi))
     return(x, y)
-    
+
+def mil(x):
+    "Convert mil to mm"
+    return x*0.0254
+
 class textAlign:
     """
     """
     center, centerLeft, centerRight, topCenter, topLeft, topRight,\
         bottomCenter, bottomLeft, bottomRight = range(9)
-
-
 
 if __name__ == "__main__":
     print(timestamp())

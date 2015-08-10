@@ -20,6 +20,7 @@ class libraryRLC(libraryClass):
     def __init__(self):
         super().__init__("niceRLC")
         self.parts.append(partR())
+        self.parts.append(partC())
         self.parts.append(partResistorNetwork())
 
 class partR(part):
@@ -29,6 +30,18 @@ class partR(part):
     def __init__(self):
         super().__init__("R", "R")
         self.symbols.append(symbolR("R"))
+        for size in ["0402", "0603", "0805", "1206", "1210", "2010", "2512"]:
+            for density in ["N", "L", "M"]:
+                self.footprints.append(footprintSmdChip(size + "_" + density, \
+                    size = size, density = density, alternativeLibName = "niceRLC"))
+
+class partC(part):
+    """
+    Capacitor part
+    """
+    def __init__(self):
+        super().__init__("C", "C")
+        self.symbols.append(symbolC("C"))
         for size in ["0402", "0603", "0805", "1206", "1210", "2010", "2512"]:
             for density in ["N", "L", "M"]:
                 self.footprints.append(footprintSmdChip(size + "_" + density, \

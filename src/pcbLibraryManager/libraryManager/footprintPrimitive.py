@@ -17,6 +17,11 @@ class pcbLayer:
         bottomAssembly, topDocumentation, bottomDocumentation, topCourtyard,\
         bottomCourtyard= range(1, 30)
 
+class padShape:
+    """
+    """
+    rect, round, roundRect = range(3)
+
 class pcbPrimitive:
     """
     """
@@ -88,6 +93,18 @@ class pcbSmtPad(pcbPrimitive):
         super().__init__(layer, width=0, position=position, dimensions=dimensions,\
             rotation=rotation, filled=True)
         self.name=name
+
+class pcbThtPad(pcbPrimitive):
+    """
+    """
+    def __init__(self, position, dimensions, drill, name, shape=padShape.round, rotation = 0.0):
+        """
+        """
+        super().__init__([], width=0, position=position, dimensions=dimensions,\
+            rotation=rotation, filled=True)
+        self.name=name
+        self.shape = shape
+        self.drill = drill
 
 class pcbCircle(pcbPrimitive):
     """

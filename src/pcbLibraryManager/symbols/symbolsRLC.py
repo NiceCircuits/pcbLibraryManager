@@ -23,3 +23,19 @@ class symbolR(symbol):
         self.nameObject.position=[0, 80]
         self.valueObject.position=[0, 0]
         self.valueObject.height = defaults.symbolSmallTextHeight
+
+class symbolC(symbol):
+    """
+    Capacitor symbol
+    """
+    def __init__(self, name, refDes="C", showPinNames=False, showPinNumbers=False, pinNumbers=[1,2]):
+        super().__init__(name, refDes, showPinNames, showPinNumbers)
+        for i in range(2):
+            self.pins.append(symbolPin(i+1, pinNumbers[i], [0, -100 if i else 100],\
+                70, pinType.passive, rotation=90 if i else 270))
+            self.primitives.append(symbolLine(defaults.symbolThickLineWidth,\
+                -80, 30 if i else -30, 80, 30 if i else -30))
+        self.nameObject.position=[20, 100]
+        self.nameObject.align=textAlign.centerLeft
+        self.valueObject.position=[20, -100]
+        self.valueObject.align=textAlign.centerLeft

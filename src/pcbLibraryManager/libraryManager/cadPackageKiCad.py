@@ -29,7 +29,7 @@ class KiCad(cadPackage):
         """
         super().__init__()
     
-    scale=0.5
+    scale=1
             
     def generateLibrary(self, library, path):
         """
@@ -113,9 +113,14 @@ class KiCad(cadPackage):
         p = primitive
         n = p.__class__.__name__
         if n == "symbolLine":
-            pass
+            primitive.__class__= symbolPolyline
+            self.generateSymbolPrimitive(primitive, file, gateNumber)
         elif n == "symbolPolyline":
-            pass
+            pointsStr=""
+            for p in primitive.points:
+                pointsStr += "%d %d " %(p[0], p[1])
+            print(r"P %d %d 1 %d %s%s" %(len(primitive.points), gateNumber, primitive.width,\
+                pointsStr, self.symbolFillType[primitive.filled]), file=file)
         elif n == "symbolRectangle":
             if p.rotation != 0:
                 raise Exception("Not implemented yet")
@@ -155,14 +160,55 @@ class KiCad(cadPackage):
             return self.generatePcbPolyLine(primitive, file)
         elif n == "pcbRectangle":
             return self.generatePcbRectangle(primitive, file)
-        elif n == "pcbArc":
-            return self.generatePcbArc(primitive, file)
-        elif n == "pcbCircle":
-            return self.generatePcbCircle(primitive, file)
-        elif n == "pcbSmtPad":
-            return self.generatePcbSmtPad(primitive, file)
         elif n == "pcbText":
             return self.generatePcbText(primitive, file)
+        elif n == "pcbArc":
+            # calculate KiCad coordinates of arc: start point, end point and angle
+            # ensure angles are in 0..360* range
+            angles = [x % 360 for x in primitive.angles]
+            end =[cos(angles[1])*primitive.radius + primitive.position[0],\
+                sin(angles[1])*primitive.radius + primitive.position[1]]
+            angle = (angles[1]-angles[0])%360
+            print(r"  (fp_arc (start %1.3f %1.3f) (end %1.3f %1.3f) (angle %1.1f) (layer %s) (width %1.3f))"%\
+                (primitive.position[0], -primitive.position[1], end[0], -end[1], angle,\
+                self.layerNames[primitive.layer], primitive.width), file=file)
+        elif n == "pcbCircle":
+            print(r"  (fp_circle (center %1.3f %1.3f) (end %1.3f %1.3f) (layer %s) (width %1.3f))"%\
+                (primitive.position[0], -primitive.position[1],\
+                primitive.position[0]+primitive.radius, -primitive.position[1],\
+                self.layerNames[primitive.layer], primitive.width), file=file)
+        elif n == "pcbThtPad":
+            layerText = r"*.Cu *.Mask"
+            print(r"  (pad %s thru_hole %s (at %1.3f %1.3f %1.1f) (size %1.3f %1.3f) (drill %1.3f) (layers %s))" %\
+                (primitive.name, self.padShape[primitive.shape], primitive.position[0],\
+                -primitive.position[1], primitive.rotation, primitive.dimensions[0],\
+                primitive.dimensions[1], primitive.drill, layerText), file=file)
+        elif n == "pcbSmtPad":
+            if primitive.layer==pcbLayer.topCopper:
+                #TODO: paste on/off
+                layerText=r"F.Cu F.Paste F.Mask"
+            else:
+                layerText=r"B.Cu B.Paste B.Mask"
+            if 0:
+                shape = "oval"
+            else:
+                shape = "rect" #TODO: roundness, circle
+            print(r"  (pad %s smd %s (at %1.3f %1.3f %1.1f) (size %1.3f %1.3f) (layers %s))" %\
+                (primitive.name, shape, primitive.position[0], -primitive.position[1],\
+                primitive.rotation, primitive.dimensions[0], primitive.dimensions[1],\
+                layerText), file=file)
+        elif n == "pcbText":
+            alignText = self.textAlignsPcb[primitive.align]
+            mirrorText = " mirror" if primitive.mirror else ""
+            if alignText or mirrorText:
+                justifyText = r" (justify" + alignText + mirrorText + ")"
+            else:
+                justifyText = ""
+            print(r"""  (fp_text %s %s (at %1.3f %1.3f  %1.1f) (layer %s)
+        (effects (font (size %1.3f %1.3f) (thickness %1.3f))%s)
+      )""" % (textType, primitive.text, primitive.position[0], -primitive.position[1],\
+                primitive.rotation, self.layerNames[primitive.layer], primitive.height,\
+                primitive.height, primitive.width, justifyText), file = file)
         else:
             text = "generatePcbPrimitive: Invalid primitive class name: %s" % n
             self.log.error(text)
@@ -192,44 +238,6 @@ class KiCad(cadPackage):
             primitive.dimensions, primitive.rotation)
         poly = pcbPolyline(primitive.layer, primitive.width, points)
         self.generatePcbPolyLine(poly, file)
-
-    def generatePcbArc(self, primitive, file):
-        """
-        """
-        # calculate KiCad coordinates of arc: start point, end point and angle
-        # ensure angles are in 0..360* range
-        angles = [x % 360 for x in primitive.angles]
-        end =[cos(angles[1])*primitive.radius + primitive.position[0],\
-            sin(angles[1])*primitive.radius + primitive.position[1]]
-        angle = (angles[1]-angles[0])%360
-        print(r"  (fp_arc (start %1.3f %1.3f) (end %1.3f %1.3f) (angle %1.1f) (layer %s) (width %1.3f))"%\
-            (primitive.position[0], -primitive.position[1], end[0], -end[1], angle,\
-            self.layerNames[primitive.layer], primitive.width), file=file)
-        pass
-
-    def generatePcbCircle(self, primitive, file):
-        """
-        """
-        print(r"  (fp_circle (center %1.3f %1.3f) (end %1.3f %1.3f) (layer %s) (width %1.3f))"%\
-            (primitive.position[0], -primitive.position[1],\
-            primitive.position[0]+primitive.radius, -primitive.position[1],\
-            self.layerNames[primitive.layer], primitive.width), file=file)
-
-    def generatePcbSmtPad(self, primitive, file):
-        """
-        """
-        if primitive.layer==pcbLayer.topCopper:
-            layerText=r"F.Cu F.Paste F.Mask"
-        else:
-            layerText=r"B.Cu B.Paste B.Mask"
-        if 0:
-            shape = "oval"
-        else:
-            shape = "rect" #TODO: roundness, circle
-        print(r"  (pad %s smd %s (at %1.3f %1.3f %1.1f) (size %1.3f %1.3f) (layers %s))" %\
-            (primitive.name, shape, primitive.position[0], -primitive.position[1],\
-            primitive.rotation, primitive.dimensions[0], primitive.dimensions[1],\
-            layerText), file=file)
 
     def generatePcbText(self, primitive, file, textType="user"):
         """
@@ -280,3 +288,5 @@ class KiCad(cadPackage):
         pinType.passive:"P", pinType.OC:"C", pinType.NC:"N", pinType.pwrIn:"W", pinType.pwrOut:"w"}
     
     symbolFillType={fillType.none:"N", fillType.background:"f", fillType.foreground:"F"}
+    
+    padShape={padShape.rect:"rect", padShape.round:"circle", padShape.roundRect:"oval"}

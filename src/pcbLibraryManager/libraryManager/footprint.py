@@ -47,16 +47,28 @@ class footprint:
         self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
             [0, 0], size*0.7))
     
-    def addCourtyard(self, dimensions):
+    def addCourtyardAndSilk(self, dimensions, court, silk=True):
         """
-        Add courtyard, extend to fit in 0.1mm grid. Return courtyard size.
+        Add courtyard, extend to fit in 0.1mm grid. If silk==true add silkscreen
+        rectangle with default extend - if fits in courtyard.
+        Return courtyard size and silkscreen size
         """
         # (x-0.01) - to cut float rounding error
-        court = [ceil((x-0.01)*5)/5 for x in dimensions]
+        courtDim = [ceil((x-0.01+court*2)*5)/5 for x in dimensions]
         self.primitives.append(pcbRectangle(pcbLayer.topCourtyard, defaults.documentationWidth,\
-            position=[0,0], dimensions=court))
-        self.log.debug("Courtyard %s -> %s" %(dimensions, court))
-        return court
+            position=[0,0], dimensions=courtDim))
+        self.log.debug("Courtyard %s -> %s" %(dimensions, courtDim))
+        if silk and court > defaults.silkWidth/2 + defaults.silkExtend:
+            if court<=0.3:
+                silkDim = courtDim
+            else:
+                silkDim = [x + defaults.silkWidth + defaults.silkExtend*2 for x in dimensions]
+            self.log.debug("Silkscreen %s -> %s" %(dimensions, silkDim))
+            self.primitives.append(pcbRectangle(pcbLayer.topSilk, width=defaults.silkWidth,\
+                position=[0,0], dimensions=silkDim))
+        else:
+            silkDim=None
+        return [courtDim, silkDim]
         
 if __name__ == "__main__":
     pass

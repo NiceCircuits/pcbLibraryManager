@@ -86,8 +86,11 @@ class footprintPinheader(footprint):
         self.primitives.append(pcbRectangle(pcbLayer.topSilk, width=defaults.silkWidth,\
             position=[-dim1[0]/2-defaults.silkWidth,dim1[1]/2-mil(50)],\
             dimensions=[defaults.silkWidth, mil(100)]))
-        self.nameObject.position=[-dim1[0]/2-self.nameObject.height, 0]
-        self.nameObject.rotation=90
-        self.valueObject.position=[dim1[0]/2+self.valueObject.height, 0]
-        self.valueObject.rotation=90
+        i=-1
+        for text in [self.nameObject, self.valueObject]:
+            text.position=[i*(dim1[0]/2+text.height), 0]
+            text.rotation=90
+            if textOnSilk:
+                text.layer=pcbLayer.topSilk
+            i=-i
         

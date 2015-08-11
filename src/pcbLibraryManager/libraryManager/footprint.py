@@ -15,13 +15,14 @@ class footprint:
     """
     """
     
-    def __init__(self, name, alternativeLibName, originMarkSize=0, textOnSilk=False):
+    def __init__(self, name, alternativeLibName, originMarkSize=0, textOnSilk=False, variantName=""):
         """
         """
         self.log=logging.getLogger("footprint")
         self.log.debug("Creating footprint %s.", name)
         self.name = name
         self.alternativeLibName = alternativeLibName
+        self.variantName=variantName # to be used with Eagle
         # fields to store name and value text objects - can be changed later
         if textOnSilk:
             textHeight = defaults.silkTextHeight
@@ -47,16 +48,19 @@ class footprint:
         self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
             [0, 0], size*0.7))
     
-    def addCourtyardAndSilk(self, dimensions, court, silk=True):
+    def addCourtyardAndSilk(self, dimensions, court, silk=True, offset=[0,0]):
         """
         Add courtyard, extend to fit in 0.1mm grid. If silk==true add silkscreen
         rectangle with default extend - if fits in courtyard.
         Return courtyard size and silkscreen size
         """
+        # round to 0.2mm
         # (x-0.01) - to cut float rounding error
         courtDim = [ceil((x-0.01+court*2)*5)/5 for x in dimensions]
+        # round to 0.1mm
+        offset = [round(x,1) for x in offset]
         self.primitives.append(pcbRectangle(pcbLayer.topCourtyard, defaults.documentationWidth,\
-            position=[0,0], dimensions=courtDim))
+            position=offset, dimensions=courtDim))
         self.log.debug("Courtyard %s -> %s" %(dimensions, courtDim))
         if silk and court > defaults.silkWidth/2 + defaults.silkExtend:
             if court<=0.3:
@@ -65,9 +69,9 @@ class footprint:
                 silkDim = [x + defaults.silkWidth + defaults.silkExtend*2 for x in dimensions]
             self.log.debug("Silkscreen %s -> %s" %(dimensions, silkDim))
             self.primitives.append(pcbRectangle(pcbLayer.topSilk, width=defaults.silkWidth,\
-                position=[0,0], dimensions=silkDim))
+                position=offset, dimensions=silkDim))
         else:
-            silkDim=None
+            silkDim=courtDim
         return [courtDim, silkDim]
         
 if __name__ == "__main__":

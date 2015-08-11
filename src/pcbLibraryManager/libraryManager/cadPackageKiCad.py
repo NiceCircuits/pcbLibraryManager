@@ -102,8 +102,8 @@ class KiCad(cadPackage):
             rot="V"
         else:
             rot="H"
-        print(r'%s "%s" %d %d %d %s %s %sNN' % (textType, p.text, p.position[0]*self.scale,\
-            p.position[1]*self.scale, p.height*self.scale, rot, "V" if p.visible else "I",\
+        print(r'%s "%s" %d %d %d %s %s %sNN' % (textType, p.text, round(p.position[0]*self.scale),\
+            round(p.position[1]*self.scale), round(p.height*self.scale), rot, "V" if p.visible else "I",\
             self.textAlignsSch[p.align]), file=file)
         # width, text, position, height, rotation = 0.0, align=textAlign.center, mirror=False):
 
@@ -118,15 +118,15 @@ class KiCad(cadPackage):
         elif n == "symbolPolyline":
             pointsStr=""
             for p in primitive.points:
-                pointsStr += "%d %d " %(p[0], p[1])
-            print(r"P %d %d 1 %d %s%s" %(len(primitive.points), gateNumber, primitive.width,\
+                pointsStr += "%d %d " %(round(p[0]*self.scale), round(p[1]*self.scale))
+            print(r"P %d %d 1 %d %s%s" %(len(primitive.points), gateNumber, round(primitive.width),\
                 pointsStr, self.symbolFillType[primitive.filled]), file=file)
         elif n == "symbolRectangle":
             if p.rotation != 0:
                 raise Exception("Not implemented yet")
             c = rectangleCorners(p.position, p.dimensions)
-            print(r"S %d %d %d %d %d 1 %d %s"%(c[0][0]*self.scale, c[0][1]*self.scale,\
-                c[1][0]*self.scale, c[1][1]*self.scale, gateNumber, p.width*self.scale,\
+            print(r"S %d %d %d %d %d 1 %d %s"%(round(c[0][0]*self.scale), round(c[0][1]*self.scale),\
+                round(c[1][0]*self.scale), round(c[1][1]*self.scale), gateNumber, round(p.width*self.scale),\
                 self.symbolFillType[p.filled]), file=file)
         elif n == "symbolArc":
             pass
@@ -143,9 +143,9 @@ class KiCad(cadPackage):
         """
         """
         name = re.sub(r"\s", r"_", str(pin.name))
-        print(r"X %s %s %d %d %d %s %d %d %d 1 %s"%(name, pin.number, pin.position[0]*self.scale,\
-            pin.position[1]*self.scale, pin.length*self.scale, self.symbolPinAngle[pin.rotation],\
-            pin.heightNumber*self.scale, pin.heightName*self.scale, gateNumber, self.symbolPinType[pin.type]), file=file)
+        print(r"X %s %s %d %d %d %s %d %d %d 1 %s"%(name, pin.number, round(pin.position[0]*self.scale),\
+            round(pin.position[1]*self.scale), round(pin.length*self.scale), self.symbolPinAngle[pin.rotation],\
+            round(pin.heightNumber*self.scale), round(pin.heightName*self.scale), gateNumber, self.symbolPinType[pin.type]), file=file)
 
         
                 
@@ -197,18 +197,6 @@ class KiCad(cadPackage):
                 (primitive.name, shape, primitive.position[0], -primitive.position[1],\
                 primitive.rotation, primitive.dimensions[0], primitive.dimensions[1],\
                 layerText), file=file)
-        elif n == "pcbText":
-            alignText = self.textAlignsPcb[primitive.align]
-            mirrorText = " mirror" if primitive.mirror else ""
-            if alignText or mirrorText:
-                justifyText = r" (justify" + alignText + mirrorText + ")"
-            else:
-                justifyText = ""
-            print(r"""  (fp_text %s %s (at %1.3f %1.3f  %1.1f) (layer %s)
-        (effects (font (size %1.3f %1.3f) (thickness %1.3f))%s)
-      )""" % (textType, primitive.text, primitive.position[0], -primitive.position[1],\
-                primitive.rotation, self.layerNames[primitive.layer], primitive.height,\
-                primitive.height, primitive.width, justifyText), file = file)
         else:
             text = "generatePcbPrimitive: Invalid primitive class name: %s" % n
             self.log.error(text)

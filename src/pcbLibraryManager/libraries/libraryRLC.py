@@ -113,20 +113,12 @@ class footprintResistorNetwork(footprint):
                         offset=-offset
                 self.primitives.append(pcbRectangle(pcbLayer.topAssembly, defaults.documentationWidth,\
                     position=[(x1-pitch[size]*x+offset)*y, y*y1],dimensions=lead))
-        # courtyard
-        dim1=[ceil((max((rCount-1)*pitch[size]+2*padSize2[size][density][0]-padSize1[size][density][0],\
-            chipSize[size][0])+2*court[size][density])*5)/5,\
-            ceil((max(padSpan[size][density]+padSize1[size][density][1], chipSize[size][1])+2*court[size][density])*5)/5]
-        self.primitives.append(pcbRectangle(pcbLayer.topCourtyard, width=defaults.documentationWidth,\
-            position=[0,0], dimensions=dim1))
+        # courtyard and silkscreen
+        [dim1, dim2]=self.addCourtyardAndSilk([max((rCount-1)*pitch[size]+2*padSize2[size][density][0]-\
+            padSize1[size][density][0], chipSize[size][0]), max(padSpan[size][density]+\
+            padSize1[size][density][1], chipSize[size][1])], court[size][density])
         # name, value
-        y = self.valueObject.height + dim1[1]/2
+        y = self.valueObject.height + dim2[1]/2
         self.valueObject.position = [0, -y]
         self.nameObject.position = [0, y]
-        # silkscreen
-        if court[size][density]>defaults.silkWidth:
-            dim1 = [dim1[0]-2*court[size][density]+2*defaults.silkWidth,\
-                dim1[1]-2*court[size][density]+2*defaults.silkWidth]
-            self.primitives.append(pcbRectangle(pcbLayer.topSilk, width=defaults.silkWidth,\
-                position=[0,0], dimensions=dim1))
             

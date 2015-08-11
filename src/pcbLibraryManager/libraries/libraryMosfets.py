@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Jul 18 09:41:04 2015
+Created on Mon Aug 10 22:18:17 2015
 
 @author: piotr at nicecircuits.com
 """
@@ -12,20 +12,24 @@ from footprints.footprintSmdPower import *
 from libraryManager.symbol import symbol
 from libraryManager.part import part
 
-class librarySemiconductors(libraryClass):
+class libraryMosfets(libraryClass):
     """
     """
     def __init__(self):
-        super().__init__("niceSemiconductors")
-        self.parts.append(partSemiconductorsDummy())
+        super().__init__("niceMosfets")
+        self.parts.append(partNMosUniversal())
+        self.parts.append(partPMosUniversal())
 
-class symbolDummy(symbol):
+class symbolMosfet(symbol):
     """
     """
-    def __init__(self, name):
+    def __init__(self, name="", polarity="N"):
+        """
+        Polarity: N, P
+        """
         super().__init__(name)
 
-class partSemiconductorsDummy(part):
+class partNMosUniversal(part):
     """
     """
     def __init__(self):
@@ -45,3 +49,8 @@ class partSemiconductorsDummy(part):
                 self.footprints.append(footprintQfp(n,0.65, density=density))
             self.footprints.append(footprintDPak(density=density))
             
+class partPMosUniversal(part):
+    """
+    """
+    def __init__(self):
+        pass

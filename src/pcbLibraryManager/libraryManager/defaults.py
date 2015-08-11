@@ -7,8 +7,8 @@ Created on Wed Jul 15 22:48:34 2015
 
 class defaults:
     # footprint defaults
-    silkWidth = 0.15
-    silkExtend = 0.1 # extension of silkscreen from component pads
+    silkWidth = 0.1524
+    silkExtend = 0.18 # extension of silkscreen from component pads
     silkTextHeight = 1.0
     documentationWidth = 0.05
     documentationTextHeight = 0.5

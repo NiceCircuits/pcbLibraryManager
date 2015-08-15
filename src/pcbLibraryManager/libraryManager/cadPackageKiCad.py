@@ -51,10 +51,11 @@ class KiCad(cadPackage):
                 boolToYN(sym.showPinNumbers), boolToYN(sym.showPinNames),\
                 len(part.symbols)), file=f)
             self.generateSymbolTextSpecial(sym.nameObject,f,"F0")
+            sym.valueObject.text=part.name # to ensure compatibility with KiCad
             self.generateSymbolTextSpecial(sym.valueObject,f,"F1")
             footprint = symbolText(part.footprints[0].name if part.footprints else "",\
                 translatePoints([sym.valueObject.position],[0, -1.5*sym.valueObject.height])[0],\
-                defaults.symbolSmallTextHeight, visible=False)
+                defaults.symbolSmallTextHeight, visible=False, align = sym.valueObject.align)
             self.generateSymbolTextSpecial(footprint,f,"F2")
             #self.generateSymbolTextSpecial(datasheet,f,"F3")
             print("DRAW",file=f)
@@ -197,6 +198,15 @@ class KiCad(cadPackage):
                 (primitive.name, shape, primitive.position[0], -primitive.position[1],\
                 primitive.rotation, primitive.dimensions[0], primitive.dimensions[1],\
                 layerText), file=file)
+        elif n == "pcb3DBody":
+            p=primitive
+            print(r"""  (model %s.wrl
+    (at (xyz %1.3f %1.3f %1.3f))
+    (scale (xyz %1.3f %1.3f %1.3f))
+    (rotate (xyz %1.3f %1.3f %1.3f))
+  )""" %(p.name, mm2inch(p.position[0]), mm2inch(p.position[1]), mm2inch(p.position[2]),\
+      p.dimensions[0], p.dimensions[1], p.dimensions[2],\
+      p.rotations[0], p.rotations[1], p.rotations[2]), file=file)
         else:
             text = "generatePcbPrimitive: Invalid primitive class name: %s" % n
             self.log.error(text)

@@ -7,6 +7,9 @@ Created on Sun Jul 19 18:28:24 2015
 
 from libraryManager.common import textAlign
 from libraryManager.defaults import defaults
+import math
+from libraryManager.common import *
+import logging 
 
 class pinType:
     """
@@ -27,6 +30,7 @@ class symbolPrimitive:
         self.dimensions = dimensions
         self.rotation = rotation
         self.filled = filled
+        self.log=logging.getLogger("symbol")
 
 class symbolPin(symbolPrimitive):
     """
@@ -53,7 +57,8 @@ class symbolPolyline(symbolPrimitive):
         """
         """
         super().__init__(width, position = None)
-        self.points = points
+        self.points = points 
+        self.filled = filled
 
 class symbolLine(symbolPolyline):
     """
@@ -116,3 +121,22 @@ class symbolArc(symbolPrimitive):
         super().__init__(width, position)
         self.radius=radius
         self.angles=angles
+
+def createSymbolArrow(width, x1, y1, x2, y2, headLength, filled = fillType.none):
+    """
+    Create arrow as a list of primitives (line + polyline) from x1,y1 to x2,y2
+    arrLen: headLength: length of arrow head
+    If headLength<= _arrow length_, return only head pointing to x2, y2
+    """
+    ret = []
+    length = math.sqrt((x2-x1)**2+(y2-y1)**2)
+    if length>headLength + 0.1:
+        ret.append(symbolLine(width, x1, y1, x2, y2))
+    rotation = math.degrees(math.atan2(y2-y1, x2-x1))
+    points = [[0,0], [-1, 1/2], [-1, -1/2], [0,0]]
+    log=logging.getLogger("symbol")
+    log.debug(points)
+    points = translatePoints(scalePoints(rotatePoints(points,rotation), headLength), [x2,y2])
+    log.debug(points)
+    ret.append(symbolPolyline(width, points, filled))
+    return ret

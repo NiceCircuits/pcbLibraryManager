@@ -48,6 +48,22 @@ class footprint:
         self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
             [0, 0], size*0.7))
     
+    def addSimple3Dbody(self, position, dimensions, draw=True):
+        """Add simple cuboid 3D body.
+        
+        :param position: position - 2D or 3D
+        :param dimensions: dimensions, 3D
+        :param draw: If True, drawing on topAssembly is added
+        """
+        # do not add anything if one of dimensions is zero
+        for x in dimensions:
+            if x==0:
+                return
+        self.primitives.append(pcb3DBody("cube", position, dimensions))
+        if draw:
+            self.primitives.append(pcbRectangle(pcbLayer.topAssembly, defaults.documentationWidth,\
+                position=position[0:2], dimensions=dimensions[0:2]))
+    
     def addCourtyardAndSilk(self, dimensions, court, silk=True, offset=[0,0]):
         """
         Add courtyard, extend to fit in 0.1mm grid. If silk==true add silkscreen

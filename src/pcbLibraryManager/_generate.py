@@ -6,7 +6,8 @@ Created on Tue Jul 14 20:56:14 2015
 """
 
 from libraries import libraryModules, librarySemiconductors, librarySwitches,\
-    libraryRLC, libraryAVR, libraryPinheaders
+    libraryRLC, libraryAVR, libraryPinheaders, libraryMosfets, libraryPowerSupplies,\
+    libraryTerminalBlocks
 from libraryManager import cadPackageKiCad
 import logging
 
@@ -22,8 +23,9 @@ if __name__ == "__main__":
     CP = cadPackageKiCad.KiCad()
     path = r"D:\test\kicadLib"
     # generate libraries
-    libs = [libraryRLC.libraryRLC(), libraryModules.libraryModules(),\
+    libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(), libraryModules.libraryModules(),\
         librarySemiconductors.librarySemiconductors(), librarySwitches.librarySwitches(),\
-        libraryAVR.libraryAVR(), libraryPinheaders.libraryPinheaders()]
+        libraryAVR.libraryAVR(), libraryPinheaders.libraryPinheaders(),\
+        libraryMosfets.libraryMosfets(), libraryPowerSupplies.libraryPowerSupplies()]
     for lib in libs:
         CP.generateLibrary(lib, path)

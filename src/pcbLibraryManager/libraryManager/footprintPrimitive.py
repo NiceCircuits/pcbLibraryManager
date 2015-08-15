@@ -124,3 +124,18 @@ class pcbArc(pcbPrimitive):
         super().__init__(layer, width, position)
         self.radius=radius
         self.angles=angles
+
+class pcb3DBody(pcbPrimitive):
+    """3D Body
+    """
+    def __init__(self, name, position, dimensions, rotations=[0,0,0]):
+        """
+        """
+        if len(position)==2:
+            position=position + [0]
+        if len(dimensions)==2:
+            dimensions=dimensions+[1]
+        super().__init__(None, 0, position)
+        self.dimensions=dimensions
+        self.rotations=rotations
+        self.name=name

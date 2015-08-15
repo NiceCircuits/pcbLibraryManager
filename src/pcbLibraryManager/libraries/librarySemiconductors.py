@@ -11,6 +11,7 @@ from footprints.footprintSmdQuad import *
 from footprints.footprintSmdPower import *
 from libraryManager.symbol import symbol
 from libraryManager.part import part
+from symbols.symbolsTransistor import *
 
 class librarySemiconductors(libraryClass):
     """
@@ -30,7 +31,8 @@ class partSemiconductorsDummy(part):
     """
     def __init__(self):
         super().__init__("dummy", defaults.icRefDes)
-        self.symbols.append(symbolDummy("dummy"))
+        self.symbols.append(symbolBipolar(polarity="npn"))
+        self.symbols.append(symbolBipolar(polarity="pnp"))
         for density in ["L", "N", "M"]:
             self.log.debug("density %s" % density)
             for pinCount in [8,14]:

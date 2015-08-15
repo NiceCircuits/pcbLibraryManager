@@ -9,48 +9,52 @@ from libraryManager.library import libraryClass
 from footprints.footprintSmdDualRow import *
 from footprints.footprintSmdQuad import *
 from footprints.footprintSmdPower import *
-from libraryManager.symbol import symbol
 from libraryManager.part import part
+from symbols.symbolsTransistor import symbolMosfet
 
 class libraryMosfets(libraryClass):
     """
     """
     def __init__(self):
         super().__init__("niceMosfets")
-        self.parts.append(partNMosUniversal())
-        self.parts.append(partPMosUniversal())
+        self.parts.append(partMosfetBig("N"))
+        self.parts.append(partMosfetBig("P"))
+        self.parts.append(partMosfetSmall("N"))
+        self.parts.append(partMosfetSmall("P"))
+        self.parts.append(partMosfetBig("N", "IRLR2905PBF", "DPak"))
 
-class symbolMosfet(symbol):
+class partMosfetBig(part):
+    """MOSFET in TO-220, D-Pak, D2Pak, SOT223 package
+    
+    :param polarity: "N"/"P"
+    :param name: name
+    :param footprint: "DPak", "TP220", "D2Pak" or "" - all available packages
     """
-    """
-    def __init__(self, name="", polarity="N"):
-        """
-        Polarity: N, P
-        """
-        super().__init__(name)
-
-class partNMosUniversal(part):
-    """
-    """
-    def __init__(self):
-        super().__init__("dummy", defaults.icRefDes)
-        self.symbols.append(symbolDummy("dummy"))
+    def __init__(self, polarity, name="", footprint="", refDes=defaults.transistorRefDes):
+        if not name:
+            name = "%s-MOS_big" %polarity
+        super().__init__(name, refDes)
+        self.symbols.append(symbolMosfet(polarity=polarity, pins=[1,2,3]))
         for density in ["L", "N", "M"]:
-            self.log.debug("density %s" % density)
-            for pinCount in [8,14]:
-                self.footprints.append(footprintSoic(pinCount,density=density))
-            for pinCount in [3,4,5,6,8]:
-                self.footprints.append(footprintSot23(pinCount,density=density))
-            for n in [32, 44, 64]:
-                self.footprints.append(footprintQfp(n,0.8, density=density))
-            for n in [48, 64, 100]:
-                self.footprints.append(footprintQfp(n,0.5, density=density))
-            for n in [80]:
-                self.footprints.append(footprintQfp(n,0.65, density=density))
-            self.footprints.append(footprintDPak(density=density))
-            
-class partPMosUniversal(part):
+            if footprint=="" or footprint == "DPak":
+                self.footprints.append(footprintDPak(density=density))
+            else:
+                raise ValueError("Invalid footprint %s" % footprint)
+
+class partMosfetSmall(part):
+    """MOSFET in SOT23 package
+    
+    :param polarity: "N"/"P"
+    :param name: name
+    :param footprint: "SOT23" or "" - all available packages
     """
-    """
-    def __init__(self):
-        pass
+    def __init__(self, polarity, name="", footprint="", refDes=defaults.transistorRefDes):
+        if not name:
+            name = "%s-MOS_small" %polarity
+        super().__init__(name, refDes)
+        self.symbols.append(symbolMosfet(polarity=polarity, pins=[1,3,2]))
+        for density in ["N", "L", "M"]:
+            if footprint=="" or footprint == "SOT23":
+                self.footprints.append(footprintDPak(density=density))
+            else:
+                raise ValueError("Invalid footprint %s" % footprint)

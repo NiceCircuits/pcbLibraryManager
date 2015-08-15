@@ -31,8 +31,9 @@ class footprintEsp07(footprintSmdDualRow):
         self.valueObject.position=[9,0]
         self.valueObject.rotation=270
         # body
-        self.primitives.append(pcbRectangle(pcbLayer.topAssembly,\
-            defaults.documentationWidth, position=[0,0], dimensions=[22.0, 16.0]))
+        self.addSimple3Dbody([0,0,0], [22.0, 16.0, 1.0])
+        self.addSimple3Dbody([-1.25,0,1], [15.3, 12.3, 2.5])
+        self.addSimple3Dbody([9.5,-2,1], [2,9,1])
         # silk
         silkX = 11.2
         silkY = 8.2

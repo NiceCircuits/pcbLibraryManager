@@ -41,8 +41,7 @@ class footprintSmdDualRowLeaded(footprintSmdDualRow):
         super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=pitch,
             padSpan=padSpan, padDimensions=padDimensions, originMarkSize=originMarkSize)
         # body
-        self.primitives.append(pcbRectangle(pcbLayer.topAssembly,defaults.documentationWidth,\
-            position=[0,0], dimensions=bodyDimensions))
+        self.addSimple3Dbody([0,0,0], bodyDimensions)
         arcRadius=min(1,bodyDimensions[1]*0.2)
         self.primitives.append(pcbArc(pcbLayer.topAssembly,defaults.documentationWidth,\
             position=[-bodyDimensions[0]/2,0],radius=arcRadius, angles=[-90,90]))
@@ -51,8 +50,7 @@ class footprintSmdDualRowLeaded(footprintSmdDualRow):
             for x in range(int(pinCount/2)):
                 x1 = pitch * (pinCount/4 - 0.5)
                 y1 = bodyDimensions[1]/2+leadDimensions[1]/2
-                self.primitives.append(pcbRectangle(pcbLayer.topAssembly,defaults.documentationWidth,\
-                    position=[(x1-pitch*x)*y,y*y1],dimensions=leadDimensions))
+                self.addSimple3Dbody([(x1-pitch*x)*y,y*y1], leadDimensions)
         self.addCourtyardAndSilk([bodyDimensions[0], padSpan+padDimensions[1]], court)
 
 
@@ -65,10 +63,12 @@ class footprintSoic(footprintSmdDualRowLeaded):
             name="SOIC-%d_%s"%(pinCount,density)
         if not alternativeLibName:
             alternativeLibName="niceSemiconductors"
-        bodyDimensions=[pinCount/2*1.27,4.04]
+        if pinCount>16:
+            wide=True
+        bodyDimensions=[pinCount/2*1.27, 4.04, 2.65 if wide else 1.75]
         super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=1.27,\
             padSpan=5.2,padDimensions=[0.6,2.2], bodyDimensions=bodyDimensions,\
-            leadDimensions=[0.41,1.3], court = 0.2)
+            leadDimensions=[0.41,1.3,1], court = 0.2)
 
 class footprintSot23(footprintSmdDualRowLeaded):
     """
@@ -80,5 +80,5 @@ class footprintSot23(footprintSmdDualRowLeaded):
         if not alternativeLibName:
             alternativeLibName="niceSemiconductors"
         super().__init__(name, alternativeLibName, pinCount, pitch = 0.95,\
-            padSpan = 2.0, padDimensions = (0.6, 0.7), bodyDimensions=[3, 1.4],\
-            leadDimensions=[0.46, 0.6], court = 0.2)
+            padSpan = 2.0, padDimensions = (0.6, 0.7), bodyDimensions=[3, 1.4, 1.1],\
+            leadDimensions=[0.46, 0.6, 0.5], court = 0.2)

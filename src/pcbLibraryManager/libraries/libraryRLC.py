@@ -42,7 +42,7 @@ class partC(part):
     def __init__(self):
         super().__init__("C", "C")
         self.symbols.append(symbolC("C"))
-        for size in ["0402", "0603", "0805", "1206", "1210", "2010", "2512"]:
+        for size in ["0603", "0402", "0805", "1206", "1210", "2010", "2512"]:
             for density in ["N", "L", "M"]:
                 self.footprints.append(footprintSmdChip(size + "_" + density, \
                     size = size, density = density, alternativeLibName = "niceRLC"))
@@ -56,7 +56,7 @@ class partResistorNetwork(part):
         super().__init__(name, refDes)
         for i in range(4):
             self.symbols.append(symbolR(name, refDes, showPinNumbers=True, pinNumbers=[i+1, 8-i]))
-        for size in ["0402", "0603"]:
+        for size in ["0603", "0402"]:
             for density in ["N", "L", "M"]:
                 self.footprints.append(footprintResistorNetwork('4x' + size + "_" + density, \
                     size = size, density = density, alternativeLibName = "niceRLC"))
@@ -97,8 +97,7 @@ class footprintResistorNetwork(footprint):
                     [(x1-pitch[size]*x+offset)*y, padSpan[size][density]/2*y],dimensions=padSize,\
                     name=str(int(x+1 if y<0 else x+rCount+1)),rotation=0 if y<0 else 180))
         # body
-        self.primitives.append(pcbRectangle(pcbLayer.topAssembly, width=defaults.documentationWidth,\
-            position=[0,0], dimensions=[chipSize[size][0],chipSize[size][1]-2*leadSize[size][1]]))
+        self.addSimple3Dbody([0,0], [chipSize[size][0],chipSize[size][1]-2*leadSize[size][1]])
         # leads
         for y in [-1, 1]:
             for x in range(int(rCount)):
@@ -111,8 +110,7 @@ class footprintResistorNetwork(footprint):
                     lead[0]=lead[0]+offset*2
                     if x>0:
                         offset=-offset
-                self.primitives.append(pcbRectangle(pcbLayer.topAssembly, defaults.documentationWidth,\
-                    position=[(x1-pitch[size]*x+offset)*y, y*y1],dimensions=lead))
+                self.addSimple3Dbody([(x1-pitch[size]*x+offset)*y, y*y1],lead)
         # courtyard and silkscreen
         [dim1, dim2]=self.addCourtyardAndSilk([max((rCount-1)*pitch[size]+2*padSize2[size][density][0]-\
             padSize1[size][density][0], chipSize[size][0]), max(padSpan[size][density]+\

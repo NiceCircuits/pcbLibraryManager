@@ -30,11 +30,20 @@ def scalePoints(points, scale):
 
 def rotatePoints(points, rotation):
     ret=[]
-    for x,y in points:
+    for p in points:
+        if len(p)==3:
+            (x,y,z)=p
+            p3d=True
+        else:
+            x,y=p
+            p3d=False
         rho, phi = cart2pol(x, y)
         phi = phi + rotation
         x, y = pol2cart(rho, phi)
-        ret.append([x,y])
+        if p3d:
+            ret.append([x,y,z])
+        else:
+            ret.append([x,y])
     return ret
 
 def translatePoints(points, translation):
@@ -59,6 +68,10 @@ def pol2cart(rho, phi):
 def mil(x):
     "Convert mil to mm"
     return x*0.0254
+
+def mm2inch(x):
+    "Convert mm to inch"
+    return x/25.4
 
 class textAlign:
     """

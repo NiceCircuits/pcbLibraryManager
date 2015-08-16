@@ -16,7 +16,8 @@ class symbolIC(symbol):
     pinsLeft, pinsRight: list of ["pin name", "pin number", type]
     width: width of symbol rectangle
     """
-    def __init__(self, name, pinsLeft, pinsRight, width, refDes="U", showPinNames=True, showPinNumbers=True):
+    def __init__(self, name, pinsLeft, pinsRight, width, refDes=defaults.icRefDes,\
+        showPinNames=True, showPinNumbers=True):
         super().__init__(name, refDes, showPinNames, showPinNumbers)
         # body
         height = (max(len(pinsLeft), len(pinsRight))+1)*100

@@ -24,6 +24,9 @@ class libraryPowerSupplies(libraryClass):
         super().__init__("nicePowerSupplies")
         self.parts.append(partRegulator3PinBig("78M05CDT", "DPak"))
         self.parts.append(partRegulator3PinBig("78M06CDT", "DPak"))
+        self.parts.append(partRegulator3PinBig("AMS1117", "Sot223", pins=[3,1,2], adj=True))
+        for v in ["1.5", "1.8", "2.5", "2.85", "3.3", "5.0"]:
+            self.parts.append(partRegulator3PinBig("AMS1117-%s" %v, "Sot223", pins=[3,1,2]))
         
 class partRegulator3PinBig(part):
     """3 Pin regulator part
@@ -34,12 +37,15 @@ class partRegulator3PinBig(part):
     :param positive: True/False - if regulator is positive or negative voltage
     :param adj: if adjustable (pin ADJ) or constant (pin GND)
     """
-    def __init__(self, name, footprint, refDes=defaults.icRefDes, positive=True, adj=False):
+    def __init__(self, name, footprint, refDes=defaults.icRefDes, positive=True,\
+    pins=[1,2,3], adj=False):
         super().__init__(name, refDes)
-        self.symbols.append(symbolRegulator3Pin(name, refDes, positive, pins=[1,2,3], adj=adj))
+        self.symbols.append(symbolRegulator3Pin(name, refDes, positive, pins=pins, adj=adj))
         for density in ["N", "L", "M"]:
             if footprint=="DPak":
                 self.footprints.append(footprintDPak(density=density))
+            elif footprint=="Sot223":
+                self.footprints.append(footprintSot223(density=density))
             else:
                 raise ValueError("Invalid footprint %s" % footprint)
 
@@ -57,6 +63,6 @@ class symbolRegulator3Pin(symbolIC):
             pinsRight.reverse()
             pinsLeft.reverse()
         super().__init__(name, pinsLeft, pinsRight, 600, refDes, showPinNames=True, showPinNumbers=True)
-        self.pins.append(symbolPin("GND", pins[1], [0, -200], 100, pinType.pwrIn, 90))
+        self.pins.append(symbolPin("ADJ" if adj else "GND", pins[1], [0, -200], 100, pinType.pwrIn, 90))
         self.valueObject.position=[x for x in self.nameObject.position]
         self.nameObject.position[1]+=self.nameObject.height*1.5

@@ -28,8 +28,9 @@ class footprintSmdQuad(footprint):
                     dimensions=padDimensions, name=str(int(y+1+side*pinCount/4)),\
                     rotation=side*90))
                 if leadDimensions:
-                    self.addSimple3Dbody(rotatePoints([[-bodyDimensions[side%2]/2-leadDimensions[0]/2, y1-pitch*y]], side*90)[0],\
-                        rotatePoints([leadDimensions], side*90)[0])
+                    self.addLead(rotatePoints(\
+                        [[(-bodyDimensions[side%2]/2-leadDimensions[0]/2), y1-pitch*y]], side*90)[0],\
+                        leadDimensions, rotation=side*90+180, lead="gullwing")
         # body
         self.addSimple3Dbody([0,0], bodyDimensions)
         radius = min(bodyDimensions[0]*0.05, bodyDimensions[1]*0.05, 0.5)

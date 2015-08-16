@@ -206,7 +206,7 @@ class KiCad(cadPackage):
     (rotate (xyz %1.3f %1.3f %1.3f))
   )""" %(p.name, mm2inch(p.position[0]), mm2inch(p.position[1]), mm2inch(p.position[2]),\
       p.dimensions[0], p.dimensions[1], p.dimensions[2],\
-      p.rotations[0], p.rotations[1], p.rotations[2]), file=file)
+      p.rotations[0], p.rotations[1], -p.rotations[2]), file=file)
         else:
             text = "generatePcbPrimitive: Invalid primitive class name: %s" % n
             self.log.error(text)

@@ -73,6 +73,7 @@ class footprintResistorNetwork(footprint):
         """
         chipSize = {'0402':[2.1, 1.1], '0603':[3.4, 1.8]}
         leadSize = {'0402':[0.3, 0.2], '0603':[0.5, 0.3]}
+        height={'0402':0.6, '0603':0.7}
         pitch = {'0402': 0.5, '0603': 0.8}
         padSize1 = {'0402':{'L':[0.25, 0.45], 'N':[0.3, 0.6], 'M':[0.3, 0.7]},\
             '0603':{'L':[0.55, 0.7], 'N':[0.55, 0.8], 'M':[0.6, 1]}}
@@ -97,7 +98,7 @@ class footprintResistorNetwork(footprint):
                     [(x1-pitch[size]*x+offset)*y, padSpan[size][density]/2*y],dimensions=padSize,\
                     name=str(int(x+1 if y<0 else x+rCount+1)),rotation=0 if y<0 else 180))
         # body
-        self.addSimple3Dbody([0,0], [chipSize[size][0],chipSize[size][1]-2*leadSize[size][1]])
+        self.addSimple3Dbody([0,0], [chipSize[size][0],chipSize[size][1]-2*leadSize[size][1],height[size]])
         # leads
         for y in [-1, 1]:
             for x in range(int(rCount)):
@@ -110,7 +111,7 @@ class footprintResistorNetwork(footprint):
                     lead[0]=lead[0]+offset*2
                     if x>0:
                         offset=-offset
-                self.addSimple3Dbody([(x1-pitch[size]*x+offset)*y, y*y1],lead)
+                self.addSimple3Dbody([(x1-pitch[size]*x+offset)*y, y*y1],lead + [height[size]], file="cube_metal")
         # courtyard and silkscreen
         [dim1, dim2]=self.addCourtyardAndSilk([max((rCount-1)*pitch[size]+2*padSize2[size][density][0]-\
             padSize1[size][density][0], chipSize[size][0]), max(padSpan[size][density]+\

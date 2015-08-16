@@ -37,7 +37,7 @@ class partSemiconductorsDummy(part):
             self.log.debug("density %s" % density)
             for pinCount in [8,14]:
                 self.footprints.append(footprintSoic(pinCount,density=density))
-            for pinCount in [3,4,5,6,8]:
+            for pinCount in [3,5,6,8]:
                 self.footprints.append(footprintSot23(pinCount,density=density))
             for n in [32, 44, 64]:
                 self.footprints.append(footprintQfp(n,0.8, density=density))
@@ -46,4 +46,5 @@ class partSemiconductorsDummy(part):
             for n in [80]:
                 self.footprints.append(footprintQfp(n,0.65, density=density))
             self.footprints.append(footprintDPak(density=density))
+            self.footprints.append(footprintSot223(density=density))
             

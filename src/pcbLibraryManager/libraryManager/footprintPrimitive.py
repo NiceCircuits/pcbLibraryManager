@@ -5,7 +5,7 @@ Created on Sun Jul 12 21:27:32 2015
 @author: piotr at nicecircuits.com
 """
 
-from libraryManager.common import textAlign
+from libraryManager.common import *
 
 class pcbLayer:
     """
@@ -69,7 +69,13 @@ class pcbRectangle(pcbPrimitive):
                 [[x1, y1], [x2, y2]] = points
             position = [(x1 + x2)/2, (y1 + y2)/2]
             dimensions = [abs(x1-x2), abs(y1-y2)]
-        super().__init__(layer, width, position, dimensions, rotation=rotation)
+        if almostEqual(rotation, 0) or almostEqual(rotation, 180):
+            pass
+        elif almostEqual(rotation, 90) or almostEqual(rotation, 270):
+            dimensions = [dimensions[1], dimensions[0]]
+        else:
+            raise ValueError("Rotation %f not implemented yet!" % rotation)
+        super().__init__(layer, width, position, dimensions)
 
 class pcbText(pcbPrimitive):
     """

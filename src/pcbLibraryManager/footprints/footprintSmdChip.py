@@ -35,7 +35,7 @@ class footprintSmdChip(footprint):
             self.primitives.append(pcbSmtPad(pcbLayer.topCopper, position=[x1*x,0],\
                 dimensions=dimensions[size]["pad"][density], name="1" if x<0 else "2"))
         # body
-        self.addSimple3Dbody([0,0], dimensions[size]["chip"])
+        self.addSimple3Dbody([0,0], dimensions[size]["chip"], file="cube_orange")
         # courtyard and silk
         [dim1, dim2]=self.addCourtyardAndSilk([dimensions[size]["L"][density],\
             max(dimensions[size]["pad"][density][1],dimensions[size]["chip"][1])],\

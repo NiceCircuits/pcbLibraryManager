@@ -20,17 +20,24 @@ class libraryPinheaders(libraryClass):
     """
     def __init__(self):
         super().__init__("nicePinheaders")
-        for cols in [1,2,3]:
-            for rows in range(1,21):
-                self.parts.append(partPinheader(cols, rows))
+        for gender in ["M", "F"]:
+            for angled in [False, True]:
+                for cols in [1,2,3]:
+                    for rows in range(1,21):
+                        self.parts.append(partPinheader(cols, rows, gender=gender, angled=angled))
         
 class partPinheader(part):
+    """Pinheader part generator
     """
-    Pinheader part generator
-    """
-    def __init__(self, cols, rows, name=""):
+    def __init__(self, cols, rows, angled=False, gender = "M", name=""):
+        """:param cols: columns - 1,2,3 or more
+        :param rows: rows, 1..inf
+        :param angled: right angle version if True
+        :param gender: **"M"**:male, **"F"**: female
+        """
         if not name:
-            name = "PIN-%dx%d" % (cols, rows)
+            name = "PIN-%dx%d%s%s" % (cols, rows, "_F" if gender=="F" else "",\
+                "_angled" if angled else "")
         super().__init__(name, "CON")
         if cols<3:
             self.symbols.append(symbolPinheader(cols, rows, name))
@@ -38,11 +45,11 @@ class partPinheader(part):
             for i in range(cols):
                 self.symbols.append(symbolPinheader(1, rows, name, offset=i*rows))
         for density in ["N", "L", "M"]:
-            self.footprints.append(footprintPinheader(cols, rows, density))
+            self.footprints.append(footprintPinheader(cols, rows, density, angled=angled,\
+                gender=gender))
 
 class symbolPinheader(symbolIC):
-    """
-    Pinheader symbol
+    """Pinheader symbol
     """
     def __init__(self, cols, rows, name, refDes="CON", showPinNames=False,\
         showPinNumbers=True, offset=0):
@@ -54,12 +61,25 @@ class footprintPinheader(footprintConnectorTht):
     """Pinheader footprint
     """
     def __init__(self, cols, rows, density ="N", name=None, alternativeLibName="nicePinheaders",\
-        originMarkSize=0, textOnSilk=True):
+        originMarkSize=0, textOnSilk=True, pinLength=-1, bodyHeight=-1, angled=False,
+        gender = "M", alternative=False):
         court=0.5
         dim={"L":[1.3, 1.3],"N":[1.8, 1.4],"M":[2,2]}
         shape={"L":padShape.round, "N":padShape.roundRect, "M":padShape.round}
+        if bodyHeight<0:
+            if gender=="F":
+                bodyHeight=8.5
+            else:
+                bodyHeight=2.5
+        if pinLength<0:
+            if gender=="F":
+                pinLength=3
+            else:
+                pinLength=11.75
         if not name:
-            name = "PIN-%dx%d_%s" % (cols, rows, density)
+            name = "PIN-%dx%d%s%s_%s" % (cols, rows, "_F" if gender=="F" else "",\
+                "_angled" if angled else "", density)
         super().__init__(cols, rows, mil(100), dim[density], shape[density], 1.0,\
-            name=name, alternativeLibName=alternativeLibName, court=court, \
-            bodyHeight=2.5, pinDimensions=[0.6, 0.6, 11.75], pinZOffset=-3.05)
+            name=name, alternativeLibName=alternativeLibName, court=court,\
+            bodyHeight=bodyHeight, pinDimensions=[0.64, 0.64, pinLength], pinZOffset=-3,\
+            angled=angled, angledOffset=-1.4)

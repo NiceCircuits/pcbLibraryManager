@@ -18,14 +18,18 @@ if __name__ == "__main__":
     logging.addLevelName(logging.DEBUG-1, "DEBUG1")
     logging.addLevelName(logging.DEBUG-2, "DEBUG2")
     logging.addLevelName(logging.DEBUG-3, "DEBUG3")
-    logging.getLogger().setLevel(logging.WARNING)
+    logging.getLogger().setLevel(logging.DEBUG)
     # create CAD package
     CP = cadPackageKiCad.KiCad()
     path = r"D:\test\kicadLib"
     # generate libraries
-    libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(), libraryModules.libraryModules(),\
-        librarySemiconductors.librarySemiconductors(), librarySwitches.librarySwitches(),\
-        libraryAVR.libraryAVR(), libraryPinheaders.libraryPinheaders(),\
-        libraryMosfets.libraryMosfets(), libraryPowerSupplies.libraryPowerSupplies()]
+    if True:
+        libs = [librarySwitches.librarySwitches(), librarySemiconductors.librarySemiconductors()]
+    else:
+        libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(),\
+            librarySemiconductors.librarySemiconductors(), librarySwitches.librarySwitches(),\
+            libraryAVR.libraryAVR(), libraryPinheaders.libraryPinheaders(),\
+            libraryMosfets.libraryMosfets(), libraryPowerSupplies.libraryPowerSupplies(),\
+            libraryModules.libraryModules()]
     for lib in libs:
         CP.generateLibrary(lib, path)

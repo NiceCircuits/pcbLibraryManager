@@ -67,7 +67,7 @@ class footprintScrewTerminal(footprintConnectorTht):
             name=name, alternativeLibName=alternativeLibName, court=court[density],\
             bodySize=[bodyXSize[pitch], pitch*rows], bodyOffset=[bodyXOffset[pitch],0],\
             keySize=-1, bodyHeight=bodyHeight[pitch], pinDimensions=pinDimensions[pitch],\
-            pinZOffset=-pinDimensions[pitch][2])
+            pinZOffset=-pinDimensions[pitch][2], bodyStyle="cube_green")
         # drawing
         for i in range(rows):
             y=(rows/2-1/2-i)*pitch
@@ -103,11 +103,11 @@ class footprintEDG(footprintConnectorTht):
             name=name, alternativeLibName=alternativeLibName, court=court[density],\
             bodySize=[bodyXSize[pitch], pitch*rows], bodyOffset=[bodyXOffset[pitch],0],\
             keySize=-1, bodyHeight=bodyHeight[pitch], pinDimensions=pinDimensions[pitch],\
-            pinZOffset=-pinDimensions[pitch][2])
+            pinZOffset=-pinDimensions[pitch][2], bodyStyle="cube_green")
         self.valueObject.position[0]+=0.5
         # drawing
         x=-bodyXSize[pitch]/2+bodyXOffset[pitch]-plugXsize[pitch]/2
-        self.addSimple3Dbody([x,0], [plugXsize[pitch], pitch*rows, plugHeight[pitch]])
+        self.addSimple3Dbody([x,0], [plugXsize[pitch], pitch*rows, plugHeight[pitch]], file="cube_green")
         for i in range(rows):
             y=(rows/2-1/2-i)*pitch
             # front size markers

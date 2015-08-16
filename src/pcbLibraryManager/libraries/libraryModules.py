@@ -14,3 +14,4 @@ class libraryModules(libraryClass):
     def __init__(self):
         super().__init__("niceModules")
         self.parts.append(partsEsp8266.partEsp07())
+        self.parts.append(partsEsp8266.partEsp01())

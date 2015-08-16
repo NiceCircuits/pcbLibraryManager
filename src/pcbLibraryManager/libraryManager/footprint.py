@@ -43,26 +43,63 @@ class footprint:
         """
         """
         for rotation in [0, 90]:
-            self.primitives.append(pcbLine(pcbLayer.topAssembly, defaults.documentationWidth,\
+            self.primitives.append(pcbLine(pcbLayer.topCourtyard, defaults.documentationWidth,\
                 points=scalePoints(rotatePoints([[-1,0],[1,0]], rotation),size)))
-        self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
+        self.primitives.append(pcbCircle(pcbLayer.topCourtyard, defaults.documentationWidth,\
             [0, 0], size*0.7))
     
-    def addSimple3Dbody(self, position, dimensions, draw=True):
-        """Add simple cuboid 3D body.
+    def addSimple3Dbody(self, position, dimensions, draw=True, silk=False, file="cube",\
+        rotation=0):
+        """Add simple cuboid (or other) 3D body.
         
         :param position: position - 2D or 3D
         :param dimensions: dimensions, 3D
         :param draw: If True, drawing on topAssembly is added
+        :param silk: If True, drawing on topSilk is added
+        :param file: name of wrl file to be used, without extension, default is "cube"
+        :param rotations: rotations of 3D body
         """
         # do not add anything if one of dimensions is zero
         for x in dimensions:
             if x==0:
                 return
-        self.primitives.append(pcb3DBody("cube", position, dimensions))
+        self.primitives.append(pcb3DBody(file, position, dimensions, [0,0,rotation]))
         if draw:
             self.primitives.append(pcbRectangle(pcbLayer.topAssembly, defaults.documentationWidth,\
-                position=position[0:2], dimensions=dimensions[0:2]))
+                position=position[0:2], dimensions=dimensions[0:2], rotation=rotation))
+        if silk:
+            self.primitives.append(pcbRectangle(pcbLayer.topSilk, defaults.silkWidth,\
+                position=position[0:2], dimensions=dimensions[0:2], rotation=rotation))
+
+    def addCylinder3Dbody(self, position, dimensions, draw=True, silk=False, file="cylinder",\
+        rotation=0):
+        """Add simple cylinder (or other) 3D body.
+        
+        :param position: position - 2D or 3D
+        :param dimensions: dimensions, 3D
+        :param draw: If True, drawing on topAssembly is added
+        :param silk: If True, drawing on topSilk is added
+        :param file: name of wrl file to be used, without extension, default is "cube"
+        :param rotations: rotations of 3D body
+        """
+        # do not add anything if one of dimensions is zero
+        for x in dimensions:
+            if x==0:
+                return
+        self.primitives.append(pcb3DBody(file, position, dimensions, [0,0,rotation]))
+        if draw:
+            self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
+                position=position[0:2], radius=dimensions[0]/2))
+        if silk:
+            self.primitives.append(pcbCircle(pcbLayer.topSilk, defaults.silkWidth,\
+                position=position[0:2], radius=dimensions[0]/2))
+
+    def addLead(self, position, dimensions, draw=True, silk=False, lead="gullwing",\
+    rotation=0):
+        dim=[x for x in dimensions]
+        if lead == "gullwing":
+            dim[2]=dim[2]/0.8 # height correction
+        self.addSimple3Dbody(position, dim, draw, silk, lead, rotation%360)
     
     def addCourtyardAndSilk(self, dimensions, court, silk=True, offset=[0,0]):
         """
@@ -89,6 +126,15 @@ class footprint:
         else:
             silkDim=courtDim
         return [courtDim, silkDim]
+    
+    def renamePads(self, names):
+        i=0
+        for p in self.primitives:
+            n = p.__class__.__name__
+            if n == "pcbThtPad" or n == "pcbSmtPad":
+                p.name=names[i]
+                i+=1
+
         
 if __name__ == "__main__":
     pass

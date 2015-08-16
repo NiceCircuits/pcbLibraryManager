@@ -22,6 +22,7 @@ class libraryMosfets(libraryClass):
         self.parts.append(partMosfetSmall("N"))
         self.parts.append(partMosfetSmall("P"))
         self.parts.append(partMosfetBig("N", "IRLR2905PBF", "DPak"))
+        self.parts.append(partMosfetSmall("N", "IRLML6244", "SOT23"))
 
 class partMosfetBig(part):
     """MOSFET in TO-220, D-Pak, D2Pak, SOT223 package
@@ -55,6 +56,6 @@ class partMosfetSmall(part):
         self.symbols.append(symbolMosfet(polarity=polarity, pins=[1,3,2]))
         for density in ["N", "L", "M"]:
             if footprint=="" or footprint == "SOT23":
-                self.footprints.append(footprintDPak(density=density))
+                self.footprints.append(footprintSot23(density=density))
             else:
                 raise ValueError("Invalid footprint %s" % footprint)

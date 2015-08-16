@@ -10,6 +10,7 @@ class defaults:
     silkWidth = 0.1524
     silkExtend = 0.18 # extension of silkscreen from component pads
     silkTextHeight = 1.0
+    firstPinMarkerR = 0.5
     documentationWidth = 0.05
     documentationTextHeight = 0.5
     originMarkSize = 1.0

@@ -54,6 +54,12 @@ def cos(x):
 
 def sin(x):
     return math.sin(math.radians(x))
+
+def almostEqual(a, b, thr=0.001):
+    if (a > b-thr) and  (a < b+thr):
+        return True
+    else:
+        return False
     
 def cart2pol(x, y):
     rho = math.sqrt(x**2 + y**2)

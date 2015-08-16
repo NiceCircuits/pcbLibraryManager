@@ -10,8 +10,7 @@ from libraryManager.symbolPrimitive import *
 from libraryManager.defaults import defaults
 
 class symbolR(symbol):
-    """
-    Resistor symbol
+    """Resistor symbol
     """
     def __init__(self, name, refDes="R", showPinNames=False, showPinNumbers=False, pinNumbers=[1,2]):
         super().__init__(name, refDes, showPinNames, showPinNumbers)
@@ -25,8 +24,7 @@ class symbolR(symbol):
         self.valueObject.height = defaults.symbolSmallTextHeight
 
 class symbolC(symbol):
-    """
-    Capacitor symbol
+    """Capacitor symbol
     """
     def __init__(self, name, refDes="C", showPinNames=False, showPinNumbers=False, pinNumbers=[1,2]):
         super().__init__(name, refDes, showPinNames, showPinNumbers)

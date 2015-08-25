@@ -7,7 +7,7 @@ Created on Tue Jul 14 20:56:14 2015
 
 from libraries import libraryModules, librarySemiconductors, librarySwitches,\
     libraryRLC, libraryAVR, libraryPinheaders, libraryMosfets, libraryPowerSupplies,\
-    libraryTerminalBlocks
+    libraryTerminalBlocks, libraryResonators, libraryDiodes
 from libraryManager import cadPackageKiCad
 import logging
 
@@ -24,12 +24,12 @@ if __name__ == "__main__":
     path = r"D:\test\kicadLib"
     # generate libraries
     if True:
-        libs = [librarySwitches.librarySwitches(), librarySemiconductors.librarySemiconductors()]
+        libs = [libraryDiodes.libraryDiodes()]
     else:
         libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(),\
             librarySemiconductors.librarySemiconductors(), librarySwitches.librarySwitches(),\
             libraryAVR.libraryAVR(), libraryPinheaders.libraryPinheaders(),\
             libraryMosfets.libraryMosfets(), libraryPowerSupplies.libraryPowerSupplies(),\
-            libraryModules.libraryModules()]
+            libraryModules.libraryModules(), libraryResonators.libraryResonators()]
     for lib in libs:
         CP.generateLibrary(lib, path)

@@ -132,7 +132,10 @@ class KiCad(cadPackage):
         elif n == "symbolArc":
             pass
         elif n == "symbolCircle":
-            pass
+            print(r"C %d %d %d %d 1 %d %s" %(round(p.position[0]*self.scale),\
+                round(p.position[1]*self.scale), round(p.radius*self.scale),\
+                gateNumber, round(p.width*self.scale), self.symbolFillType[p.filled]),\
+                file=file)
         elif n == "symbolText":
             pass
         else:
@@ -247,10 +250,11 @@ class KiCad(cadPackage):
             justifyText = r" (justify" + alignText + mirrorText + ")"
         else:
             justifyText = ""
-        print(r"""  (fp_text %s %s (at %1.3f %1.3f  %1.1f) (layer %s)
+        print(r"""  (fp_text %s %s (at %1.3f %1.3f  %1.1f) (layer %s)%s
     (effects (font (size %1.3f %1.3f) (thickness %1.3f))%s)
   )""" % (textType, primitive.text, primitive.position[0], -primitive.position[1],\
-            primitive.rotation, self.layerNames[primitive.layer], primitive.height,\
+            primitive.rotation, self.layerNames[primitive.layer],\
+            "" if primitive.visible else " hide", primitive.height,\
             primitive.height, primitive.width, justifyText), file = file)
 
     layerNames = {pcbLayer.topCopper:"F.Cu" ,pcbLayer.bottomCopper:"B.Cu", \

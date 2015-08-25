@@ -81,13 +81,14 @@ class pcbText(pcbPrimitive):
     """
     """
     def __init__(self, layer, width, text, position, height, rotation = 0.0,\
-        align=textAlign.center, mirror=False):
+        align=textAlign.center, mirror=False, visible=True):
         """
         """
         self.text = text
         self.align = align
         self.mirror = mirror
         self.height = height
+        self.visible = visible
         super().__init__(layer, width, position, rotation=rotation)
         
 class pcbSmtPad(pcbPrimitive):

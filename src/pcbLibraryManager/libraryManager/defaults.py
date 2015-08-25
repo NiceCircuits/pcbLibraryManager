@@ -24,5 +24,7 @@ class defaults:
     # reference designators
     icRefDes = "U"
     transistorRefDes = "T"
+    diodeRefDes = "D"
     switchRefDes = "SW"
     conRefDes = "CON"
+    resonatorRefDes="Q"

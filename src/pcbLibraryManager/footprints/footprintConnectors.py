@@ -85,6 +85,7 @@ class footprintConnectorTht(footprint):
             if textOnSilk:
                 text.layer=pcbLayer.topSilk
             i=-i
+        self.nameObject.visible = False
 
     def addPin(self, pitch, x, y, cols, rows, padSize, drill, number, shape,\
         pinDimensions, pinZOffset, angled, angledOffset, bodySize, bodyOffset):

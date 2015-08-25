@@ -63,7 +63,7 @@ class symbolPolyline(symbolPrimitive):
 class symbolLine(symbolPolyline):
     """
     """
-    def __init__(self, width,x1 = None, y1 = None, x2 = None, y2 = None,  points = []):
+    def __init__(self, width,x1 = 0, y1 = 0, x2 = 0, y2 = 0,  points = []):
         """
         Initialize with points or x1, y1, x2, y2
         """
@@ -74,7 +74,7 @@ class symbolLine(symbolPolyline):
 class symbolRectangle(symbolPrimitive):
     """
     """
-    def __init__(self, width, x1 = None, y1 = None, x2 = None, y2 = None,\
+    def __init__(self, width, x1 = 0, y1 = 0, x2 = 0, y2 = 0,\
         position = [], dimensions = [], rotation = 0.0, points = [], filled=fillType.none):
         """
         Initialize with one of options:
@@ -122,12 +122,15 @@ class symbolArc(symbolPrimitive):
         self.radius=radius
         self.angles=angles
 
-def createSymbolArrow(width, x1, y1, x2, y2, headLength, filled = fillType.none):
+def createSymbolArrow(width, x1=0, y1=0, x2=0, y2=0, headLength=0,\
+filled = fillType.none, points=[]):
     """
     Create arrow as a list of primitives (line + polyline) from x1,y1 to x2,y2
     arrLen: headLength: length of arrow head
     If headLength<= _arrow length_, return only head pointing to x2, y2
     """
+    if points:
+        [[x1, y1], [x2, y2]] = points
     ret = []
     length = math.sqrt((x2-x1)**2+(y2-y1)**2)
     if length>headLength + 0.1:

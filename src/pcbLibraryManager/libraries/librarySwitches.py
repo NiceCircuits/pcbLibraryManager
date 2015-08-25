@@ -12,7 +12,6 @@ from libraryManager.symbol import symbol
 from libraryManager.symbolPrimitive import *
 from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import defaults
-from symbols.symbolsSwitches import *
 
 class librarySwitches(libraryClass):
     """
@@ -30,7 +29,7 @@ class partMicroswitchSmt(part):
         name = "MicroswitchSmt-%1.1f" % height
         super().__init__(name, defaults.switchRefDes)
         self.symbols.append(symbolButton())
-        for density in ["L", "N", "M"]:
+        for density in ["N", "L", "M"]:
             self.footprints.append(footprintMicroswitchSmt(density, height))
 
 class symbolButton(symbol):
@@ -43,8 +42,12 @@ class symbolButton(symbol):
             self.pins.append(symbolPin(i+1, pinNumbers[i], [200 if i else -200,0],\
                 100, pinType.passive, rotation=180 if i else 0))
             self.primitives.append(symbolCircle(defaults.symbolLineWidth,\
-                [75 if i else -75, 0], 50))
-        self.nameObject.position=[0, 100]
+                [75 if i else -75, 0], 25))
+        self.primitives.append(symbolLine(defaults.symbolThickLineWidth,\
+            -100, 50, 100, 50))
+        self.primitives.append(symbolRectangle(0, -25, 50, 25, 75,\
+            filled=fillType.foreground))
+        self.nameObject.position=[0, 120]
         self.valueObject.position=[0, -80]
 
 class footprintMicroswitchSmt(footprintSmdDualRow):

@@ -53,11 +53,11 @@ class symbolEsp07(symbolIC):
         pinsLeft=[
 ['TxD', 8, pinType.output],
 ['RxD', 7, pinType.input],
-['GPIO4', 6, pinType.IO],
-['GPIO5', 5, pinType.IO],
+['GPIO5', 6, pinType.IO],
+['GPIO4', 5, pinType.IO],
 ['GPIO0/BOOT', 4, pinType.IO],
-['GPIO2', 3, pinType.IO],
-['GPIO15', 2, pinType.IO],
+['GPIO2/BOOT1', 3, pinType.IO],
+['GPIO15/BOOT2', 2, pinType.IO],
 ['GND', 1, pinType.pwrIn]
         ]
         pinsRight=[
@@ -111,23 +111,12 @@ class footprintEsp07(footprintSmdDualRow):
         # pads
         padSizes={"L":[1.1, 1.6], "N":[1.2, 2.0], "M":[1.3, 2.2]}
         padSpan={"L":15.6, "N":16.0, "M":16.2}
+        court = {'L':0.2, 'N':0.3, 'M':0.5}
         super().__init__( name, alternativeLibName=alternativeLibName, pinCount=16, pitch=2,\
             padSpan=padSpan[density], padDimensions=padSizes[density], bodyDimensions=[22.0, 16.0, 1.0],\
-            padOffset = [-2, 0], originMarkSize=defaults.originMarkSize, bodyStyle="cube_green")
-        self.nameObject.position=[-12.5, 0]
-        self.nameObject.rotation=270
-        self.valueObject.position=[9,0]
-        self.valueObject.rotation=270
+            padOffset = [-2, 0], originMarkSize=defaults.originMarkSize, bodyStyle="cube_green",\
+            firstPinMarker=False, court=court[density])
         # body
         self.addSimple3Dbody([-1.25,0,1], [15.3, 12.3, 2.5], file="cube_metal")
         self.addSimple3Dbody([9.5,-2,1], [2,9,1], file="cube_metal")
-        # silk
-        silkX = 11.2
-        silkY = 8.2
-        for x in [-1, 1]:
-            self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
-                silkX*x, silkY, silkX*x, -silkY))
-            for y in [-1, 1]:
-                self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
-                    silkX*x, silkY*y, (silkX-3)*x-2, silkY*y))
-        # TODO: courtyard
+        self.addCylinder3Dbody([8.5,6,1], [2,2,1], file="cylinder_metal")

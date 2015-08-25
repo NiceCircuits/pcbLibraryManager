@@ -12,7 +12,6 @@ from libraryManager.defaults import *
 from libraryManager.common import *
 from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
-from libraryManager.footprint import footprint
 from footprints.footprintConnectors import footprintConnectorTht
 
 class libraryPinheaders(libraryClass):
@@ -63,7 +62,6 @@ class footprintPinheader(footprintConnectorTht):
     def __init__(self, cols, rows, density ="N", name=None, alternativeLibName="nicePinheaders",\
         originMarkSize=0, textOnSilk=True, pinLength=-1, bodyHeight=-1, angled=False,
         gender = "M", alternative=False):
-        court=0.5
         dim={"L":[1.3, 1.3],"N":[1.8, 1.4],"M":[2,2]}
         shape={"L":padShape.round, "N":padShape.roundRect, "M":padShape.round}
         if bodyHeight<0:
@@ -80,6 +78,6 @@ class footprintPinheader(footprintConnectorTht):
             name = "PIN-%dx%d%s%s_%s" % (cols, rows, "_F" if gender=="F" else "",\
                 "_angled" if angled else "", density)
         super().__init__(cols, rows, mil(100), dim[density], shape[density], 1.0,\
-            name=name, alternativeLibName=alternativeLibName, court=court,\
+            name=name, alternativeLibName=alternativeLibName, court=defaults.courtConn[density],\
             bodyHeight=bodyHeight, pinDimensions=[0.64, 0.64, pinLength], pinZOffset=-3,\
             angled=angled, angledOffset=-1.4)

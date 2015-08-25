@@ -14,6 +14,9 @@ class defaults:
     documentationWidth = 0.05
     documentationTextHeight = 0.5
     originMarkSize = 1.0
+    court={'L':0.15, 'N':0.26, 'M':0.5}
+    courtSmall={'L':0.1, 'N':0.15, 'M':0.26}
+    courtConn={'L':0.5, 'N':0.5, 'M':1.0}
     # symbol defaults
     symbolTextHeight = 60
     symbolSmallTextHeight = 40

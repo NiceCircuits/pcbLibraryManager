@@ -62,7 +62,6 @@ class footprintMicroswitchSmt(footprintSmdDualRow):
         # pads
         padSizes={"L":[1.3,2], "N":[1.3,2], "M":[1.4,2.5]}
         padSpan={"L":8.5, "N":8.5, "M":9}
-        court = {'L':0.15, 'N':0.26, 'M':0.5}
         super().__init__(name, alternativeLibName,\
             pinCount= 4,\
             pitch=4.5,\
@@ -71,7 +70,7 @@ class footprintMicroswitchSmt(footprintSmdDualRow):
             bodyDimensions=[6.2, 6.2, 3.6],\
             originMarkSize=defaults.originMarkSize,
             leadDimensions=[1.9, 0.7, 1],\
-            court=court[density],\
+            court=defaults.court[density],\
             firstPinMarker=False)
         self.addCylinder3Dbody([0,0,0], [3.5,3.5,height])
         self.renamePads([1,2,2,1])

@@ -65,7 +65,7 @@ class footprintResonator3Pin(footprint):
         pad1 = {"3.7x3.1":{"L":[0.7,4.1], "N":[0.7,4.1], "M":[0.7,4.1]}}
         pad2 = {"3.7x3.1":{"L":[1.0,4.1], "N":[1.0,4.1], "M":[1.0,4.1]}}
         padSpan = {"3.7x3.1":{"L":1.5, "N":1.5, "M":1.5}}
-        court = {"3.7x3.1":{"L":0.15, "N":0.26, "M":0.5}}
+        court = {"3.7x3.1":defaults.court}
         
         originMarkSize = min(defaults.originMarkSize, body[size][1]*0.25)
         super().__init__(name, alternativeLibName, originMarkSize=originMarkSize)

@@ -70,10 +70,9 @@ class footprintQfp(footprintSmdQuad):
         padDimensions={0.5:{"L":[1.5, 0.3], "N":[1.5, 0.3], "M":[1.5, 0.3]},\
             0.65:{"L":[1.5, 0.45], "N":[1.5, 0.45], "M":[1.5, 0.45]},\
             0.8:{"L":[1.5,0.55], "N":[1.5,0.55], "M":[1.5,0.55]}}
-        court = {'L':0.15, 'N':0.25, 'M':0.5}
         super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=pitch,\
             padSpan=padSpan[pitch][pinCount][density],\
             padDimensions=padDimensions[pitch][density],\
-            bodyDimensions=bodyDimensions[pitch][pinCount], court = court[density],\
+            bodyDimensions=bodyDimensions[pitch][pinCount], court = defaults.court[density],\
             leadDimensions=leadDimensions[pitch])
 

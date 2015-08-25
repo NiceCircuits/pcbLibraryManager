@@ -59,7 +59,6 @@ class footprintDPak(footprintSmdPower):
         padOffset ={"L":-5.3,"N":-5.1,"M":-5.2}
         tabPadSize = {"L":[7.0,6.5], "N":[7.0,7.0], "M":[7.0,7.0]}
         tabPadOffset ={"L":1.55,"N":1.8,"M":1.8}
-        court = {'L':0.15, 'N':0.26, 'M':0.5}
         super().__init__( name,\
             bodySize=[6.8, 6.3, 2.4],\
             pitch=2.3,\
@@ -70,7 +69,7 @@ class footprintDPak(footprintSmdPower):
             tabPadSize = tabPadSize[density],\
             tabPadOffset = tabPadOffset[density],\
             pads=2,\
-            court=court[density],\
+            court=defaults.court[density],\
             stubSize=[0.95, 1.2, 0.6],\
             tabShape="cube_metal",\
             leadShape="gullwing",
@@ -89,7 +88,6 @@ class footprintSot223(footprintSmdPower):
         padSize = {"L":[1.1,1.6], "N":[1.4,2.2], "M":[1.6,2.4]}
         padOffset = {"L":-3.1,"N":-3.1,"M":-3.2}
         tabPadSize = {"L":[3.4,1.6], "N":[3.7,2.2], "M":[4,2.4]}
-        court = {'L':0.15, 'N':0.26, 'M':0.5}
         super().__init__( name,\
             bodySize=[6.7, 3.7, 1.8],\
             pitch=2.3,\
@@ -100,7 +98,7 @@ class footprintSot223(footprintSmdPower):
             tabPadSize = tabPadSize[density],\
             tabPadOffset = -padOffset[density],\
             pads=3,\
-            court=court[density],\
+            court=defaults.court[density],\
             stubSize=[0.95, 1.2, 0.6],\
             tabShape="gullwing",\
             leadShape="gullwing",

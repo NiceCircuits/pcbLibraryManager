@@ -70,7 +70,7 @@ class footprintSoic(footprintSmdDualRow):
         bodyDimensions=[pinCount/2*1.27, 4.04, 2.65 if wide else 1.75]
         super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=1.27,\
             padSpan=5.2,padDimensions=[0.6,2.2], bodyDimensions=bodyDimensions,\
-            leadDimensions=[1.3,0.41,1], court = 0.26)
+            leadDimensions=[1.3,0.41,1], court = defaults.court[density])
 
 class footprintSot23(footprintSmdDualRow):
     """
@@ -90,12 +90,11 @@ class footprintSot23(footprintSmdDualRow):
             8:{"L":[0.48,0.7], "N":[0.5,0.9], "M":[0.5,1.4]}}
         bodyDimensions = {3:[3,1.4,1.2], 5:[3.1,1.8,1.45], 6:[3.1,1.8,1.45], 8:[3.1,1.8,1.45]}
         leadDimensions = {3:[0.55,0.5,0.7], 5:[0.7,0.5,0.8], 6:[0.7,0.5,0.8], 8:[0.7,0.38,0.8]}
-        court = {'L':0.15, 'N':0.26, 'M':0.5}
         # name, alternativeLibName, pinCount, pitch, padSpan, padDimensions
         super().__init__(name, alternativeLibName, pinCount, pitch[pinCount],\
             padSpan[pinCount][density], padDimensions[pinCount][density] ,\
             bodyDimensions=bodyDimensions[pinCount],\
-            leadDimensions=leadDimensions[pinCount], court = court[density])
+            leadDimensions=leadDimensions[pinCount], court = defaults.court[density])
         # tests
         self.nameObject.position=[0,0]
         self.valueObject.position=[0,\

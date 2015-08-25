@@ -99,28 +99,47 @@ class footprintSmdChip(footprint):
         size: "0603", "0805"
         density: "L" - least, "N" - nominal, "M" - most
         """
-        dimensions = {
-            '0402':{'chip':[1.1, 0.6, 0.6], 'pad':{'L':[0.4, 0.6], 'N':[0.5, 0.65], 'M':[0.6, 0.75]}, 'L':{'L':1.1, 'N':1.35, 'M':1.55}, 'court':{'L':0.1, 'N':0.15, 'M':0.26}},
-            '0603':{'chip':[1.75, 0.95, 0.85], 'pad':{'L':[0.8, 0.85], 'N':[1, 0.95], 'M':[1.2, 1.1]}, 'L':{'L':2.05, 'N':2.45, 'M':2.9}, 'court':{'L':0.1, 'N':0.26, 'M':0.5}},
-            '0805':{'chip':[2.2, 1.45, 1.1], 'pad':{'L':[1, 1.35], 'N':[1.2, 1.45], 'M':[1.4, 1.55]}, 'L':{'L':2.5, 'N':2.9, 'M':3.3}, 'court':{'L':0.1, 'N':0.26, 'M':0.5}},
-            '1206':{'chip':[3.4, 1.8, 1.35], 'pad':{'L':[1.1, 1.7], 'N':[1.3, 1.8], 'M':[1.5, 1.9]}, 'L':{'L':3.7, 'N':4.1, 'M':4.5}, 'court':{'L':0.1, 'N':0.26, 'M':0.5}},
-            '1210':{'chip':[3.4, 2.7, 1.35], 'pad':{'L':[1.1, 2.6], 'N':[1.3, 2.7], 'M':[1.5, 2.8]}, 'L':{'L':3.7, 'N':4.1, 'M':4.5}, 'court':{'L':0.1, 'N':0.26, 'M':0.5}},
-            '2010':{'chip':[5.15, 2.65, 0.71], 'pad':{'L':[1.1, 2.55], 'N':[1.3, 2.65], 'M':[1.5, 2.8]}, 'L':{'L':5.45, 'N':5.85, 'M':6.3}, 'court':{'L':0.1, 'N':0.26, 'M':0.5}},
-            '2512':{'chip':[6.45, 3.35, 0.71], 'pad':{'L':[1.1, 3.25], 'N':[1.3, 3.35], 'M':[1.5, 3.5]}, 'L':{'L':6.75, 'N':7.15, 'M':7.6}, 'court':{'L':0.1, 'N':0.26, 'M':0.5}}
-            }
-        originMarkSize = min(defaults.originMarkSize, dimensions[size]["chip"][1]*0.3)
+        chipSize = {'0402':[1.1, 0.6, 0.6],
+            '0603':[1.75, 0.95, 0.85],
+            '0805':[2.2, 1.45, 1.1],
+            '1206':[3.4, 1.8, 1.35],
+            '1210':[3.4, 2.7, 1.35],
+            '2010':[5.15, 2.65, 0.71],
+            '2512':[6.45, 3.35, 0.71]}
+        padSize = {'0402':{'L':[0.4, 0.6], 'N':[0.5, 0.65], 'M':[0.6, 0.75]},
+            '0603':{'L':[0.8, 0.85], 'N':[1, 0.95], 'M':[1.2, 1.1]},  
+            '0805':{'L':[1, 1.35], 'N':[1.2, 1.45], 'M':[1.4, 1.55]}, 
+            '1206':{'L':[1.1, 1.7], 'N':[1.3, 1.8], 'M':[1.5, 1.9]},  
+            '1210':{'L':[1.1, 2.6], 'N':[1.3, 2.7], 'M':[1.5, 2.8]},  
+            '2010':{'L':[1.1, 2.55], 'N':[1.3, 2.65], 'M':[1.5, 2.8]},
+            '2512':{'L':[1.1, 3.25], 'N':[1.3, 3.35], 'M':[1.5, 3.5]}}
+        L = {'0402':{'L':1.1, 'N':1.35, 'M':1.55},
+            '0603':{'L':2.05, 'N':2.45, 'M':2.9},
+            '0805':{'L':2.5, 'N':2.9, 'M':3.3},  
+            '1206':{'L':3.7, 'N':4.1, 'M':4.5},  
+            '1210':{'L':3.7, 'N':4.1, 'M':4.5},  
+            '2010':{'L':5.45, 'N':5.85, 'M':6.3},
+            '2512':{'L':6.75, 'N':7.15, 'M':7.6}}
+        court = {'0402':defaults.courtSmall,
+            '0603':defaults.court,
+            '0805':defaults.court,
+            '1206':defaults.court,
+            '1210':defaults.court,
+            '2010':defaults.court,
+            '2512':defaults.court}
+        originMarkSize = min(defaults.originMarkSize, chipSize[size][1]*0.3)
         super().__init__(name, alternativeLibName, originMarkSize=originMarkSize)
         # pads
-        x1=(dimensions[size]["L"][density] - dimensions[size]["pad"][density][0])/2
+        x1=(L[size][density] - padSize[size][density][0])/2
         for x in [-1,1]:
             self.primitives.append(pcbSmtPad(pcbLayer.topCopper, position=[x1*x,0],\
-                dimensions=dimensions[size]["pad"][density], name="1" if x<0 else "2"))
+                dimensions=padSize[size][density], name="1" if x<0 else "2"))
         # body
-        self.addSimple3Dbody([0,0], dimensions[size]["chip"], file="cube_orange")
+        self.addSimple3Dbody([0,0], chipSize[size], file="cube_orange")
         # courtyard and silk
-        [dim1, dim2]=self.addCourtyardAndSilk([dimensions[size]["L"][density],\
-            max(dimensions[size]["pad"][density][1],dimensions[size]["chip"][1])],\
-            dimensions[size]["court"][density])
+        [dim1, dim2]=self.addCourtyardAndSilk([L[size][density],\
+            max(padSize[size][density][1],chipSize[size][1])],\
+            court[size][density])
         # name, value
         y = self.valueObject.height + dim1[1]/2
         self.valueObject.position = [0, -y]

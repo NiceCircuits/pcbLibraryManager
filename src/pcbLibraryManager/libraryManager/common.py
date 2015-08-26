@@ -79,6 +79,9 @@ def mm2inch(x):
     "Convert mm to inch"
     return x/25.4
 
+def isIterable(x):
+    return hasattr(x, '__iter__')
+
 class textAlign:
     """
     """

@@ -23,8 +23,8 @@ if __name__ == "__main__":
     CP = cadPackageKiCad.KiCad()
     path = r"D:\test\kicadLib"
     # generate libraries
-    if False:
-        libs = [libraryDiodes.libraryDiodes()]
+    if True:
+        libs = [libraryRLC.libraryRLC()]
     else:
         libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(),\
             librarySemiconductors.librarySemiconductors(), librarySwitches.librarySwitches(),\

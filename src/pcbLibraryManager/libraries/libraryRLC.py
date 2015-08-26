@@ -21,11 +21,11 @@ class libraryRLC(libraryClass):
         super().__init__("niceRLC")
         self.parts.append(partR())
         self.parts.append(partC())
+        self.parts.append(partCPolar())
         self.parts.append(partResistorNetwork())
 
 class partR(part):
-    """
-    Resistor part
+    """Resistor part
     """
     def __init__(self):
         super().__init__("R", "R")
@@ -36,13 +36,23 @@ class partR(part):
                     size = size, density = density, alternativeLibName = "niceRLC"))
 
 class partC(part):
-    """
-    Capacitor part
+    """Capacitor part
     """
     def __init__(self):
         super().__init__("C", "C")
         self.symbols.append(symbolC("C"))
         for size in ["0603", "0402", "0805", "1206", "1210", "2010", "2512"]:
+            for density in ["N", "L", "M"]:
+                self.footprints.append(footprintSmdChip(size + "_" + density, \
+                    size = size, density = density, alternativeLibName = "niceRLC"))
+
+class partCPolar(part):
+    """Polarized capacitor part
+    """
+    def __init__(self):
+        super().__init__("Cpol", "C")
+        self.symbols.append(symbolC("Cpol", polar=True))
+        for size in ["SMA", "SMB", "SMC"]:
             for density in ["N", "L", "M"]:
                 self.footprints.append(footprintSmdChip(size + "_" + density, \
                     size = size, density = density, alternativeLibName = "niceRLC"))
@@ -78,7 +88,8 @@ class symbolR(symbol):
 class symbolC(symbol):
     """Capacitor symbol
     """
-    def __init__(self, name, refDes="C", showPinNames=False, showPinNumbers=False, pinNumbers=[1,2]):
+    def __init__(self, name, refDes="C", showPinNames=False, showPinNumbers=False,\
+    pinNumbers=[1,2], polar=False):
         super().__init__(name, refDes, showPinNames, showPinNumbers)
         for i in range(2):
             self.pins.append(symbolPin(i+1, pinNumbers[i], [0, -100 if i else 100],\
@@ -89,14 +100,16 @@ class symbolC(symbol):
         self.nameObject.align=textAlign.centerLeft
         self.valueObject.position=[20, -100]
         self.valueObject.align=textAlign.centerLeft
+        if polar:
+            self.primitives.append(symbolLine(defaults.symbolLineWidth, -50, 100, -50, 50))
+            self.primitives.append(symbolLine(defaults.symbolLineWidth, -75, 75, -25, 75))
 
 class footprintSmdChip(footprint):
-    """
-    Chip component (0603, 0805 etc.)
+    """Chip component (0603, 0805, SMA, SMB etc.)
     """
     def __init__(self, name, size, density, alternativeLibName):
         """
-        size: "0603", "0805"
+        size: "0402", "0603", "0805", "1206", "1210", "2010", "2512", "SMA", "SMB", "SMC"
         density: "L" - least, "N" - nominal, "M" - most
         """
         chipSize = {'0402':[1.1, 0.6, 0.6],
@@ -105,38 +118,69 @@ class footprintSmdChip(footprint):
             '1206':[3.4, 1.8, 1.35],
             '1210':[3.4, 2.7, 1.35],
             '2010':[5.15, 2.65, 0.71],
-            '2512':[6.45, 3.35, 0.71]}
+            '2512':[6.45, 3.35, 0.71],
+            'SMA':[4.6, 2.92, 2.4],
+            'SMB':[4.57, 3.94, 2.5],
+            'SMC':[7.11, 6.22, 2.5]}
+        leadSize = {'0402':0.3,
+            '0603':0.5,
+            '0805':0.75,
+            '1206':0.75,
+            '1210':0.75,
+            '2010':0.85,
+            '2512':0.85,
+            'SMA':[0.5, 1.63, 1.2],
+            'SMB':[0.5, 2.21, 1.25],
+            'SMC':[0.5, 3.18, 1.25]}
         padSize = {'0402':{'L':[0.4, 0.6], 'N':[0.5, 0.65], 'M':[0.6, 0.75]},
             '0603':{'L':[0.8, 0.85], 'N':[1, 0.95], 'M':[1.2, 1.1]},  
             '0805':{'L':[1, 1.35], 'N':[1.2, 1.45], 'M':[1.4, 1.55]}, 
             '1206':{'L':[1.1, 1.7], 'N':[1.3, 1.8], 'M':[1.5, 1.9]},  
             '1210':{'L':[1.1, 2.6], 'N':[1.3, 2.7], 'M':[1.5, 2.8]},  
             '2010':{'L':[1.1, 2.55], 'N':[1.3, 2.65], 'M':[1.5, 2.8]},
-            '2512':{'L':[1.1, 3.25], 'N':[1.3, 3.35], 'M':[1.5, 3.5]}}
+            '2512':{'L':[1.1, 3.25], 'N':[1.3, 3.35], 'M':[1.5, 3.5]},
+            'SMA':{'L':[2.2, 1.45], 'N':[2.6, 1.55], 'M':[2.8, 1.85]},
+            'SMB':{'L':[2.1, 2], 'N':[2.5, 2.15], 'M':[2.8, 2.45]},
+            'SMC':{'L':[2, 3], 'N':[2.4, 3.1], 'M':[2.8, 3.4]}}
         L = {'0402':{'L':1.1, 'N':1.35, 'M':1.55},
             '0603':{'L':2.05, 'N':2.45, 'M':2.9},
             '0805':{'L':2.5, 'N':2.9, 'M':3.3},  
             '1206':{'L':3.7, 'N':4.1, 'M':4.5},  
             '1210':{'L':3.7, 'N':4.1, 'M':4.5},  
             '2010':{'L':5.45, 'N':5.85, 'M':6.3},
-            '2512':{'L':6.75, 'N':7.15, 'M':7.6}}
+            '2512':{'L':6.75, 'N':7.15, 'M':7.6},
+            'SMA':{'L':5.75, 'N':5.9, 'M':6.0},
+            'SMB':{'L':5.75, 'N':5.9, 'M':6.0},
+            'SMC':{'L':8.3, 'N':8.45, 'M':8.65}}
         court = {'0402':defaults.courtSmall,
             '0603':defaults.court,
             '0805':defaults.court,
             '1206':defaults.court,
             '1210':defaults.court,
             '2010':defaults.court,
-            '2512':defaults.court}
+            '2512':defaults.court,
+            'SMA':defaults.court,
+            'SMB':defaults.court,
+            'SMC':defaults.court}
         originMarkSize = min(defaults.originMarkSize, chipSize[size][1]*0.3)
         super().__init__(name, alternativeLibName, originMarkSize=originMarkSize)
         # pads
         x1=(L[size][density] - padSize[size][density][0])/2
+        b =[x for x in chipSize[size]]
+        if isIterable(leadSize[size]):
+            x2=(b[0]+leadSize[size][0])/2
+            lead=leadSize[size]
+        else:
+            x2=(b[0]-leadSize[size])/2
+            b[0]-=2*leadSize[size]
+            lead =[x for x in chipSize[size]]
+            lead[0]=leadSize[size]
         for x in [-1,1]:
             self.primitives.append(pcbSmtPad(pcbLayer.topCopper, position=[x1*x,0],\
                 dimensions=padSize[size][density], name="1" if x<0 else "2"))
+            self.addLead([x2*x, 0], lead, lead="cube_metal")
         # body
-        self.addSimple3Dbody([0,0], chipSize[size], file="cube_orange")
-        # courtyard and silk
+        self.addSimple3Dbody([0,0], b, file="cube_orange")
         [dim1, dim2]=self.addCourtyardAndSilk([L[size][density],\
             max(padSize[size][density][1],chipSize[size][1])],\
             court[size][density])

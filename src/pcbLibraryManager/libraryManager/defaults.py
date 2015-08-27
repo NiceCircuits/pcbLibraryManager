@@ -16,6 +16,7 @@ class defaults:
     originMarkSize = 1.0
     court={'L':0.15, 'N':0.26, 'M':0.5}
     courtSmall={'L':0.1, 'N':0.15, 'M':0.26}
+    courtTht={'L':0.3, 'N':0.4, 'M':0.6}
     courtConn={'L':0.5, 'N':0.5, 'M':1.0}
     # symbol defaults
     symbolTextHeight = 60

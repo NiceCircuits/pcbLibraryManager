@@ -13,7 +13,7 @@ from libraryManager.symbol import symbol
 from libraryManager.symbolPrimitive import *
 from libraryManager.defaults import *
 from libraryManager.common import *
-
+from libraries.libraryRLC import footprintSmdChip
 
 class libraryDiodes(libraryClass):
     """
@@ -32,6 +32,11 @@ class libraryDiodes(libraryClass):
         for v in ["3V3", "5V2", "12V", "15V", "24V"]:
             self.parts.append(partDiode("PESD%sS2UT" % v, diodeType="zener",\
                 dual="A", footprint="SOT23"))
+        for [name, fp] in [["SK1", "SMA"], ["SS1", "SMA"], ["SK2", "SMB"],\
+        ["SS2", "SMB"], ["SK3", "SMC"], ["SS3", "SMC"]]:
+            for v in [2, 3, 4, 5, 6, 8, 10]:
+                self.parts.append(partDiode(name + str(v), diodeType="shottky",\
+                    footprint=fp))
 
 class partDiode(part):
     """Diode generator
@@ -47,15 +52,25 @@ class partDiode(part):
             name = "diode%s%s%s%s" % ("_" if diodeType else "", diodeType,\
                 "_dual_" if dual else "", dual)
         super().__init__(name, refDes)
-        defaultPins={"SOT23":[1,3,2]}
+        defaultPins={"SOT23":[1,3,2],"SMA":[2,1], "SMB":[2,1], "SMC":[2,1]}
+        if not footprint and dual:
+            footprint = "SOT23"
         if not pins:
             if footprint:
                 pins=defaultPins[footprint]
             else:
-                pins=[1,3,2]
+                pins=[2,1]
+        self.log.debug("New diode: \"%s\", pins: %s, footprint: %s, dual: %s" %\
+            (name, pins, footprint, dual))
         self.symbols.append(symbolDiode(diodeType=diodeType, pins=pins, dual=dual, refDes=refDes))
         for density in ["N", "L", "M"]:
-            if footprint=="" or footprint == "SOT23":
+            defaultFootprints=["SMA", "SMB", "SMC"]
+            if footprint=="" or footprint in defaultFootprints:
+                for fp in defaultFootprints:
+                    if footprint=="" or footprint==fp:
+                        self.footprints.append(footprintSmdChip(fp + "_" + density, \
+                            size = fp, density = density, alternativeLibName = "niceSemiconductors"))
+            elif footprint == "SOT23":
                 self.footprints.append(footprintSot23(density=density))
             else:
                 raise ValueError("Invalid footprint %s" % footprint)

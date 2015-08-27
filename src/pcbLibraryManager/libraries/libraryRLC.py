@@ -52,10 +52,13 @@ class partCPolar(part):
     def __init__(self):
         super().__init__("Cpol", "C")
         self.symbols.append(symbolC("Cpol", polar=True))
-        for size in ["SMA", "SMB", "SMC"]:
-            for density in ["N", "L", "M"]:
-                self.footprints.append(footprintSmdChip(size + "_" + density, \
-                    size = size, density = density, alternativeLibName = "niceRLC"))
+        for density in ["N", "L", "M"]:
+            for [D, heights] in [[4,[5,7]],[5,[5,7,11,12,15]], [6.3,[5,7,11,12]],\
+            [8,[7,11.5,12,15,20]], [10,[12.5,16,20,25,31.5,35,40]], [12.5,[20,25,30,31.5,35,40,45,50]],\
+            [16,[20,25,30,31.5,35.5,40]], [18,[20,25,31.5,35.5,40]], [20,[40]], [22,[40,50]],\
+            [25,[50]]]:
+                for H in heights:
+                    self.footprints.append(footprintCapElecTht(D, H, density))
 
 class partResistorNetwork(part):
     """
@@ -164,6 +167,11 @@ class footprintSmdChip(footprint):
             'SMC':defaults.court}
         originMarkSize = min(defaults.originMarkSize, chipSize[size][1]*0.3)
         super().__init__(name, alternativeLibName, originMarkSize=originMarkSize)
+        polar=False
+        bodyStyle="cube_orange"
+        if size in ["SMA", "SMB", "SMC"]:
+            polar=True
+            bodyStyle="cube"
         # pads
         x1=(L[size][density] - padSize[size][density][0])/2
         b =[x for x in chipSize[size]]
@@ -180,10 +188,22 @@ class footprintSmdChip(footprint):
                 dimensions=padSize[size][density], name="1" if x<0 else "2"))
             self.addLead([x2*x, 0], lead, lead="cube_metal")
         # body
-        self.addSimple3Dbody([0,0], b, file="cube_orange")
+        self.addSimple3Dbody([0,0], b, file=bodyStyle)
         [dim1, dim2]=self.addCourtyardAndSilk([L[size][density],\
             max(padSize[size][density][1],chipSize[size][1])],\
-            court[size][density])
+            court[size][density], silk=not polar)
+        if polar:
+            dim = [chipSize[size][0]/10, chipSize[size][1], 0.05]
+            pos = [-chipSize[size][0]*0.35, 0, chipSize[size][2]]
+            self.addSimple3Dbody(pos,dim,file="cube_metal")
+            if density!="L":
+                for y in [-1,1]:
+                    self.primitives.append(pcbPolyline(pcbLayer.topSilk, defaults.silkWidth,\
+                        [[0, y*(chipSize[size][1]+defaults.silkWidth)/2],\
+                        [-(chipSize[size][0]+defaults.silkWidth)/2,\
+                        y*(chipSize[size][1]+defaults.silkWidth)/2],
+                        [-(chipSize[size][0]+defaults.silkWidth)/2,\
+                        y*((padSize[size][density][1]+defaults.silkWidth)/2+defaults.silkExtend)]]))
         # name, value
         y = self.valueObject.height + dim1[1]/2
         self.valueObject.position = [0, -y]
@@ -249,3 +269,43 @@ class footprintResistorNetwork(footprint):
         self.valueObject.position = [0, -y]
         self.nameObject.position = [0, y]
             
+class footprintCapElecTht(footprint):
+    """Electrolytic THT capacitor
+    :param D: body diameter: 4, 5, 6.3, 8, 10, 12.5, 16, 18, 20, 22, 25
+    """
+    def __init__(self, D, H, density="N", pitch=0, name="", dPin=0):
+        pitches={4:1.5, 5:2, 6.3:2.5, 8:3.5, 10:5, 12.5:5, 16:7.5, 18:7.5, 20:10, 22:10, 25:12.5}
+        diameters={4:0.45, 5:0.5, 6.3:0.5, 8:0.6, 10:0.6, 12.5:0.8, 16:0.8, 18:0.8, 20:1, 22:1, 25:1}
+        ring={"L":0.3, "N":0.4, "M":0.7}
+        if pitch:
+            pitchText="_%1.1f" % pitch
+        else:
+            pitchText=""
+            pitch = pitches[D]
+        if not dPin:
+            dPin = diameters[D]
+        if not name:
+            name="Cpol_%1.1f_%1.1f%s_%s" % (D, H, pitchText, density)
+        super().__init__(name, "niceRLC", originMarkSize=defaults.originMarkSize)
+        #tolerance
+        D+=0.5
+        H+=(1.5 if H<=20 else 2)
+        # pins
+        for i in [-1, 1]:
+            dPadY= dPin+2*ring[density]
+            dPadX=min(dPadY, pitch-mil(10))
+            self.primitives.append(pcbThtPad([pitch/2*i, 0], [dPadX, dPadY],\
+                dPin+0.2, 1 if i<0 else 2, padShape.rect if i<0 else padShape.roundRect))
+            self.addCylinder3Dbody([pitch/2*i, 0, -2.5], [dPin, dPin, 2.5],\
+                file="cylinder_metal")
+        # body
+        self.addCylinder3Dbody([0,0], [D,D,H], silk=True, file="cylinder_blue")
+        self.primitives.append(pcbCircle(pcbLayer.topCourtyard, defaults.documentationWidth,\
+            [0,0],D/2+defaults.courtTht[density]))
+        for i in [-1, 1, 2, 3]:
+            self.primitives.append(pcbArc(pcbLayer.topSilk, defaults.silkWidth,\
+                [0,0], D/2-i*defaults.silkWidth*0.9, [-80,80]))
+        self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
+            -D/2-2.2, 1, -D/2-0.2, 1))
+        self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
+            -D/2-1.2, 2, -D/2-1.2, 0))

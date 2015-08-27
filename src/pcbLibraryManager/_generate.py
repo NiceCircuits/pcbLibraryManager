@@ -24,12 +24,13 @@ if __name__ == "__main__":
     path = r"D:\test\kicadLib"
     # generate libraries
     if True:
-        libs = [libraryRLC.libraryRLC()]
+        libs = [libraryDiodes.libraryDiodes()]
     else:
         libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(),\
             librarySemiconductors.librarySemiconductors(), librarySwitches.librarySwitches(),\
             libraryAVR.libraryAVR(), libraryPinheaders.libraryPinheaders(),\
             libraryMosfets.libraryMosfets(), libraryPowerSupplies.libraryPowerSupplies(),\
-            libraryModules.libraryModules(), libraryResonators.libraryResonators()]
+            libraryModules.libraryModules(), libraryResonators.libraryResonators(),\
+            libraryDiodes.libraryDiodes()]
     for lib in libs:
         CP.generateLibrary(lib, path)

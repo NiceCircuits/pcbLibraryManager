@@ -5,9 +5,10 @@ Created on Tue Jul 14 20:56:14 2015
 @author: piotr at nicecircuits.com
 """
 
-from libraries import libraryModules, librarySemiconductors, librarySwitches,\
+from libraries import libraryModules, librarySwitches,\
     libraryRLC, libraryAVR, libraryPinheaders, libraryMosfets, libraryPowerSupplies,\
-    libraryTerminalBlocks, libraryResonators, libraryDiodes
+    libraryTerminalBlocks, libraryResonators, libraryDiodes, libraryMechanical,\
+    libraryLogic, libraryCommunicationIC, libraryConnectorsOther
 from libraryManager import cadPackageKiCad
 import logging
 
@@ -24,13 +25,15 @@ if __name__ == "__main__":
     path = r"D:\test\kicadLib"
     # generate libraries
     if True:
-        libs = [libraryDiodes.libraryDiodes()]
+        libs = [libraryConnectorsOther.libraryConnectorsOther()]
     else:
         libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(),\
-            librarySemiconductors.librarySemiconductors(), librarySwitches.librarySwitches(),\
+            librarySwitches.librarySwitches(),\
             libraryAVR.libraryAVR(), libraryPinheaders.libraryPinheaders(),\
             libraryMosfets.libraryMosfets(), libraryPowerSupplies.libraryPowerSupplies(),\
             libraryModules.libraryModules(), libraryResonators.libraryResonators(),\
-            libraryDiodes.libraryDiodes()]
+            libraryDiodes.libraryDiodes(), libraryMechanical.libraryMechanical(),\
+            libraryLogic.libraryLogic(), libraryCommunicationIC.libraryCommunicationIC(),\
+            libraryConnectorsOther.libraryConnectorsOther()]
     for lib in libs:
         CP.generateLibrary(lib, path)

@@ -53,6 +53,9 @@ class partCPolar(part):
         super().__init__("Cpol", "C")
         self.symbols.append(symbolC("Cpol", polar=True))
         for density in ["N", "L", "M"]:
+            for size in ['Tantal_A', 'Tantal_B', 'Tantal_C', 'Tantal_D', 'Tantal_E', 'Tantal_X']:
+                self.footprints.append(footprintSmdChip(size + "_" + density,\
+                    size, density, alternativeLibName = "niceRLC"))
             for [D, heights] in [[4,[5,7]],[5,[5,7,11,12,15]], [6.3,[5,7,11,12]],\
             [8,[7,11.5,12,15,20]], [10,[12.5,16,20,25,31.5,35,40]], [12.5,[20,25,30,31.5,35,40,45,50]],\
             [16,[20,25,30,31.5,35.5,40]], [18,[20,25,31.5,35.5,40]], [20,[40]], [22,[40,50]],\
@@ -112,9 +115,12 @@ class footprintSmdChip(footprint):
     """
     def __init__(self, name, size, density, alternativeLibName):
         """
-        size: "0402", "0603", "0805", "1206", "1210", "2010", "2512", "SMA", "SMB", "SMC"
+        size: "0402", "0603", "0805", "1206", "1210", "2010", "2512",
+            "SMA", "SMB", "SMC", 'Tantal_A', 'Tantal_B', 'Tantal_C', 'Tantal_D',
+            'Tantal_E', 'Tantal_X'
         density: "L" - least, "N" - nominal, "M" - most
         """
+        # TODO: 0603 etc. in R, L, and D versions
         chipSize = {'0402':[1.1, 0.6, 0.6],
             '0603':[1.75, 0.95, 0.85],
             '0805':[2.2, 1.45, 1.1],
@@ -124,7 +130,13 @@ class footprintSmdChip(footprint):
             '2512':[6.45, 3.35, 0.71],
             'SMA':[4.6, 2.92, 2.4],
             'SMB':[4.57, 3.94, 2.5],
-            'SMC':[7.11, 6.22, 2.5]}
+            'SMC':[7.11, 6.22, 2.5],
+            'Tantal_A':[3, 1.8, 1.8],
+            'Tantal_B':[3.5, 3, 2.1],
+            'Tantal_C':[6.1, 3.5, 2.8],
+            'Tantal_D':[7.4, 4.6, 3.1],
+            'Tantal_E':[7.4, 6.3, 3.8],
+            'Tantal_X':[7.4, 4.6, 4.3]}
         leadSize = {'0402':0.3,
             '0603':0.5,
             '0805':0.75,
@@ -134,7 +146,13 @@ class footprintSmdChip(footprint):
             '2512':0.85,
             'SMA':[0.5, 1.63, 1.2],
             'SMB':[0.5, 2.21, 1.25],
-            'SMC':[0.5, 3.18, 1.25]}
+            'SMC':[0.5, 3.18, 1.25],
+            'Tantal_A':[0.2, 1.3, 0.9],
+            'Tantal_B':[0.2, 2.3, 1.05],
+            'Tantal_C':[0.2, 2.3, 1.4],
+            'Tantal_D':[0.2, 2.5, 1.55],
+            'Tantal_E':[0.2, 4.2, 1.9],
+            'Tantal_X':[0.2, 2.5, 4.15]}
         padSize = {'0402':{'L':[0.4, 0.6], 'N':[0.5, 0.65], 'M':[0.6, 0.75]},
             '0603':{'L':[0.8, 0.85], 'N':[1, 0.95], 'M':[1.2, 1.1]},  
             '0805':{'L':[1, 1.35], 'N':[1.2, 1.45], 'M':[1.4, 1.55]}, 
@@ -142,9 +160,15 @@ class footprintSmdChip(footprint):
             '1210':{'L':[1.1, 2.6], 'N':[1.3, 2.7], 'M':[1.5, 2.8]},  
             '2010':{'L':[1.1, 2.55], 'N':[1.3, 2.65], 'M':[1.5, 2.8]},
             '2512':{'L':[1.1, 3.25], 'N':[1.3, 3.35], 'M':[1.5, 3.5]},
-            'SMA':{'L':[2.2, 1.45], 'N':[2.6, 1.55], 'M':[2.8, 1.85]},
-            'SMB':{'L':[2.1, 2], 'N':[2.5, 2.15], 'M':[2.8, 2.45]},
-            'SMC':{'L':[2, 3], 'N':[2.4, 3.1], 'M':[2.8, 3.4]}}
+            'SMA':{'L':[2, 1.45], 'N':[2.1, 1.55], 'M':[2.3, 1.85]},
+            'SMB':{'L':[1.9, 2], 'N':[2.1, 2.15], 'M':[2.3, 2.45]},
+            'SMC':{'L':[1.8, 3], 'N':[1.9, 3.1], 'M':[2.1, 3.4]},
+            'Tantal_A':{'L':[1.4, 1.1], 'N':[1.5, 1.25], 'M':[1.6, 1.55]},
+            'Tantal_B':{'L':[1.4, 2.1], 'N':[1.5, 2.25], 'M':[1.6, 2.55]},
+            'Tantal_C':{'L':[2.0, 2.1], 'N':[2.1, 2.25], 'M':[2.2, 2.55]},
+            'Tantal_D':{'L':[2.0, 2.3], 'N':[2.1, 2.45], 'M':[2.2, 2.75]},
+            'Tantal_E':{'L':[2.0, 4.0], 'N':[2.1, 4.15], 'M':[2.2, 4.45]},
+            'Tantal_X':{'L':[2.0, 2.3], 'N':[2.1, 2.45], 'M':[2.2, 2.75]}}
         L = {'0402':{'L':1.1, 'N':1.35, 'M':1.55},
             '0603':{'L':2.05, 'N':2.45, 'M':2.9},
             '0805':{'L':2.5, 'N':2.9, 'M':3.3},  
@@ -152,9 +176,15 @@ class footprintSmdChip(footprint):
             '1210':{'L':3.7, 'N':4.1, 'M':4.5},  
             '2010':{'L':5.45, 'N':5.85, 'M':6.3},
             '2512':{'L':6.75, 'N':7.15, 'M':7.6},
-            'SMA':{'L':5.75, 'N':5.9, 'M':6.0},
-            'SMB':{'L':5.75, 'N':5.9, 'M':6.0},
-            'SMC':{'L':8.3, 'N':8.45, 'M':8.65}}
+            'SMA': {'L':5.75, 'N':5.9, 'M':6.1},
+            'SMB': {'L':5.75, 'N':5.9, 'M':6.1},
+            'SMC': {'L':8.3, 'N':8.45, 'M':8.65},
+            'Tantal_A':{'L':3.55, 'N':3.7, 'M':3.9},
+            'Tantal_B':{'L':3.85, 'N':4.0, 'M':4.2},
+            'Tantal_C':{'L':6.45, 'N':6.6, 'M':6.8},
+            'Tantal_D':{'L':7.75, 'N':7.9, 'M':8.1},
+            'Tantal_E':{'L':7.75, 'N':7.9, 'M':8.1},
+            'Tantal_X':{'L':7.75, 'N':7.9, 'M':8.1}}
         court = {'0402':defaults.courtSmall,
             '0603':defaults.court,
             '0805':defaults.court,
@@ -164,7 +194,13 @@ class footprintSmdChip(footprint):
             '2512':defaults.court,
             'SMA':defaults.court,
             'SMB':defaults.court,
-            'SMC':defaults.court}
+            'SMC':defaults.court,
+            'Tantal_A':defaults.court,
+            'Tantal_B':defaults.court,
+            'Tantal_C':defaults.court,
+            'Tantal_D':defaults.court,
+            'Tantal_E':defaults.court,
+            'Tantal_X':defaults.court}
         originMarkSize = min(defaults.originMarkSize, chipSize[size][1]*0.3)
         super().__init__(name, alternativeLibName, originMarkSize=originMarkSize)
         polar=False
@@ -172,6 +208,8 @@ class footprintSmdChip(footprint):
         if size in ["SMA", "SMB", "SMC"]:
             polar=True
             bodyStyle="cube"
+        elif size in ['Tantal_A', 'Tantal_B', 'Tantal_C', 'Tantal_D', 'Tantal_E', 'Tantal_X']:
+            polar=True
         # pads
         x1=(L[size][density] - padSize[size][density][0])/2
         b =[x for x in chipSize[size]]

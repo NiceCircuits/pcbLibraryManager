@@ -27,6 +27,7 @@ class libraryDiodes(libraryClass):
             for name in ["BAS40", "BAS70"]:
                 self.parts.append(partDiode(name=name+basPostfix[dual],\
                 diodeType="shottky", dual=dual, footprint="SOT23"))
+        self.parts.append(partDiode(diodeType="LED"))
         self.parts.append(partDiode("BAV70", dual="C", footprint="SOT23"))
         self.parts.append(partDiode("BAV99", dual="S", footprint="SOT23"))
         for v in ["3V3", "5V2", "12V", "15V", "24V"]:
@@ -41,7 +42,7 @@ class libraryDiodes(libraryClass):
 class partDiode(part):
     """Diode generator
     
-    :param diodeType: "", "shottky", "zener"
+    :param diodeType: "", "shottky", "zener", "LED"
     :param name: name
     :param footprint: "DPak", "TP220", "D2Pak" or "" - all available packages
     :param pins: [A,C] pins, like [1,2]
@@ -77,7 +78,7 @@ class partDiode(part):
 
 class symbolDiode(symbol):
     """Symbol for diode
-    :param diodeType: "", "shottky", "zener"
+    :param diodeType: "", "shottky", "zener", "LED"
     :param name: name
     :param footprint: "DPak", "TP220", "D2Pak" or "" - all available packages
     :param pins: [A,C] pins, like [1,2]
@@ -112,7 +113,7 @@ class symbolDiode(symbol):
         self.pins.append(symbolPin(pinNames[1], pins[1], [0,-200 if dual else -100],\
             75 if dual else 50, pinType.passive, 90))
         # drawing
-        if diodeType=="":
+        if diodeType=="" or diodeType=="LED":
             points=[[-55, 50], [55, 50]]
         elif diodeType=="zener":
             points=[[-55, 50], [55, 50], [55, 25]]
@@ -120,6 +121,10 @@ class symbolDiode(symbol):
             points=[[-35, 70], [-55, 70], [-55, 50], [55, 50], [55, 30], [35, 30]]
         else:
             raise ValueError("Invalid diode type %s" % diodeType)
+        if diodeType=="LED":
+            for i in range(2):
+                self.primitives.extend(createSymbolArrow(defaults.symbolLineWidth,\
+                    -75, 25-50*i, -125, 0-50*i, 25, fillType.foreground))
         for i in sides:
             if dual=="C" or (dual=="S" and i<0) or dual=="":
                 rot=180
@@ -137,5 +142,8 @@ class symbolDiode(symbol):
         i=1
         for t in [self.nameObject, self.valueObject]:
             t.align = textAlign.centerLeft
-            t.position = [175 if dual else 75, t.height*i -(25 if dual else 0)]
+            if dual:
+                t.position = [175, t.height*i -25]
+            else:
+                t.position = [75, t.height*i]
             i=-i

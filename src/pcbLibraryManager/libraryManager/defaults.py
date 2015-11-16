@@ -18,6 +18,8 @@ class defaults:
     courtSmall={'L':0.1, 'N':0.15, 'M':0.26}
     courtTht={'L':0.3, 'N':0.4, 'M':0.6}
     courtConn={'L':0.5, 'N':0.5, 'M':1.0}
+    viaDrill=0.3
+    viaDiam=0.65
     # symbol defaults
     symbolTextHeight = 60
     symbolSmallTextHeight = 40
@@ -32,3 +34,6 @@ class defaults:
     switchRefDes = "SW"
     conRefDes = "CON"
     resonatorRefDes="Q"
+    mechanicalRefDes="MECH"
+    mountingHoleRefDes="MH"
+    

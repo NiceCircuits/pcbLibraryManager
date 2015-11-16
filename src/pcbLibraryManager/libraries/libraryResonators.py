@@ -20,32 +20,43 @@ class libraryResonators(libraryClass):
     """
     def __init__(self):
         super().__init__("niceResonators")
+        self.parts.append(partResonator(2, "XT_2pin", ""))
+        self.parts.append(partResonator(3, "XT_3pin", ""))
         for footprint in ["3.7x3.1"]:
             for freq in ["8Mhz", "16MHz"]:
-                self.parts.append(partResonator3Pin("Ceramic_%s_%s" %(footprint, freq), footprint))
+                self.parts.append(partResonator(3, "Ceramic_%s_%s" %(footprint, freq), footprint))
 
-class partResonator3Pin(part):
+class partResonator(part):
     """3 Pin resonator (ceramic or quartz)
     """
-    def __init__(self, name, footprint):
+    def __init__(self, pins, name, footprint):
         super().__init__(name, defaults.resonatorRefDes)
-        self.symbols.append(symbolResonator3Pin())
-        for density in ["N", "L", "M"]:
-            self.footprints.append(footprintResonator3Pin(footprint, density))
+        self.symbols.append(symbolResonator(pins))
+        if footprint:
+            for density in ["N", "L", "M"]:
+                self.footprints.append(footprintResonator3Pin(footprint, density))
 
-class symbolResonator3Pin(symbol):
-    """3 Pin resonator (ceramic or quartz)
+class symbolResonator(symbol):
+    """2 or 3 Pin resonator (ceramic or quartz)
     """
-    def __init__(self, name="Resonator_3pin", refDes=defaults.resonatorRefDes, showPinNames=False,
-    showPinNumbers=False, pinNumbers=[1,2,3]):
+    def __init__(self, pins=2, name="", refDes=defaults.resonatorRefDes, showPinNames=False,
+    showPinNumbers=False, pinNumbers=[]):
+        if not name:
+            name = "Resonator_%dpin" % pins
+            if not pinNumbers:
+                if pins==3:
+                    pinNumbers=[1,2,3]
+                else:
+                    pinNumbers=[1,0,3]
         super().__init__(name, refDes, showPinNames, showPinNumbers)
         for i in [-1,1]:
-            self.pins.append(symbolPin(i+2, pinNumbers[i+1], [200*i,0],\
+            self.pins.append(symbolPin(pinNumbers[i+1], pinNumbers[i+1], [200*i,0],\
                 140, pinType.passive, rotation=180 if i>0 else 0))
             self.primitives.append(symbolLine(defaults.symbolThickLineWidth,\
                 i*60, 75, i*60, -75))
-        self.pins.append(symbolPin(2, pinNumbers[1], [0,-200],\
-            100, pinType.passive, rotation=90))
+        if pins==3:
+            self.pins.append(symbolPin(2, pinNumbers[1], [0,-200],\
+                100, pinType.passive, rotation=90))
         self.primitives.append(symbolRectangle(defaults.symbolLineWidth,\
             position=[0,0], dimensions=[70, 200]))
         self.nameObject.position=[0, 230]

@@ -23,7 +23,7 @@ class symbolIC(symbol):
         height = (max(len(pinsLeft), len(pinsRight))+1)*100
         offset = 50 if (height % 200) > 0 else 0
         if width % 200 >0:
-            width = width//200 + 200
+            width = (width//200+1) * 200
         self.log.debug("IC symbol body: pins: %d, %d; height: %d, offset: %d" %\
             (len(pinsLeft), len(pinsRight), height, offset))
         self.primitives.append(symbolRectangle(0, position=[0,offset],\

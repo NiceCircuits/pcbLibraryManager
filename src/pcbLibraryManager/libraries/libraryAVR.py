@@ -12,6 +12,7 @@ from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import *
 from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
+from libraries.libraryPinheaders import footprintPinheader
 
 class libraryAVR(libraryClass):
     """
@@ -20,6 +21,7 @@ class libraryAVR(libraryClass):
         super().__init__("niceAVR")
         self.parts.append(partAtmega48("ATmega48", "AU"))
         self.parts.append(partAtmega48("ATmega328", "AU"))
+        self.parts.append(partAvrProg())
         
 class partAtmega48(part):
     """
@@ -31,6 +33,16 @@ class partAtmega48(part):
         self.symbols.append(symbolAtmega48(name, version))
         for density in ["N", "L", "M"]:
             self.footprints.append(footprintQfp(32, 0.8, density=density))
+
+class partAvrProg(part):
+    """AVR programming connector part
+    """
+    def __init__(self, name="AVR_Prog"):
+        super().__init__(name, defaults.conRefDes)
+        self.symbols.append(symbolAvrProg())
+        for density in ["N", "L", "M"]:
+            self.footprints.append(footprintPinheader(2, 3, density))
+
 
 class symbolAtmega48(symbolIC):
     """
@@ -82,3 +94,19 @@ None,
 ['ADC7', 22, pinType.input]
         ]
         super().__init__(name, pinsLeft=pinsLeft, pinsRight=pinsRight, width=3000)
+
+class symbolAvrProg(symbolIC):
+    """AVR programming connector symbol symbol
+    """
+    def __init__(self, name="AVR_Prog", refDes=defaults.conRefDes, showPinNames=True, showPinNumbers=True):
+        pinsRight = [
+['VCC', 2, pinType.passive],
+['MOSI', 4, pinType.passive],
+['GND', 6, pinType.passive]
+        ]
+        pinsLeft = [
+['MISO', 1, pinType.passive],
+['SCK', 3, pinType.passive],
+['RST', 5, pinType.passive]
+        ]
+        super().__init__(name, pinsLeft=pinsLeft, pinsRight=pinsRight, width=800, refDes=refDes)

@@ -8,7 +8,7 @@ Created on Tue Jul 14 20:56:14 2015
 from libraries import libraryModules, librarySwitches,\
     libraryRLC, libraryAVR, libraryPinheaders, libraryMosfets, libraryPowerSupplies,\
     libraryTerminalBlocks, libraryResonators, libraryDiodes, libraryMechanical,\
-    libraryLogic, libraryCommunicationIC, libraryConnectorsOther
+    libraryLogic, libraryCommunicationIC, libraryConnectorsOther, librarySTM32
 from libraryManager import cadPackageKiCad
 import logging
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     path = r"D:\test\kicadLib"
     # generate libraries
     if True:
-        libs = [libraryConnectorsOther.libraryConnectorsOther()]
+        libs = [librarySTM32.librarySTM32()]
     else:
         libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(),\
             librarySwitches.librarySwitches(),\
@@ -34,6 +34,6 @@ if __name__ == "__main__":
             libraryModules.libraryModules(), libraryResonators.libraryResonators(),\
             libraryDiodes.libraryDiodes(), libraryMechanical.libraryMechanical(),\
             libraryLogic.libraryLogic(), libraryCommunicationIC.libraryCommunicationIC(),\
-            libraryConnectorsOther.libraryConnectorsOther()]
+            libraryConnectorsOther.libraryConnectorsOther(), librarySTM32.librarySTM32()]
     for lib in libs:
         CP.generateLibrary(lib, path)

@@ -15,7 +15,19 @@ class pinType:
     """
     """
     input, output, IO, tristate, passive, OC, NC, pwrIn, pwrOut=range(9)
-
+    fromStr={
+    ""        :passive,
+    "input"   :input,
+    "output"  :output,
+    "IO"      :IO,
+    "tristate":tristate,
+    "passive" :passive,
+    "OC"      :OC,
+    "NC"      :NC,
+    "pwrIn"   :pwrIn,
+    "pwrOut"  :pwrOut
+    }
+     
 class fillType:
     """
     """

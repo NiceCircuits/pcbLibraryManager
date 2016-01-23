@@ -104,7 +104,7 @@ class pcbSmtPad(pcbPrimitive):
 class pcbThtPad(pcbPrimitive):
     """
     """
-    def __init__(self, position, dimensions, drill, name, shape=padShape.round, rotation = 0.0):
+    def __init__(self, position, dimensions, drill, name, shape=padShape.roundRect, rotation = 0.0):
         """
         """
         super().__init__([], width=0, position=position, dimensions=dimensions,\

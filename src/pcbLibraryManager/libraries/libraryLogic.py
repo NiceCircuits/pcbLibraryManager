@@ -12,7 +12,7 @@ from libraryManager.defaults import *
 from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
 from footprints.footprintSmdDualRow import footprintSoic
-from footprints.footprintDip import footprintDip
+from footprints.footprintDil import footprintDip
 
 class libraryLogic(libraryClass):
     """

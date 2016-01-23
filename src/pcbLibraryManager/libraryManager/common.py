@@ -28,6 +28,9 @@ def scalePoints(points, scale):
         scale = [scale, scale]
     return [[x*scale[0], y*scale[1]] for x,y in points]
 
+def rotatePoint(point, rotation):
+    return rotatePoints([point], rotation)[0]
+    
 def rotatePoints(points, rotation):
     ret=[]
     for p in points:
@@ -46,8 +49,18 @@ def rotatePoints(points, rotation):
             ret.append([x,y])
     return ret
 
+def translatePoint(point, translation):
+    return translatePoints([point], translation)[0]
+
 def translatePoints(points, translation):
-    return [[x+translation[0], y+translation[1]] for x,y in points]
+    if len(points[0])==2:
+        return [[x+translation[0], y+translation[1]] for x,y in points]
+    elif len(points[0])==3:
+        if len(translation)==2:
+            translation.append(0)
+        return [[x+translation[0], y+translation[1], z+translation[2]] for x,y,z in points]
+    else:
+        raise ValueError("invalid points")
 
 def cos(x):
     return math.cos(math.radians(x))

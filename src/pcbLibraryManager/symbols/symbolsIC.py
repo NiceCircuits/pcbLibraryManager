@@ -8,6 +8,7 @@ Created on Sun Aug  2 19:02:52 2015
 from libraryManager.symbol import symbol
 from libraryManager.symbolPrimitive import *
 from libraryManager.defaults import defaults
+from libraryManager.common import *
 
 class symbolIC(symbol):
     """
@@ -40,3 +41,36 @@ class symbolIC(symbol):
                 y = y-100
         self.nameObject.position=[0, height/2 + self.nameObject.height + offset]
         self.valueObject.position=[0, -(height/2 + self.valueObject.height) + offset]
+
+class symbolICquad(symbol):
+    """
+    Quad IC symbol generator
+    Generate symbol with pins[] on each side
+    pins: list of 0..4 lists of ["pin name", "pin number", type]
+        top, right, bottom, left, clockwise
+    size: size of symbol rectangle (auto if 0)
+    """
+    def __init__(self, name, pins, size=0, refDes=defaults.icRefDes,\
+        showPinNames=True, showPinNumbers=True):
+        super().__init__(name, refDes, showPinNames, showPinNumbers)
+        # body
+        if size==0:
+            size = (len(pins[0])+5)*100
+        offset = 50 if (size % 200) > 0 else 0
+        self.log.debug("IC quad symbol body: pins: %d; size: %d, offset: %d" %\
+            (sum([len(p) for p in pins]), size, offset))
+        self.primitives.append(symbolRectangle(0, position=[offset,offset],\
+            dimensions=[size, size], filled=fillType.background))
+        # pins
+        pinLength = 200
+        for side in range(4):
+            pos = [-len(pins[0])*50+50, size/2+pinLength]
+            rot = -side*90
+            for p in pins[side]:
+                if p:
+                    self.pins.append(symbolPin(p[0], p[1], 
+                        translatePoints(rotatePoints([pos],rot),[offset,offset])[0],\
+                        pinLength, p[2], rotation=(rot-90)%360))
+                pos[0] = pos[0]+100
+#        self.nameObject.position=[0, height/2 + self.nameObject.height + offset]
+#        self.valueObject.position=[0, -(height/2 + self.valueObject.height) + offset]

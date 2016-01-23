@@ -134,7 +134,30 @@ class footprint:
             if n == "pcbThtPad" or n == "pcbSmtPad":
                 p.name=names[i]
                 i+=1
-
+    
+    def movePrimitives(self, translation, rotation=0):
+        for p in self.primitives:
+            n = p.__class__.__name__
+            if n in ["pcbThtPad", "pcbSmtPad", "pcbRectangle", "pcbText",\
+                "pcbCircle"]:
+                p.position=translatePoint(rotatePoint(p.position, rotation), translation)
+                p.rotation = p.rotation + rotation
+            elif n == "pcb3DBody":
+                p.position=translatePoint(rotatePoint(p.position, rotation), translation)
+                p.rotations[2] = p.rotations[2] + rotation
+            elif n == "pcbPolyline" or n=="pcbline":
+                p.points=translatePoints(rotatePoints(p.points,rotation),translation)
+            elif n=="pcbArc":
+                p.position=translatePoint(rotatePoint(p.position,rotation),translation)
+                p.angles=[a+rotation for a in p.angles]
+    
+    def get3DBody(self):
+        ret=[]
+        for p in self.primitives:
+            n = p.__class__.__name__
+            if n == "pcb3DBody":
+                ret.append(p)
+        return ret
         
 if __name__ == "__main__":
     pass

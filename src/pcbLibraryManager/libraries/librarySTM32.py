@@ -26,6 +26,10 @@ class librarySTM32(libraryClass):
 ["7","60",None,"1",None,"13",None,"32","64","48","19",None,None,"12",None,"31","63","47","18",],
 ["8","9","10","11","24","25","37","38","39","40","51","52","53","2","3","4",None,"5","6"]
         ]
-        footprints = [footprintQfp(32, 0.8, density=density) for density in ["N", "L", "M"]]
+        footprints = [footprintQfp(64, 0.5, density=density) for density in ["N", "L", "M"]]
         path=os.path.join(os.path.dirname(__file__),"STM32_LQFP64.ods")
-        self.parts.extend(icGenerator.generate(path,pinNames,footprints))
+        #generate symbols configured by pinNames
+        self.parts.extend(icGenerator.generate(path,pinNames,footprints,size=3000))
+        #generate quad pin-by-pin symbols
+        self.parts.extend(icGenerator.generate(path,pinNames=None,\
+            footprints=footprints,symbolType="quad",namePosfix="_q",size=3100))

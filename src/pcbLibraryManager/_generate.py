@@ -11,6 +11,22 @@ from libraries import libraryModules, librarySwitches,\
     libraryLogic, libraryCommunicationIC, libraryConnectorsOther, librarySTM32
 from libraryManager import cadPackageKiCad
 import logging
+from libraryManager.library import libraryClass
+from libraryManager.part import part
+from libraryManager.defaults import *
+from symbols.symbolsIC import symbolICquad
+from libraryManager.symbolPrimitive import pinType
+
+class _libraryTest(libraryClass):
+    def __init__(self):
+        super().__init__("_test_")
+        self.parts.append(_partTest())
+
+class _partTest(part):
+    def __init__(self):
+        super().__init__("_test_","TEST")
+        pins=[[["%d"%(i+j*7),"%d"%(i+j*4),pinType.IO] for i in range(7)] for j in range(4)]
+        self.symbols.append(symbolICquad("_test_",pins))
 
 if __name__ == "__main__":
     #enable debug logs
@@ -25,7 +41,7 @@ if __name__ == "__main__":
     path = r"D:\test\kicadLib"
     # generate libraries
     if True:
-        libs = [librarySTM32.librarySTM32()]
+        libs = [libraryModules.libraryModules()]
     else:
         libs = [libraryTerminalBlocks.libraryTerminalBlocks(),  libraryRLC.libraryRLC(),\
             librarySwitches.librarySwitches(),\
@@ -37,3 +53,4 @@ if __name__ == "__main__":
             libraryConnectorsOther.libraryConnectorsOther(), librarySTM32.librarySTM32()]
     for lib in libs:
         CP.generateLibrary(lib, path)
+        print(lib.name)

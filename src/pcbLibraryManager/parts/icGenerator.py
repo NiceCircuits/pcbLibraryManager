@@ -19,7 +19,7 @@ class icGenerator():
     """
     universal generator for IC symbols from xls files
     """
-    def generate(fileName, pinNames, footprints=[], namePosfix=""):
+    def generate(fileName, pinNames=[], footprints=[], namePosfix="", symbolType="dual",size=0):
         """
         generate one or many parts from pinout file
         fileName: name of file with pinouts
@@ -30,6 +30,21 @@ class icGenerator():
         """
         pinout=icGenerator.loadPinout(fileName)
         ret=[]
+        if not pinNames:
+            #auto generate
+            if symbolType=="quad":
+                nPins=len(pinout[0]["pins"])
+                nSide=int((nPins)/4)
+                #if additional pin above N*4 (thermal pad)
+                plus=((nPins%4)>0)*1
+                pinNames=np.array([[None]*(nSide+plus)]*4)
+                for side in range(4):
+                    for i in range(nSide):
+                        pinNames[side,i]=pinout[0]["pins"][i+side*nSide]
+                if plus:
+                    pinNames[3,nSide]=pinout[0]["pins"][nPins-1]
+            else:
+                raise ValueError("Auto pinout for %s symbol type not implemented yet!" % symbolType)
         #for each pinout variant
         for v in pinout:
             # generate symbol(s)
@@ -44,15 +59,21 @@ class icGenerator():
                     else:
                         pinCol.append(None)
                 pins.append(pinCol)
-            #for 1..2 pin columns - one symbol, for 2..3 - 2 etc.
-            nSymbols = int((len(pinNames)+1)/2)
-            for i in range(nSymbols):
-                if nSymbols>1:
-                    symPostfix = "_%d" % i
-                else:
-                    symPostfix = ""
-                symbols.append(symbolIC(v["name"]+symPostfix+namePosfix, pinsLeft=pins[i*2], pinsRight=pins[i*2+1],\
-                    width=3000, refDes=defaults.icRefDes,showPinNames=True, showPinNumbers=True))
+            if symbolType=="dual":
+                #for 1..2 pin columns - one symbol, for 2..3 - 2 etc.
+                nSymbols = int((len(pinNames)+1)/2)
+                for i in range(nSymbols):
+                    if nSymbols>1:
+                        symPostfix = "_%d" % i
+                    else:
+                        symPostfix = ""
+                    symbols.append(symbolIC(v["name"]+symPostfix+namePosfix, pinsLeft=pins[i*2], pinsRight=pins[i*2+1],\
+                        width=size, refDes=defaults.icRefDes,showPinNames=True, showPinNumbers=True))
+            elif symbolType=="quad":
+                symbols.append(symbolICquad(v["name"]+namePosfix,\
+                    pins=pins,size=size))
+            else:
+                raise ValueError("invalid symbolType: %s!" % symbolType)
             for p in v["partNames"]:
                 _part = part(p+namePosfix, defaults.icRefDes)
                 _part.symbols.extend(symbols)
@@ -103,7 +124,13 @@ class icGenerator():
         pins=[["1","2",None,"3","4"],["5","6","7","8"]]
         print(icGenerator.generate("pinoutTest.ods",pins,fp,""))
 
+    def _testGenerate2():
+        """
+        test for generate function
+        """
+        print(icGenerator.generate("pinoutTest.ods",symbolType="quad"))
+
 if __name__ == "__main__":
-    icGenerator._testGenerate()
+    icGenerator._testGenerate2()
     
     

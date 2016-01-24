@@ -10,6 +10,7 @@ from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import defaults
 from libraryManager.common import *
 from math import  ceil
+from libraryManager.common import *
 
 class footprint:
     """
@@ -86,13 +87,32 @@ class footprint:
         for x in dimensions:
             if x==0:
                 return
-        self.primitives.append(pcb3DBody(file, position, dimensions, [0,0,rotation]))
-        if draw:
-            self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
-                position=position[0:2], radius=dimensions[0]/2))
-        if silk:
-            self.primitives.append(pcbCircle(pcbLayer.topSilk, defaults.silkWidth,\
-                position=position[0:2], radius=dimensions[0]/2))
+        if not isArray(rotation):
+            rotation = [0,0,rotation]
+        self.primitives.append(pcb3DBody(file, position, dimensions, rotation))
+        orientations={0:{0:"V", 90:"R", 270:"L"},\
+            90:{0:"U"},270:{0:"D"}}
+        orientation = orientations[int(rotation[0])%360][int(rotation[1])%360]
+        if orientation == "V":
+            if draw:
+                self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
+                    position=position[0:2], radius=dimensions[0]/2))
+            if silk:
+                    self.primitives.append(pcbCircle(pcbLayer.topSilk, defaults.silkWidth,\
+                        position=position[0:2], radius=dimensions[0]/2))
+        else:
+            dims=[dimensions[0], dimensions[2]]
+            if orientation in ["L","R"]:
+                dims=[dims[1],dims[0]]
+            rot={"U":0,"L":90,"D":180,"R":270}
+            pos=rotatePoint([0,dimensions[2]/2], rot[orientation])
+            pos=translatePoint(position, pos)
+            if draw:
+                self.primitives.append(pcbRectangle(pcbLayer.topAssembly, defaults.documentationWidth,\
+                    position=pos, dimensions=dims))
+            if silk:
+                self.primitives.append(pcbRectangle(pcbLayer.topSilk, defaults.silkWidth,\
+                    position=pos, dimensions=dims))
 
     def addLead(self, position, dimensions, draw=True, silk=False, lead="gullwing",\
     rotation=0):
@@ -149,7 +169,7 @@ class footprint:
                 p.points=translatePoints(rotatePoints(p.points,rotation),translation)
             elif n=="pcbArc":
                 p.position=translatePoint(rotatePoint(p.position,rotation),translation)
-                p.angles=[a+rotation for a in p.angles]
+                p.angles=[(a+rotation)%360 for a in p.angles]
     
     def get3DBody(self):
         ret=[]

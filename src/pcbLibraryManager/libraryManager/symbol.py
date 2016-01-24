@@ -29,5 +29,17 @@ class symbol:
         self.primitives = []
         self.pins = []
 
+    def movePrimitives(self, translation, rotation=0):
+        for p in self.primitives+self.pins:
+            n = p.__class__.__name__
+            if n in ["symbolPin", "symbolRectangle", "symbolText", "symbolCircle"]:
+                p.position=translatePoint(rotatePoint(p.position, rotation), translation)
+                p.rotation = p.rotation + rotation
+            elif n == "symbolPolyline" or n=="symbolLine":
+                p.points=translatePoints(rotatePoints(p.points,rotation),translation)
+            elif n=="symbolArc":
+                p.position=translatePoint(rotatePoint(p.position,rotation),translation)
+                p.angles=[(a+rotation)%360 for a in p.angles]
+
 if __name__ == "__main__":
     pass

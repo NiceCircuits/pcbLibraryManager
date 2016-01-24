@@ -12,14 +12,15 @@ from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import *
 from libraryManager.symbol import symbol
 from libraryManager.symbolPrimitive import *
-
+from libraryManager.generateLibraries import generateLibraries
 
 class libraryRLC(libraryClass):
     """
     """
     def __init__(self):
         super().__init__("niceRLC")
-        self.parts.append(partR())
+        for v in ["H", "V"]:
+            self.parts.append(partR(variant=v))
         self.parts.append(partC())
         self.parts.append(partCPolar())
         self.parts.append(partResistorNetwork())
@@ -27,9 +28,13 @@ class libraryRLC(libraryClass):
 class partR(part):
     """Resistor part
     """
-    def __init__(self):
-        super().__init__("R", "R")
-        self.symbols.append(symbolR("R"))
+    def __init__(self, variant="H"):
+        if variant=="H":
+            name="R"
+        else:
+            name="R_%s" % variant
+        super().__init__(name, "R")
+        self.symbols.append(symbolR(name,variant=variant))
         for size in ["0603", "0402", "0805", "1206", "1210", "2010", "2512"]:
             for density in ["N", "L", "M"]:
                 self.footprints.append(footprintSmdChip(size + "_" + density, \
@@ -61,7 +66,9 @@ class partCPolar(part):
             [16,[20,25,30,31.5,35.5,40]], [18,[20,25,31.5,35.5,40]], [20,[40]], [22,[40,50]],\
             [25,[50]]]:
                 for H in heights:
-                    self.footprints.append(footprintCapElecTht(D, H, density))
+                    for variant in ["V","HR","HL"]:
+                        self.footprints.append(footprintCapElecTht(D, H, density,\
+                            variant=variant))
 
 class partResistorNetwork(part):
     """
@@ -78,17 +85,28 @@ class partResistorNetwork(part):
                     size = size, density = density, alternativeLibName = "niceRLC"))
 
 class symbolR(symbol):
-    """Resistor symbol
     """
-    def __init__(self, name, refDes="R", showPinNames=False, showPinNumbers=False, pinNumbers=[1,2]):
+    Resistor symbol
+    variant = H(orizontal), V(ertical)
+    """
+    def __init__(self, name, refDes="R", variant="H", showPinNames=False, showPinNumbers=False, pinNumbers=[1,2]):
         super().__init__(name, refDes, showPinNames, showPinNumbers)
         for i in range(2):
             self.pins.append(symbolPin(i+1, pinNumbers[i], [200 if i else -200,0],\
                 100, pinType.passive, rotation=180 if i else 0))
         self.primitives.append(symbolRectangle(defaults.symbolLineWidth,\
             position=[0,0], dimensions=[200, 80]))
-        self.nameObject.position=[0, 80]
-        self.valueObject.position=[0, 0]
+        if variant=="H":
+            self.nameObject.position=[0, 80]
+            self.valueObject.position=[0, 0]
+        elif variant=="V":
+            self.movePrimitives([0,0],90)
+            self.nameObject.position=[60, 40]
+            self.nameObject.align=textAlign.centerLeft
+            self.valueObject.position=[60, -40]
+            self.valueObject.align=textAlign.centerLeft
+        else:
+            raise ValueError("Invalid variant %s" % variant)    
         self.valueObject.height = defaults.symbolSmallTextHeight
 
 class symbolC(symbol):
@@ -113,7 +131,7 @@ class symbolC(symbol):
 class footprintSmdChip(footprint):
     """Chip component (0603, 0805, SMA, SMB etc.)
     """
-    def __init__(self, name, size, density, alternativeLibName):
+    def __init__(self, name, size, density, alternativeLibName="niceRLC"):
         """
         size: "0402", "0603", "0805", "1206", "1210", "2010", "2512",
             "SMA", "SMB", "SMC", 'Tantal_A', 'Tantal_B', 'Tantal_C', 'Tantal_D',
@@ -310,8 +328,9 @@ class footprintResistorNetwork(footprint):
 class footprintCapElecTht(footprint):
     """Electrolytic THT capacitor
     :param D: body diameter: 4, 5, 6.3, 8, 10, 12.5, 16, 18, 20, 22, 25
+    :param variant: "V" (horizontal), "HL","HR" (rorizontal left/right)
     """
-    def __init__(self, D, H, density="N", pitch=0, name="", dPin=0):
+    def __init__(self, D, H, density="N", pitch=0, variant="V", name="", dPin=0):
         pitches={4:1.5, 5:2, 6.3:2.5, 8:3.5, 10:5, 12.5:5, 16:7.5, 18:7.5, 20:10, 22:10, 25:12.5}
         diameters={4:0.45, 5:0.5, 6.3:0.5, 8:0.6, 10:0.6, 12.5:0.8, 16:0.8, 18:0.8, 20:1, 22:1, 25:1}
         ring={"L":0.3, "N":0.4, "M":0.7}
@@ -323,27 +342,74 @@ class footprintCapElecTht(footprint):
         if not dPin:
             dPin = diameters[D]
         if not name:
-            name="Cpol_%1.1f_%1.1f%s_%s" % (D, H, pitchText, density)
+            name="Cpol_%1.1f_%1.1f%s_%s_%s" % (D, H, pitchText, variant, density)
         super().__init__(name, "niceRLC", originMarkSize=defaults.originMarkSize)
         #tolerance
         D+=0.5
         H+=(1.5 if H<=20 else 2)
         # pins
+        dPadY= dPin+2*ring[density]
+        dPadX=min(dPadY, pitch-mil(10))
+        if variant != "V":
+            zOffset=D/2
+            bodyOffset=dPadY/2+0.3
+            if variant=="HR":
+                side=1
+            elif variant=="HL":
+                side=-1
+            else:
+                raise ValueError("invalid variant %s" % variant)
+            rotation=[90*side,0,0]
+        else:
+            side=0
+            zOffset=0
+            bodyOffset=0
+            rotation=[0,0,0]
         for i in [-1, 1]:
-            dPadY= dPin+2*ring[density]
-            dPadX=min(dPadY, pitch-mil(10))
+            #pad
             self.primitives.append(pcbThtPad([pitch/2*i, 0], [dPadX, dPadY],\
                 dPin+0.2, 1 if i<0 else 2, padShape.rect if i<0 else padShape.roundRect))
-            self.addCylinder3Dbody([pitch/2*i, 0, -2.5], [dPin, dPin, 2.5],\
+            #pin
+            self.addCylinder3Dbody([pitch/2*i, 0, -2.5], [dPin, dPin, 2.5+zOffset],\
                 file="cylinder_metal")
+            if side!=0:
+                #horizontal pin part
+                self.addCylinder3Dbody([pitch/2*i, -dPin/2*side, zOffset],\
+                    [dPin, dPin, dPin/2+bodyOffset], file="cylinder_metal", rotation=rotation)
         # body
-        self.addCylinder3Dbody([0,0], [D,D,H], silk=True, file="cylinder_blue")
-        self.primitives.append(pcbCircle(pcbLayer.topCourtyard, defaults.documentationWidth,\
-            [0,0],D/2+defaults.courtTht[density]))
-        for i in [-1, 1, 2, 3]:
-            self.primitives.append(pcbArc(pcbLayer.topSilk, defaults.silkWidth,\
-                [0,0], D/2-i*defaults.silkWidth*0.9, [-80,80]))
+        self.addCylinder3Dbody([0,bodyOffset*side,zOffset], [D,D,H], silk=True, \
+            file="cylinder_blue", rotation=rotation)
+        if side==0:
+            self.primitives.append(pcbCircle(pcbLayer.topCourtyard, defaults.documentationWidth,\
+                [0,0],D/2+defaults.courtTht[density]))
+            # minus terminal mark
+            for i in range(-2,3):
+                self.primitives.append(pcbArc(pcbLayer.topSilk, defaults.silkWidth,\
+                    [0,0], D/2-i*defaults.silkWidth*0.9, [-80,80]))
+            # "+" sign
+            self.addPlus(-D/2-1.2, 1, 2)
+        else:
+            y=(H/2)*side
+            hC=H+2*bodyOffset
+            self.addCourtyardAndSilk([D,hC], defaults.court[density], silk=False,\
+                offset=[0,y])
+            # minus terminal mark
+            for i in range(1,8):
+                x=D/2-defaults.silkWidth*i*0.9
+                self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
+                    x, bodyOffset*side, x, (bodyOffset+H)*side))
+            # "+" sign
+            self.addPlus(-pitch/2-1.5-dPadX/2, (bodyOffset-1.5)*side, 2)
+            self.nameObject.position=[0,(bodyOffset+2)*side+1]
+            self.valueObject.position=[0,(bodyOffset+2)*side]
+
+    def addPlus(self,x,y,l):
         self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
-            -D/2-2.2, 1, -D/2-0.2, 1))
+            x-l/2, y, x+l/2, y))
         self.primitives.append(pcbLine(pcbLayer.topSilk, defaults.silkWidth,\
-            -D/2-1.2, 2, -D/2-1.2, 0))
+            x, y-l/2, x, y+l/2))
+        
+
+if __name__ == "__main__":
+    # generate libraries
+    generateLibraries([libraryRLC()])

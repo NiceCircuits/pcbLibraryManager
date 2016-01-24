@@ -95,6 +95,11 @@ def mm2inch(x):
 def isIterable(x):
     return hasattr(x, '__iter__')
 
+def isArray(x):
+    return not hasattr(x, "strip") and \
+        (hasattr(x, "__getitem__") or hasattr(x, "__iter__"))
+
+
 class textAlign:
     """
     """

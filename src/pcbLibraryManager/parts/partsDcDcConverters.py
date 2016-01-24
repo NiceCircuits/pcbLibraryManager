@@ -51,9 +51,11 @@ class footprintDcDcDsun3A(footprint):
                 self.primitives.extend(donor.primitives)
         # body
         self.addSimple3Dbody([0,0,h], [mil(870),mil(660),1], file="cube_green")
-        self.addSimple3Dbody([mil(140),mil(60),h+1], [7,7,2.8])
-        self.addSimple3Dbody([mil(150),mil(-250),h+1], [3.5, 3, 1.9])
-        self.addCylinder3Dbody([mil(150),mil(-250),h+2.9], [2.5, 2.5, 0.1], file="cylinder_metal")
+        self.addCourtyardAndSilk([mil(870),mil(660)], defaults.court[density])
+        self.addSimple3Dbody([mil(140),mil(60),h+1], [7,7,2.8], draw=False)
+        self.addSimple3Dbody([mil(150),mil(-250),h+1], [3.5, 3, 1.9], draw=False)
+        self.addCylinder3Dbody([mil(150),mil(-250),h+2.9], [2.5, 2.5, 0.1],\
+            file="cylinder_metal", draw=False)
         # transplant some parts - for fun and profit
         for x in [-1,1]:
             donor=footprintSmdChip("","1206","N","")
@@ -77,3 +79,4 @@ class footprintDcDcDsun3A(footprint):
         donor=footprintSmdChip("","SMA","N","")
         donor.movePrimitives([mil(-155),mil(220),h+1],180)
         self.primitives.extend(donor.get3DBody())
+        

@@ -13,6 +13,7 @@ from libraryManager.common import *
 from symbols.symbolsConnectors import symbolConnector
 from footprints.footprintConnectors import footprintConnectorTht
 from math import sqrt
+from libraryManager.generateLibraries import generateLibraries
 
 class libraryTerminalBlocks(libraryClass):
     """
@@ -96,6 +97,7 @@ class footprintEDG(footprintConnectorTht):
         plugHeight={5.08:15.5}
         plugXsize={5.08:10.3}
         pinDimensions={5.08:[1,1,4]}
+        lockSizes={5.08:[5,4,2.5]}
         shape={"L":padShape.round, "N":padShape.roundRect, "M":padShape.round}
         if not name:
             name = "EDG-%1.2fmm-%d_%s" % (pitch, rows, density)
@@ -108,6 +110,13 @@ class footprintEDG(footprintConnectorTht):
         # drawing
         x=-bodyXSize[pitch]/2+bodyXOffset[pitch]-plugXsize[pitch]/2
         self.addSimple3Dbody([x,0], [plugXsize[pitch], pitch*rows, plugHeight[pitch]], file="cube_green")
+        if rows>2:
+            locks=[-1,1]
+        else:
+            locks=[0]
+        for y in locks:
+            self.addSimple3Dbody([bodyXOffset[pitch]-bodyXSize[pitch]/2+lockSizes[pitch][0]/2,\
+                (rows-2)/2*pitch*y,bodyHeight[pitch]], lockSizes[pitch], file="cube_green")
         for i in range(rows):
             y=(rows/2-1/2-i)*pitch
             # front size markers
@@ -119,3 +128,6 @@ class footprintEDG(footprintConnectorTht):
             k=pitch*0.35*sqrt(2)/2
             self.primitives.append(pcbLine(pcbLayer.topAssembly,defaults.documentationWidth,\
                 x-k, y-k, x+k, y+k))
+
+if __name__ == "__main__":
+    generateLibraries([libraryTerminalBlocks()])

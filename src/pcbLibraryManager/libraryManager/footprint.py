@@ -156,18 +156,67 @@ class footprint:
                 i+=1
     
     def movePrimitives(self, translation, rotation=0):
+        """
+        move and rotate primitives. don't flip to other side of a board
+        """
+        if isArray(rotation):
+            if (rotation[0]%360)==180:
+                flipX=True
+            elif (rotation[0]%360)==0:
+                flipX=False
+            else:
+                raise ValueError("unsupported rotation %s" % (rotation,))
+            if (rotation[1]%360)==180:
+                flipY=True
+            elif (rotation[1]%360)==0:
+                flipY=False
+            else:
+                raise ValueError("unsupported rotation %s" % (rotation,))
+            rotations3d=[x for x in rotation]
+            rotation=rotation[2]
+        else:
+            flipX=False
+            flipY=False
+            rotations3d=False
         for p in self.primitives:
             n = p.__class__.__name__
-            if n in ["pcbThtPad", "pcbSmtPad", "pcbRectangle", "pcbText",\
-                "pcbCircle"]:
+            if n in ["pcbThtPad", "pcbSmtPad", "pcbText","pcbCircle"]:
+                if flipX:
+                    p.position=mirrorPoint(p.position,"X")
+                if flipY:
+                    p.position=mirrorPoint(p.position,"Y")
                 p.position=translatePoint(rotatePoint(p.position, rotation), translation)
                 p.rotation = p.rotation + rotation
+            elif n== "pcbRectangle":
+                if flipX:
+                    p.position=mirrorPoint(p.position,"X")
+                if flipY:
+                    p.position=mirrorPoint(p.position,"Y")
+                p.position=translatePoint(rotatePoint(p.position, rotation), translation)
+                if (rotation%180)==90:
+                    p.dimensions=p.dimensions[::-1] # reverse list
+                elif (rotation%180)==0:
+                    pass
+                else:
+                    raise ValueError("unsupported rotation %f" % rotation)
             elif n == "pcb3DBody":
                 p.position=translatePoint(rotatePoint(p.position, rotation), translation)
-                p.rotations[2] = p.rotations[2] + rotation
+                if rotations3d:
+                    for i in range(3):
+                        p.rotations[i]=(p.rotations[i]+rotations3d[i]%360)
+                else:
+                    p.rotations[2] = p.rotations[2] + rotation
             elif n == "pcbPolyline" or n=="pcbline":
+                if flipX:
+                    p.points=mirrorPoints(p.points,"X")
+                if flipY:
+                    p.points=mirrorPoints(p.points,"Y")
                 p.points=translatePoints(rotatePoints(p.points,rotation),translation)
             elif n=="pcbArc":
+                if flipX:
+                    p.position=mirrorPoint(p.position,"X")
+                if flipY:
+                    p.position=mirrorPoint(p.position,"Y")
                 p.position=translatePoint(rotatePoint(p.position,rotation),translation)
                 p.angles=[(a+rotation)%360 for a in p.angles]
     

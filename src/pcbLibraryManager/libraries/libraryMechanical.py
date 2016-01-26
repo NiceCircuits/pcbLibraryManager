@@ -14,6 +14,7 @@ from libraryManager.symbolPrimitive import *
 from libraryManager.symbol import symbol
 from libraryManager.footprint import footprint
 from math import sqrt
+from libraryManager.generateLibraries import generateLibraries
 
 class libraryMechanical(libraryClass):
     """
@@ -74,6 +75,7 @@ class partDummy(part):
             name = "dummy_mech"
         super().__init__(name, refDes)
         self.symbols.append(symbolMechanical(name, False, refDes))
+        self.footprints.append(footprintDummy())
 
 class partNut(part):
     """Nut part generator
@@ -241,3 +243,15 @@ class footprintSpacer(footprint):
             self.addCylinder3Dbody([0,0,-lengthExt], [size, size, lengthExt],\
                 draw=False, file=cylinderBody)
 
+class footprintDummy(footprint):
+    """
+    dummy footprint for mechanical only parts
+    """
+    def __init__(self, name="dummy", alternativeLibName="niceMechanical"):
+        super().__init__(name, alternativeLibName)
+        self.primitives.append(pcbRectangle(pcbLayer.topAssembly,\
+            defaults.documentationWidth,position=[0,0], dimensions=[10,5]))
+
+if __name__ == "__main__":
+    # generate libraries
+    generateLibraries([libraryMechanical()])

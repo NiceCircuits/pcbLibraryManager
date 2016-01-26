@@ -411,5 +411,4 @@ class footprintCapElecTht(footprint):
         
 
 if __name__ == "__main__":
-    # generate libraries
     generateLibraries([libraryRLC()])

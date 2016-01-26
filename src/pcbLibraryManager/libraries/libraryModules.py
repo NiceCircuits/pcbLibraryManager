@@ -6,7 +6,8 @@ Created on Tue Jul 14 20:51:04 2015
 """
 
 from libraryManager.library import libraryClass
-from parts import partsEsp8266, partsDcDcConverters
+from parts import partsEsp8266, partsDcDcConverters, partsDisplays
+from libraryManager.generateLibraries import generateLibraries
 
 class libraryModules(libraryClass):
     """
@@ -16,3 +17,8 @@ class libraryModules(libraryClass):
         self.parts.append(partsEsp8266.partEsp07())
         self.parts.append(partsEsp8266.partEsp01())
         self.parts.append(partsDcDcConverters.partDcDcDsun3A())
+        for mnt in [False, True]:
+            self.parts.append(partsDisplays.partOled128x64(mnt))
+
+if __name__ == "__main__":
+    generateLibraries([libraryModules()])

@@ -16,6 +16,20 @@ class pcbLayer:
         topRestrict, bottomRestrict, thtRestrict, thtHoles, topAssembly,\
         bottomAssembly, topDocumentation, bottomDocumentation, topCourtyard,\
         bottomCourtyard= range(1, 30)
+    
+    def flip(layer):
+        if layer in [topAssembly, topCopper, topCourtyard, topDocumentation,\
+        topGlue, topKeepout, topMask, topNames, topPaste, topRestrict, topSilk,\
+        topValues]:
+            return layer+1
+        elif layer in [bottomAssembly, bottomCopper, bottomCourtyard, bottomDocumentation,\
+        bottomGlue, bottomKeepout, bottomMask, bottomNames, bottomPaste, bottomRestrict, bottomSilk,\
+        bottomValues]:
+            return layer-1
+        elif layer in [thtPads, thtVias, edges, thtRestrict, thtHoles]:
+            return layer
+        else:
+            raise ValueError("unsupproted layer %s" % layer) 
 
 class padShape:
     """

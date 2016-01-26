@@ -34,23 +34,29 @@ def rotatePoint(point, rotation):
 def rotatePoints(points, rotation):
     ret=[]
     for p in points:
-        if len(p)==3:
-            (x,y,z)=p
-            p3d=True
+        if p:
+            if len(p)==3:
+                (x,y,z)=p
+                p3d=True
+            else:
+                x,y=p
+                p3d=False
+            rho, phi = cart2pol(x, y)
+            phi = phi + rotation
+            x, y = pol2cart(rho, phi)
+            if p3d:
+                ret.append([x,y,z])
+            else:
+                ret.append([x,y])
         else:
-            x,y=p
-            p3d=False
-        rho, phi = cart2pol(x, y)
-        phi = phi + rotation
-        x, y = pol2cart(rho, phi)
-        if p3d:
-            ret.append([x,y,z])
-        else:
-            ret.append([x,y])
+            ret.append(p)
     return ret
 
 def translatePoint(point, translation):
-    return translatePoints([point], translation)[0]
+    if point:
+        return translatePoints([point], translation)[0]
+    else:
+        return point
 
 def translatePoints(points, translation):
     if len(points[0])==2:
@@ -61,6 +67,17 @@ def translatePoints(points, translation):
         return [[x+translation[0], y+translation[1], z+translation[2]] for x,y,z in points]
     else:
         raise ValueError("invalid points")
+
+def mirrorPoint(point, axis):
+    if axis=="X":
+        point[0]=-point[0]
+    elif axis=="Y":
+        point[1]=-point[1]
+    else:
+        raise ValueError("unsupported mirror axis %s" % axis)
+
+def mirrorPoints(points, axis):
+    return [mirrorPoint(p, axis) for p in points]
 
 def cos(x):
     return math.cos(math.radians(x))

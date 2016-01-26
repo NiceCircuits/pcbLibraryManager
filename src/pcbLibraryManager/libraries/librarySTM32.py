@@ -14,6 +14,7 @@ from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
 from parts.icGenerator import icGenerator
 import os.path
+from libraryManager.generateLibraries import generateLibraries
 
 class librarySTM32(libraryClass):
     """
@@ -33,3 +34,6 @@ class librarySTM32(libraryClass):
         #generate quad pin-by-pin symbols
         self.parts.extend(icGenerator.generate(path,pinNames=None,\
             footprints=footprints,symbolType="quad",namePosfix="_q",size=3100))
+
+if __name__ == "__main__":
+    generateLibraries([librarySTM32()])

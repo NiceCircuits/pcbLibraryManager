@@ -13,6 +13,7 @@ from libraryManager.common import *
 from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
 from footprints.footprintConnectors import footprintConnectorTht
+from libraryManager.generateLibraries import generateLibraries
 
 class libraryPinheaders(libraryClass):
     """
@@ -80,4 +81,7 @@ class footprintPinheader(footprintConnectorTht):
         super().__init__(cols, rows, mil(100), dim[density], shape[density], 1.0,\
             name=name, alternativeLibName=alternativeLibName, court=defaults.courtConn[density],\
             bodyHeight=bodyHeight, pinDimensions=[0.64, 0.64, pinLength], pinZOffset=-3,\
-            angled=angled, angledOffset=-1.4)
+            angled=angled, angledOffset=-1.4,gender=gender)
+
+if __name__ == "__main__":
+    generateLibraries([libraryPinheaders()])

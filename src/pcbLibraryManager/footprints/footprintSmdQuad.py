@@ -33,9 +33,15 @@ class footprintSmdQuad(footprint):
                         leadDimensions, rotation=side*90+180, lead="gullwing")
         # body
         self.addSimple3Dbody([0,0], bodyDimensions)
+        #first pad marker
+        pos=rotatePoint(scalePoint(bodyDimensions[0:2], 0.4),90)+[bodyDimensions[2]-0.05]
         radius = min(bodyDimensions[0]*0.05, bodyDimensions[1]*0.05, 0.5)
-        self.primitives.append(pcbCircle(pcbLayer.topAssembly, defaults.documentationWidth,\
-            rotatePoints(scalePoints([bodyDimensions[0:2]], 0.4),90)[0], radius))
+        self.addCylinder3Dbody(pos,[radius,radius,0.1],draw=True, file="cylinder_metal")
+        # first pad marker - silk
+        pos = [-padSpan[0]/2,padSpan[1]/2]
+        radius=padDimensions[0]/2
+        self.primitives.append(pcbCircle(pcbLayer.topSilk,defaults.silkWidth,\
+            pos,radius))
         # courtyard
         self.addCourtyardAndSilk([s+max(padDimensions) for s in padSpan], court, silk=False)
         # texts

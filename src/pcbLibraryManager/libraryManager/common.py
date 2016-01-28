@@ -23,6 +23,9 @@ def rectangleCorners(position, dimensions):
 def polylinePointsToLines(points):
     return [[points[i], points[i+1]] for i in range(len(points)-1)]
 
+def scalePoint(point, scale):
+    return scalePoints([point],scale)[0]    
+    
 def scalePoints(points, scale):
     if not type(scale) is list:
         scale = [scale, scale]

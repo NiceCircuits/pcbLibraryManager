@@ -24,7 +24,7 @@ class symbol:
         self.nameObject = symbolText(refDes,\
             [0, defaults.symbolTextHeight * 2], defaults.symbolTextHeight, align = textAlign.center)
         self.valueObject = symbolText(name,\
-            [0, 0], defaults.symbolTextHeight, align = textAlign.center)
+            [0, 0], defaults.symbolSmallTextHeight, align = textAlign.center)
         # initialize empty list for storing primitives and pins
         self.primitives = []
         self.pins = []

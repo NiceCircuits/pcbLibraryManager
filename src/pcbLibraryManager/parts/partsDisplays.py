@@ -45,9 +45,9 @@ class symbolOled128x64(symbolIC):
             name="Oled128x64%s" %(mntString)
         pinsLeft=[
 ['VCC', 2, pinType.pwrIn],
-['SDA', 7, pinType.IO],
-['SCL', 6, pinType.input],
-['GND', 5, pinType.pwrIn],
+['SDA', 4, pinType.IO],
+['SCL', 3, pinType.input],
+['GND', 1, pinType.pwrIn],
 None
         ]
         if mount:

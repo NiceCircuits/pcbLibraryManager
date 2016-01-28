@@ -23,7 +23,8 @@ class libraryRLC(libraryClass):
             self.parts.append(partR(variant=v))
         self.parts.append(partC())
         self.parts.append(partCPolar())
-        self.parts.append(partResistorNetwork())
+        for v in ["H", "V"]:
+            self.parts.append(partResistorNetwork(variant=v))
 
 class partR(part):
     """Resistor part
@@ -73,12 +74,16 @@ class partCPolar(part):
 class partResistorNetwork(part):
     """
     """
-    def __init__(self):
-        name = "R_Network_4"
+    def __init__(self,variant="H"):
+        if variant=="H":
+            name = "R_Network_4"
+        else:
+            name = "R_Network_4%s" % variant
         refDes = "RN"
         super().__init__(name, refDes)
         for i in range(4):
-            self.symbols.append(symbolR(name, refDes, showPinNumbers=True, pinNumbers=[i+1, 8-i]))
+            self.symbols.append(symbolR(name, refDes, showPinNumbers=True, pinNumbers=[i+1, 8-i],\
+                variant=variant))
         for size in ["0603", "0402"]:
             for density in ["N", "L", "M"]:
                 self.footprints.append(footprintResistorNetwork('4x' + size + "_" + density, \

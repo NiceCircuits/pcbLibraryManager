@@ -123,7 +123,8 @@ class KiCad(cadPackage):
             print(r"P %d %d 1 %d %s%s" %(len(primitive.points), gateNumber, round(primitive.width),\
                 pointsStr, self.symbolFillType[primitive.filled]), file=file)
         elif n == "symbolRectangle":
-            c = rotatePoints(rectangleCorners(p.position, p.dimensions),p.rotation)
+            c = rotatePoints(rectangleCorners([0,0], p.dimensions),p.rotation)
+            c=translatePoints(c,p.position)
             print(r"S %d %d %d %d %d 1 %d %s"%(round(c[0][0]*self.scale), round(c[0][1]*self.scale),\
                 round(c[1][0]*self.scale), round(c[1][1]*self.scale), gateNumber, round(p.width*self.scale),\
                 self.symbolFillType[p.filled]), file=file)

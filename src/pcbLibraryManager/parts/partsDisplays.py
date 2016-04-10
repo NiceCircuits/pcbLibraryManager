@@ -85,7 +85,7 @@ class footprintOled128x64(footprintPinheader):
                 self.primitives.append(pcbThtPad([23.3/2*x,-23.7/2], [5,5], 2.5, "0"))
         # transplant some parts - for fun and profit
         for y in [-13,-11,-7,-5,-1,1,3,5,7,9,11,13]:
-            donor=footprintSmdChip("","0603","N","")
+            donor=footprintSmdChip("0603","N","")
             donor.movePrimitives([0.87*y,-0.1, h],[0,180,90])
             self.primitives.extend(donor.get3DBody())
         

@@ -35,11 +35,12 @@ class partR(part):
         else:
             name="R_%s" % variant
         super().__init__(name, "R")
-        self.symbols.append(symbolR(name,variant=variant))
+        self.symbols.append(symbolR(name,variant=variant, short=True))
         for size in ["0603", "0402", "0805", "1206", "1210", "2010", "2512"]:
             for density in ["N", "L", "M"]:
-                self.footprints.append(footprintSmdChip(size + "_" + density, \
-                    size = size, density = density, alternativeLibName = "niceRLC"))
+                self.footprints.append(footprintSmdChip(\
+                    size = size, density = density, alternativeLibName = "niceRLC",\
+                    body="R"))
 
 class partC(part):
     """Capacitor part
@@ -49,7 +50,7 @@ class partC(part):
         self.symbols.append(symbolC("C"))
         for size in ["0603", "0402", "0805", "1206", "1210", "2010", "2512"]:
             for density in ["N", "L", "M"]:
-                self.footprints.append(footprintSmdChip(size + "_" + density, \
+                self.footprints.append(footprintSmdChip(\
                     size = size, density = density, alternativeLibName = "niceRLC"))
 
 class partCPolar(part):
@@ -60,7 +61,7 @@ class partCPolar(part):
         self.symbols.append(symbolC("Cpol", polar=True))
         for density in ["N", "L", "M"]:
             for size in ['Tantal_A', 'Tantal_B', 'Tantal_C', 'Tantal_D', 'Tantal_E', 'Tantal_X']:
-                self.footprints.append(footprintSmdChip(size + "_" + density,\
+                self.footprints.append(footprintSmdChip(\
                     size, density, alternativeLibName = "niceRLC"))
             for [D, heights] in [[4,[5,7]],[5,[5,7,11,12,15]], [6.3,[5,7,11,12]],\
             [8,[7,11.5,12,15,20]], [10,[12.5,16,20,25,31.5,35,40]], [12.5,[20,25,30,31.5,35,40,45,50]],\
@@ -94,11 +95,16 @@ class symbolR(symbol):
     Resistor symbol
     variant = H(orizontal), V(ertical)
     """
-    def __init__(self, name, refDes="R", variant="H", showPinNames=False, showPinNumbers=False, pinNumbers=[1,2]):
+    def __init__(self, name, refDes="R", variant="H", showPinNames=False,\
+    showPinNumbers=False, pinNumbers=[1,2], short=False):
         super().__init__(name, refDes, showPinNames, showPinNumbers)
+        if short:
+            L=100
+        else:
+            L=200
         for i in range(2):
-            self.pins.append(symbolPin(i+1, pinNumbers[i], [200 if i else -200,0],\
-                100, pinType.passive, rotation=180 if i else 0))
+            self.pins.append(symbolPin(i+1, pinNumbers[i], [L if i else -L,0],\
+                L-100, pinType.passive, rotation=180 if i else 0))
         self.primitives.append(symbolRectangle(defaults.symbolLineWidth,\
             position=[0,0], dimensions=[200, 80]))
         if variant=="H":
@@ -136,13 +142,20 @@ class symbolC(symbol):
 class footprintSmdChip(footprint):
     """Chip component (0603, 0805, SMA, SMB etc.)
     """
-    def __init__(self, name, size, density, alternativeLibName="niceRLC"):
+    def __init__(self, size, density, alternativeLibName="niceRLC", body="C"):
         """
         size: "0402", "0603", "0805", "1206", "1210", "2010", "2512",
             "SMA", "SMB", "SMC", 'Tantal_A', 'Tantal_B', 'Tantal_C', 'Tantal_D',
             'Tantal_E', 'Tantal_X'
         density: "L" - least, "N" - nominal, "M" - most
         """
+        if body == "R":
+            bodyStyle="cube"
+            name=size+"_R_"+density
+            size + "_" + density
+        else:
+            name=size+"_"+density
+            bodyStyle="cube_orange"
         # TODO: 0603 etc. in R, L, and D versions
         chipSize = {'0402':[1.1, 0.6, 0.6],
             '0603':[1.75, 0.95, 0.85],
@@ -227,7 +240,6 @@ class footprintSmdChip(footprint):
         originMarkSize = min(defaults.originMarkSize, chipSize[size][1]*0.3)
         super().__init__(name, alternativeLibName, originMarkSize=originMarkSize)
         polar=False
-        bodyStyle="cube_orange"
         if size in ["SMA", "SMB", "SMC"]:
             polar=True
             bodyStyle="cube"
@@ -326,8 +338,8 @@ class footprintResistorNetwork(footprint):
             padSize1[size][density][0], chipSize[size][0]), max(padSpan[size][density]+\
             padSize1[size][density][1], chipSize[size][1])], court[size][density])
         # name, value
-        y = self.valueObject.height + dim2[1]/2
-        self.valueObject.position = [0, -y]
+        y = self.valueObject.height *3/4 + dim2[1]/2
+        self.valueObject.position = [0, 0]
         self.nameObject.position = [0, y]
             
 class footprintCapElecTht(footprint):

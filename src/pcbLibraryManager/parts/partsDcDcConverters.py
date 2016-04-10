@@ -58,25 +58,25 @@ class footprintDcDcDsun3A(footprint):
             file="cylinder_metal", draw=False)
         # transplant some parts - for fun and profit
         for x in [-1,1]:
-            donor=footprintSmdChip("","1206","N","")
+            donor=footprintSmdChip("1206","N","")
             donor.movePrimitives([mil(365)*x,0,h+1], 90)
             self.primitives.extend(donor.get3DBody())
         for y in range(4):
-            donor=footprintSmdChip("","0603","N","")
+            donor=footprintSmdChip("0603","N","")
             donor.movePrimitives([mil(-275), mil(-235)+mil(115)*y, h+1], 90)
             self.primitives.extend(donor.get3DBody())
         for x in range(2):
-            donor=footprintSmdChip("","0603","N","")
+            donor=footprintSmdChip("0603","N","")
             donor.movePrimitives([mil(60)+mil(150)*x, mil(-140), h+1])
             self.primitives.extend(donor.get3DBody())
             for y in range(2):
-                donor=footprintSmdChip("","0603","N","")
+                donor=footprintSmdChip("0603","N","")
                 donor.movePrimitives([mil(-175)+mil(125)*x, mil(-260)+mil(60)*y, h+1])
                 self.primitives.extend(donor.get3DBody())
         donor=footprintSoic(8)
         donor.movePrimitives([mil(-140),0,h+1])
         self.primitives.extend(donor.get3DBody())
-        donor=footprintSmdChip("","SMA","N","")
+        donor=footprintSmdChip("SMA","N","",body="R")
         donor.movePrimitives([mil(-155),mil(220),h+1],180)
         self.primitives.extend(donor.get3DBody())
         

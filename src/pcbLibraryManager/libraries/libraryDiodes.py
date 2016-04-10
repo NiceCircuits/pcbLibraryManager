@@ -14,6 +14,7 @@ from libraryManager.symbolPrimitive import *
 from libraryManager.defaults import *
 from libraryManager.common import *
 from libraries.libraryRLC import footprintSmdChip
+from libraryManager.generateLibraries import generateLibraries
 
 class libraryDiodes(libraryClass):
     """
@@ -64,16 +65,23 @@ class partDiode(part):
         self.log.debug("New diode: \"%s\", pins: %s, footprint: %s, dual: %s" %\
             (name, pins, footprint, dual))
         self.symbols.append(symbolDiode(diodeType=diodeType, pins=pins, dual=dual, refDes=refDes))
+        footprintGenerated=False
         for density in ["N", "L", "M"]:
             defaultFootprints=["SMA", "SMB", "SMC"]
             if footprint=="" or footprint in defaultFootprints:
                 for fp in defaultFootprints:
                     if footprint=="" or footprint==fp:
-                        self.footprints.append(footprintSmdChip(fp + "_" + density, \
-                            size = fp, density = density, alternativeLibName = "niceSemiconductors"))
-            elif footprint == "SOT23":
+                        self.footprints.append(footprintSmdChip(\
+                            size = fp, density = density, alternativeLibName = "niceSemiconductors",\
+							body="R"))
+                footprintGenerated=True
+            if footprint == "SOT23" or footprint=="":
                 self.footprints.append(footprintSot23(density=density))
-            else:
+                footprintGenerated=True
+            if footprint == "SOD-323" or footprint=="":
+                self.footprints.append(footprintSod323(density=density))
+                footprintGenerated=True
+            if not footprintGenerated:
                 raise ValueError("Invalid footprint %s" % footprint)
 
 class symbolDiode(symbol):
@@ -147,3 +155,20 @@ class symbolDiode(symbol):
             else:
                 t.position = [75, t.height*i]
             i=-i
+
+class footprintSod323(footprintSmdDualRow):
+    """
+    
+    """
+    def __init__(self, name="", alternativeLibName="", density="N"):
+        if not name:
+            name="SOD-323_%s"%(density)
+        if not alternativeLibName:
+            alternativeLibName="niceSemiconductors"
+        bodyDimensions=[1.35, 1.8, 1.1]
+        super().__init__(name, alternativeLibName, pinCount=2, pitch=1,\
+            padSpan=2.4,padDimensions=[0.6,0.8], bodyDimensions=bodyDimensions,\
+            leadDimensions=[0.45,0.4,0.8], court = defaults.court[density])
+
+if __name__ == "__main__":
+    generateLibraries([libraryDiodes()])

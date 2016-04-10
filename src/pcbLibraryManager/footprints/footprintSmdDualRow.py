@@ -72,6 +72,20 @@ class footprintSoic(footprintSmdDualRow):
             padSpan=5.2,padDimensions=[0.6,2.2], bodyDimensions=bodyDimensions,\
             leadDimensions=[1.3,0.41,1], court = defaults.court[density])
 
+class footprintTssop(footprintSmdDualRow):
+    """
+    
+    """
+    def __init__(self, pinCount, name="", alternativeLibName="", density="N"):
+        if not name:
+            name="TSSOP-%d_%s"%(pinCount,density)
+        if not alternativeLibName:
+            alternativeLibName="niceSemiconductors"
+        bodyDimensions=[pinCount/2*0.65+0.1, 4.5, 1.2]
+        super().__init__(name, alternativeLibName, pinCount=pinCount, pitch=0.65,\
+            padSpan=6.05,padDimensions=[0.4,1.65], bodyDimensions=bodyDimensions,\
+            leadDimensions=[1.05,0.2,0.6], court = defaults.court[density])
+
 class footprintSot23(footprintSmdDualRow):
     """
     

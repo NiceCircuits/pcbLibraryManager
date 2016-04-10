@@ -48,27 +48,32 @@ class footprintSmdPower(footprint):
 class footprintDPak(footprintSmdPower):
     """D-Pak (TO 252)
     """
-    def __init__(self, name="", density="N", alternativeLibName="niceSemiconductors"):
+    def __init__(self, pins=3, name="", density="N", alternativeLibName="niceSemiconductors"):
         """
         density: "L" - least, "N" - nominal, "M" - most
         """
         if not name:
-            name = "D-PAK_%s" % density
+            if pins==3:
+                name = "D-PAK_%s" % density
+            else:
+                name = "D-PAK-%d_%s" % (pins,density)
         
-        padSize = {"L":[1.2,2], "N":[1.5,2.5], "M":[2,3]}
+        padSize = {3:{"L":[1.2,2], "N":[1.5,2.5], "M":[2,3]},
+                      5:{"L":[0.8,2.2], "N":[0.8,2.5], "M":[0.95,3]}}
         padOffset ={"L":-5.3,"N":-5.1,"M":-5.2}
         tabPadSize = {"L":[7.0,6.5], "N":[7.0,7.0], "M":[7.0,7.0]}
         tabPadOffset ={"L":1.55,"N":1.8,"M":1.8}
+        pitch={3:2.27,5:1.135}
         super().__init__( name,\
             bodySize=[6.8, 6.3, 2.4],\
-            pitch=2.3,\
-            padSize = padSize[density],\
+            pitch=pitch[pins],\
+            padSize = padSize[pins][density],\
             padOffset = padOffset[density],\
             leadSize = [2.95, 0.95, 1.8],\
             tabSize = [1.2, 5.65, 0.6],\
             tabPadSize = tabPadSize[density],\
             tabPadOffset = tabPadOffset[density],\
-            pads=2,\
+            pads=pins-1,\
             court=defaults.court[density],\
             stubSize=[0.95, 1.2, 0.6],\
             tabShape="cube_metal",\

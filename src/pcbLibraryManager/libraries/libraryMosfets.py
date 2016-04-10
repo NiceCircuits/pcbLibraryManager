@@ -81,9 +81,10 @@ class symbolMosfet(symbol):
         else:
             flip=1
         # pins
-        self.pins.append(symbolPin("G", pins[0], [-200,-100*flip], 100, pinType.passive, 0))
-        self.pins.append(symbolPin("D", pins[1], [0,200*flip], 100, pinType.passive, 90*(2+flip)))
-        self.pins.append(symbolPin("S", pins[2], [0,-200*flip], 100, pinType.passive, 90*(2-flip)))
+        if pins:
+            self.pins.append(symbolPin("G", pins[0], [-200,-100*flip], 100, pinType.passive, 0))
+            self.pins.append(symbolPin("D", pins[1], [0,200*flip], 100, pinType.passive, 90*(2+flip)))
+            self.pins.append(symbolPin("S", pins[2], [0,-200*flip], 100, pinType.passive, 90*(2-flip)))
         # drawing
         self.primitives.append(symbolLine(defaults.symbolThickLineWidth, -100, -133, -100, 133))
         for i in range(3):

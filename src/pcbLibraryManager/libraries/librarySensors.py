@@ -33,8 +33,8 @@ class partThermistor(part):
         self.symbols.append(symbolThermistor(name, variant=variant))
         for size in ["0603", "0805"]:
             for density in ["N", "L", "M"]:
-                self.footprints.append(footprintSmdChip(size + "_" + density, \
-                    size = size, density = density))
+                self.footprints.append(footprintSmdChip(\
+                    size = size, density = density,body="R"))
 
 class symbolThermistor(symbolR):
     """

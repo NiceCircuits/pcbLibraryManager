@@ -13,7 +13,7 @@ from libraryManager.common import *
 from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
 from footprints.footprintSmdPower import *
-
+from libraryManager.generateLibraries import generateLibraries
 
 class libraryPowerSupplies(libraryClass):
     """Power supply parts library
@@ -25,6 +25,7 @@ class libraryPowerSupplies(libraryClass):
         self.parts.append(partRegulator3PinBig("78M05CDT", "DPak"))
         self.parts.append(partRegulator3PinBig("78M06CDT", "DPak"))
         self.parts.append(partRegulator3PinBig("AMS1117", "Sot223", pins=[3,1,2], adj=True))
+        self.parts.append(partRegulator3PinBig("L78L33ACUTR", "Sot89", pins=[3,2,1]))
         for v in ["1.5", "1.8", "2.5", "2.85", "3.3", "5.0"]:
             self.parts.append(partRegulator3PinBig("AMS1117-%s" %v, "Sot223", pins=[3,1,2]))
         
@@ -46,6 +47,8 @@ class partRegulator3PinBig(part):
                 self.footprints.append(footprintDPak(density=density))
             elif footprint=="Sot223":
                 self.footprints.append(footprintSot223(density=density))
+            elif footprint=="Sot89":
+                self.footprints.append(footprintSot89(density=density))
             else:
                 raise ValueError("Invalid footprint %s" % footprint)
 
@@ -66,3 +69,6 @@ class symbolRegulator3Pin(symbolIC):
         self.pins.append(symbolPin("ADJ" if adj else "GND", pins[1], [0, -200], 100, pinType.pwrIn, 90))
         self.valueObject.position=[x for x in self.nameObject.position]
         self.nameObject.position[1]+=self.nameObject.height*1.5
+
+if __name__ == "__main__":
+    generateLibraries([libraryPowerSupplies()])

@@ -23,7 +23,7 @@ class libraryPinheaders(libraryClass):
         for gender in ["M", "F"]:
             for angled in [False, True]:
                 for cols in [1,2,3]:
-                    for rows in range(1,21):
+                    for rows in range(1,31):
                         self.parts.append(partPinheader(cols, rows, gender=gender, angled=angled))
         
 class partPinheader(part):

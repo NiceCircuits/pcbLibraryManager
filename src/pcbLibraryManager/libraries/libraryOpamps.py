@@ -68,13 +68,19 @@ class symbolOpamp(symbol):
             like: ["+","-","OUT","GND","VCC",]
         """
         super().__init__(name, refDes=refDes, showPinNames=False, showPinNumbers=True)
-        points=[[-150,-200],[-150,200],[-200,0],[-200,-150]]
+        points=[[-150,-200],[-150,200],[200,0],[-150,-200]]
         self.primitives.append(symbolPolyline(defaults.symbolLineWidth,points,\
             filled=fillType.background))
+        # +
         self.pins.append(symbolPin(pinNames[0], pinNumbers[0], [-200,100], 50,\
             pinType.input,0))
+        self.primitives.append(symbolLine(defaults.symbolLineWidth,-125,100,-75,100))
+        self.primitives.append(symbolLine(defaults.symbolLineWidth,-100,75,-100,125))
+        # -
         self.pins.append(symbolPin(pinNames[1], pinNumbers[1], [-200,-100], 50,\
             pinType.input,0))
+        self.primitives.append(symbolLine(defaults.symbolLineWidth,-125,-100,-75,-100))
+        # OUT
         self.pins.append(symbolPin(pinNames[2], pinNumbers[2], [300,0], 100,\
             pinType.input,180))
         self.nameObject.position=[100,100]
@@ -82,11 +88,17 @@ class symbolOpamp(symbol):
         self.valueObject.position=[100,-100]
         self.valueObject.align=textAlign.centerLeft
         if variant >= 1:
-            # power pins
+            # GND
             self.pins.append(symbolPin(pinNames[3], pinNumbers[3], [0,-200], 50,\
                 pinType.input,90))
+            self.primitives.append(symbolLine(defaults.symbolLineWidth,75,-125,25,-125))
+            self.primitives.append(symbolLine(6,0,-112,0,-150))
+            # VDD
             self.pins.append(symbolPin(pinNames[4], pinNumbers[4], [0,200], 50,\
                 pinType.input,270))
+            self.primitives.append(symbolLine(defaults.symbolLineWidth,75,125,25,125))
+            self.primitives.append(symbolLine(defaults.symbolLineWidth,50,150,50,100))
+            self.primitives.append(symbolLine(6,0,112,0,150))
 
 class symbolOpampPower(symbol):
     """
@@ -104,8 +116,11 @@ class symbolOpampPower(symbol):
         # power pins
         self.pins.append(symbolPin(pinNames[0], pinNumbers[0], [0,-200], 50,\
             pinType.input,90))
+        self.primitives.append(symbolLine(defaults.symbolLineWidth,25,-100,-25,-100))
         self.pins.append(symbolPin(pinNames[1], pinNumbers[1], [0,200], 50,\
             pinType.input,270))
+        self.primitives.append(symbolLine(defaults.symbolLineWidth,25,100,-25,100))
+        self.primitives.append(symbolLine(defaults.symbolLineWidth,0,125,0,75))
 
 if __name__ == "__main__":
     generateLibraries([libraryOpamps()])

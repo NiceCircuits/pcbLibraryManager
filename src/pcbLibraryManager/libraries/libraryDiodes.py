@@ -39,6 +39,8 @@ class libraryDiodes(libraryClass):
             for v in [2, 3, 4, 5, 6, 8, 10]:
                 self.parts.append(partDiode(name + str(v), diodeType="shottky",\
                     footprint=fp))
+        self.parts.append(partLed("ASMB-MTB0-0A3A2", diodes=3, connection="CA",\
+            footprint=footprintAvagoPLCC4(),pins=[1,2,3,4]))
 
 class partDiode(part):
     """Diode generator
@@ -156,6 +158,86 @@ class symbolDiode(symbol):
                 t.position = [75, t.height*i]
             i=-i
 
+class partLed(part):
+    """LED Diode generator
+    
+    :param name: name
+    :param diodes: number of diodes in one package (1+)
+    :param connection: diodes connection ("CA" or "CC")
+    :param footprint: footprint object
+    :param pins: if "CA": [A,C] or [A,C1,C2,C3..] pins, 
+    if "CC": [C,A] or [C,A1,A2,A3..] pins, like [1,2]
+    """
+    def __init__(self, name="", diodes=1, connection="CA", footprint=None, \
+    pins=[], refDes=defaults.diodeRefDes):
+        if not name:
+            if diodes==1:
+                name = "led"
+            else:
+                name = "led_%d%s" %(diodes,connection)
+        super().__init__(name, refDes)
+        self.log.debug("New LED: \"%s\", pins: %s, footprint: %s, connection: %d %s" %\
+            (name, pins, footprint, diodes, connection))
+        self.symbols.append(symbolLed(name, diodes, connection,pins,refDes))
+        if footprint:
+            self.footprints.append(footprint)
+        else:
+            raise ValueError("Invalid footprint %s" % footprint)
+
+class symbolLed(symbol):
+    """LED Diode generator
+    
+    :param name: name
+    :param diodes: number of diodes in one package (1+)
+    :param connection: diodes connection ("CA" or "CC")
+    :param pins: if "CA": [A,C] or [A,C1,C2,C3..] pins, 
+    if "CC": [C,A] or [C,A1,A2,A3..] pins, like [1,2]
+    """
+    def __init__(self, name, diodes, connection,pins,refDes):
+        super().__init__(name=name, refDes=refDes, showPinNames=False, showPinNumbers=True)
+        for i in range(diodes):
+            # drawing
+            symbol = symbolDiode(diodeType="LED",pins=[1,2])
+            symbol.movePrimitives([100*(i*2-diodes+1),-25 if connection=="CA" else 25])
+            self.primitives.extend(symbol.primitives)
+            # pins
+            if connection=="CA":
+                self.pins.append(symbolPin("C%d"%(i+1),pins[i+1],[100*(i*2-diodes+1),-200],\
+                    75,pinType.passive,90))
+                self.primitives.append(symbolLine(points=[[100*(i*2-diodes+1),-125],\
+                    [100*(i*2-diodes+1),-75]]))
+                self.primitives.append(symbolLine(points=[[100*(i*2-diodes+1),75],\
+                    [100*(i*2-diodes+1),25]]))
+            else:
+                self.pins.append(symbolPin("A%d"%(i+1),pins[i+1],[100*(i*2-diodes+1),200],\
+                    75,pinType.passive,270))
+                self.primitives.append(symbolLine(points=[[100*(i*2-diodes+1),125],\
+                    [100*(i*2-diodes+1),75]]))
+                self.primitives.append(symbolLine(points=[[100*(i*2-diodes+1),-75],\
+                    [100*(i*2-diodes+1),-25]]))
+        # pin common
+        if connection=="CA":
+            self.pins.append(symbolPin("A",pins[0],[0,200],\
+                75,pinType.passive,270))
+            self.primitives.append(symbolLine(points=[[0,125],[0,25]]))
+            if diodes>1:
+                self.primitives.append(symbolLine(points=[[100*(diodes-1),75],\
+                    [-100*(diodes-1),75]]))
+                self.primitives.append(symbolCircle(20,[0,75],10))
+        else:
+            self.pins.append(symbolPin("C",pins[0],[0,-150],\
+                75,pinType.passive,90))
+            self.primitives.append(symbolLine(points=[[0,-125],[0,-25]]))
+            if diodes>1:
+                self.primitives.append(symbolLine(points=[[100*(diodes-1),-75],\
+                    [-100*(diodes-1),-75]]))
+                self.primitives.append(symbolCircle(20,[0,-75],10))
+        self.nameObject.position[0]+=(100*(diodes-1)+50)
+        self.valueObject.position[0]+=(100*(diodes-1)+50)
+        self.primitives.append(symbolRectangle(width=defaults.symbolLineWidth,\
+            position=[-25,0],\
+            dimensions=[200*diodes+50, 250], filled=fillType.background))
+
 class footprintSod323(footprintSmdDualRow):
     """
     
@@ -169,6 +251,21 @@ class footprintSod323(footprintSmdDualRow):
         super().__init__(name, alternativeLibName, pinCount=2, pitch=1,\
             padSpan=2.4,padDimensions=[0.6,0.8], bodyDimensions=bodyDimensions,\
             leadDimensions=[0.45,0.4,0.8], court = defaults.court[density])
+
+class footprintAvagoPLCC4(footprintSmdDualRow):
+    """
+    
+    """
+    def __init__(self, name="", alternativeLibName="", density="N"):
+        if not name:
+            name="Avago_PLCC4_%s"%(density)
+        if not alternativeLibName:
+            alternativeLibName="niceSemiconductors"
+        super().__init__(name, alternativeLibName, pinCount=4, pitch=1.7,\
+            padSpan=3, padDimensions=[1.1,1.5], \
+            bodyDimensions=[3,3.4,2.1], bodyStyle="cube_metal",\
+            leadDimensions=[0.15,0.7,1.3], leadStyle="cube_metal", \
+            court = defaults.court[density])
 
 if __name__ == "__main__":
     generateLibraries([libraryDiodes()])

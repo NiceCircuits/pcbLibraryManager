@@ -39,13 +39,16 @@ class librarySTM32(libraryClass):
 
 # ============== STM32 TSSOP20 ============== 
         pinNames=[
-["4","1",None,"5","16",None,None,None,None,"2","3",None,"15"],
+["4","1",None,"16","5",None,None,None,None,"2","3",None,"15"],
 ["6","7","8","9","10","11","12","13","17","18","19","20","14"]
         ]
         footprints = [footprintTssop(20, density=density) for density in ["N", "L", "M"]]
         path=os.path.join(os.path.dirname(__file__),"STM32_TSSOP20.ods")
         #generate symbols configured by pinNames
         self.parts.extend(icGenerator.generate(path,pinNames,footprints,size=2000))
+# ============== STM32 LQFP48 ============== 
+        path=os.path.join(os.path.dirname(__file__),"STM32_LQFP48.ods")
+        self.parts.extend(icGenerator.generate_advanced(path))
 
 if __name__ == "__main__":
     generateLibraries([librarySTM32()])

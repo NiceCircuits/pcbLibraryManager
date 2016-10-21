@@ -75,7 +75,7 @@ class symbolPolyline(symbolPrimitive):
 class symbolLine(symbolPolyline):
     """
     """
-    def __init__(self, width,x1 = 0, y1 = 0, x2 = 0, y2 = 0,  points = []):
+    def __init__(self, width=defaults.symbolLineWidth,x1 = 0, y1 = 0, x2 = 0, y2 = 0,  points = []):
         """
         Initialize with points or x1, y1, x2, y2
         """

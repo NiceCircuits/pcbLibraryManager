@@ -16,7 +16,7 @@ class footprintSmdDualRow(footprint):
     """
     def __init__(self, name, alternativeLibName, pinCount, pitch, padSpan, padDimensions,\
     bodyDimensions, padOffset = [0, 0], originMarkSize=0, leadDimensions=None, court=0.5,\
-    bodyStyle="cube", firstPinMarker=True):
+    bodyStyle="cube", leadStyle="gullwing", firstPinMarker=True):
         originMarkSize = min(defaults.originMarkSize, bodyDimensions[0]*0.25, bodyDimensions[1]*0.25)
         super().__init__(name, alternativeLibName=alternativeLibName, originMarkSize=originMarkSize,)
         # body
@@ -49,7 +49,7 @@ class footprintSmdDualRow(footprint):
                 if leadDimensions:
                     pos1=[a for a in pos]
                     pos1[1]=(bodyDimensions[1]/2+leadDimensions[0]/2)*y
-                    self.addLead(pos1, leadDimensions, lead="gullwing", rotation=90 if y>0 else 270)
+                    self.addLead(pos1, leadDimensions, lead=leadStyle, rotation=90 if y>0 else 270)
         # first pin marker, when body and leads are generated and pin count is even
         if leadDimensions and bodyDimensions and (pinCount%2==0) and firstPinMarker:
             r = min(leadDimensions[0]/2, defaults.firstPinMarkerR, bodyDimensions[1]/4)

@@ -50,6 +50,28 @@ class footprintSmdQuad(footprint):
             self.nameObject.position=[0,y]
             self.valueObject.position=[0,-y]
 
+class footprintQfpParametrized(footprintSmdQuad):
+    """
+    """
+    def __init__(self, params, mechanical, footprint, variant, alternativeLibName=""):
+        """
+        Take parameters from excel file via icGenerator
+        """
+        name="%s_%s" % (params["Name"], variant)
+        if not alternativeLibName:
+            alternativeLibName="niceSemiconductors"
+        fp = footprint[variant]
+        mech=mechanical["Max"]
+        super().__init__(name, alternativeLibName,\
+            pinCount=params["Pins"],\
+            pitch=mechanical["Typ"]["e"],\
+            padSpan=[fp["C"], fp["C"]],\
+            padDimensions=[fp["Y"],fp["X"]],\
+            bodyDimensions=[mech["D1"], mech["E1"], mech["A"]],\
+            court = fp["Court"],\
+            leadDimensions=[(mech["E"]-mech["E1"])/2, mech["b"], mech["A"]*0.6])
+        
+
 class footprintQfp(footprintSmdQuad):
     """
     QFP (0.5, 0.65, 0.8, 1.0mm pitch). Based on Atmel datasheets.

@@ -8,7 +8,7 @@ Created on Mon Aug 10 21:13:05 2015
 from libraryManager.footprint import footprint
 from libraryManager.defaults import defaults
 from libraryManager.footprintPrimitive import *
-from math import floor
+from math import floor, sqrt
 
 class footprintSmdPower(footprint):
     """SMD high power footprint generator (D-Pak, D2Pak, SOT223 etc.)
@@ -108,3 +108,35 @@ class footprintSot223(footprintSmdPower):
             tabShape="gullwing",\
             leadShape="gullwing",
             alternativeLibName=alternativeLibName)
+
+class footprintSot89(footprint):
+    """SOT89
+    """
+    def __init__(self, name="", density="N", alternativeLibName="niceSemiconductors"):
+        if not name:
+            name = "SOT89_%s" % density
+        super().__init__(name, alternativeLibName)
+        # body
+        self.addSimple3Dbody([0,0], [4.8,2.8,1.75])
+        # tab
+        tabPadOffset={"L":0.8,"N":0.8,"M":1.05}
+        tabPadSize={"L":[1.9,2.5],"N":[2,2.5],"M":[2,3]}
+        self.addSimple3Dbody([0,1.675], [1.8,0.55,0.5], file="cube_metal")
+        self.primitives.append(pcbSmtPad(pcbLayer.topCopper,[0, tabPadOffset[density]],\
+            tabPadSize[density], 2))
+        self.primitives.append(pcbSmtPad(pcbLayer.topCopper,[0, -0.45],\
+            [tabPadSize[density][0]/sqrt(2),tabPadSize[density][0]/sqrt(2)], 2,\
+            rotation=45.0))
+        # pads
+        padOffset={"L":-1.65,"N":-1.7,"M":-1.75}
+        padSize={"L":[0.55,1.4],"N":[0.6,1.5],"M":[0.7,1.6]}
+        for i in [-1,0,1]:
+                # pin
+                self.primitives.append(pcbSmtPad(pcbLayer.topCopper,[1.5*i, padOffset[density]],\
+                    padSize[density],i+2))
+                self.addSimple3Dbody([1.5*i,-1.85], [0.5,0.9,0.5], file="cube_metal")
+        # courtyard and silk
+        #dim=[max(bodySize[0], tabPadSize[0]),\
+        #    (tabPadSize[1]+padSize[1])/2-padOffset+tabPadOffset]
+        #offsetY=((tabPadSize[1]-padSize[1])/2+padOffset+tabPadOffset)/2
+        #self.addCourtyardAndSilk(dim, court, offset=[0,offsetY])

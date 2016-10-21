@@ -36,7 +36,9 @@ class symbolIC(symbol):
             y = height/2-100+offset
             for p in pins[x]:
                 if p:
-                    self.pins.append(symbolPin(p[0], p[1], [(width/2+pinLength)*(1 if x>0 else -1),y],\
+                    if isinstance(p[2],str):
+                        p[2]=pinType.fromStr[p[2]]
+                    self.pins.append(symbolPin(str(p[0]), str(p[1]), [(width/2+pinLength)*(1 if x>0 else -1),y],\
                         pinLength, p[2], rotation=180 if x>0 else 0))
                 y = y-100
         self.nameObject.position=[0, height/2 + self.nameObject.height + offset]

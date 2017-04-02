@@ -8,6 +8,7 @@ Created on Tue Aug  4 22:17:59 2015
 from libraryManager.library import libraryClass
 from libraryManager.part import part
 from libraryManager.footprintPrimitive import *
+from libraryManager.footprint import *
 from libraryManager.defaults import *
 from libraryManager.common import *
 from symbols.symbolsIC import symbolIC
@@ -82,6 +83,29 @@ class footprintPinheader(footprintConnectorTht):
             name=name, alternativeLibName=alternativeLibName, court=defaults.courtConn[density],\
             bodyHeight=bodyHeight, pinDimensions=[0.64, 0.64, pinLength], pinZOffset=-3,\
             angled=angled, angledOffset=-1.4,gender=gender)
+
+class footprintPinheaderSmd(footprint):
+    """SMD pinheader footprint
+    """
+    def __init__(self, cols, rows, density ="N", name=None, alternativeLibName="nicePinheaders",\
+        originMarkSize=0, textOnSilk=True, pinLength=-1, bodyHeight=-1, angled=False,
+        gender = "M", alternative=False):
+        super().__init__(alternativeLibName=alternativeLibName,\
+            originMarkSize=originMarkSize, textOnSilk=textOnSilk)
+        dim={"L":[1.3, 1.3],"N":[1.8, 1.4],"M":[2,2]}
+        if bodyHeight<0:
+            if gender=="F":
+                bodyHeight=8.5
+            else:
+                bodyHeight=2.5
+        if pinLength<0:
+            if gender=="F":
+                pinLength=3
+            else:
+                pinLength=11.75
+        if not name:
+            name = "PIN-%dx%d%s%s_%s" % (cols, rows, "_F" if gender=="F" else "",\
+                "_angled" if angled else "", density)
 
 if __name__ == "__main__":
     generateLibraries([libraryPinheaders()])

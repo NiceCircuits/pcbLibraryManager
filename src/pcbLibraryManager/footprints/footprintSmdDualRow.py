@@ -16,7 +16,7 @@ class footprintSmdDualRow(footprint):
     """
     def __init__(self, name, alternativeLibName, pinCount, pitch, padSpan, padDimensions,\
     bodyDimensions, padOffset = [0, 0], originMarkSize=0, leadDimensions=None, court=0.5,\
-    bodyStyle="cube", leadStyle="gullwing", firstPinMarker=True):
+    bodyStyle="cube", leadStyle="gullwing", leadOffset=[0,0,0], firstPinMarker=True):
         originMarkSize = min(defaults.originMarkSize, bodyDimensions[0]*0.25, bodyDimensions[1]*0.25)
         super().__init__(name, alternativeLibName=alternativeLibName, originMarkSize=originMarkSize,)
         # body
@@ -48,7 +48,9 @@ class footprintSmdDualRow(footprint):
                 pin+=1
                 if leadDimensions:
                     pos1=[a for a in pos]
-                    pos1[1]=(bodyDimensions[1]/2+leadDimensions[0]/2)*y
+                    pos1[0]=pos1[0] + leadOffset[0]
+                    pos1[1]=(bodyDimensions[1]/2+leadDimensions[0]/2+leadOffset[1])*y
+                    pos1.append(leadOffset[2])
                     self.addLead(pos1, leadDimensions, lead=leadStyle, rotation=90 if y>0 else 270)
         # first pin marker, when body and leads are generated and pin count is even
         if leadDimensions and bodyDimensions and (pinCount%2==0) and firstPinMarker:
@@ -104,6 +106,34 @@ class footprintSot23(footprintSmdDualRow):
             8:{"L":[0.48,0.7], "N":[0.5,0.9], "M":[0.5,1.4]}}
         bodyDimensions = {3:[3,1.4,1.2], 5:[3.1,1.8,1.45], 6:[3.1,1.8,1.45], 8:[3.1,1.8,1.45]}
         leadDimensions = {3:[0.55,0.5,0.7], 5:[0.7,0.5,0.8], 6:[0.7,0.5,0.8], 8:[0.7,0.38,0.8]}
+        # name, alternativeLibName, pinCount, pitch, padSpan, padDimensions
+        super().__init__(name, alternativeLibName, pinCount, pitch[pinCount],\
+            padSpan[pinCount][density], padDimensions[pinCount][density] ,\
+            bodyDimensions=bodyDimensions[pinCount],\
+            leadDimensions=leadDimensions[pinCount], court = defaults.court[density])
+        # tests
+        self.nameObject.position=[0,0]
+        self.valueObject.position=[0,\
+            -bodyDimensions[pinCount][1]/2-leadDimensions[pinCount][0]-self.valueObject.height]
+
+class footprintSc70(footprintSmdDualRow):
+    """
+    
+    """
+    def __init__(self, pinCount = 3, name = "", alternativeLibName = "", density="N"):
+        if not name:
+            name="SC70-%d_%s"%(pinCount,density)
+        if not alternativeLibName:
+            alternativeLibName="niceSemiconductors"
+        pitch = {3:0.65, 5:0.65, 6:0.65, 8:0.5}
+        padSpan = {3:{"L":1.8, "N":1.8, "M":2.0}, 5:{"L":1.8, "N":1.8, "M":2.0},\
+            6:{"L":1.8, "N":1.8, "M":2.0}, 8:{"L":1.8, "N":1.8, "M":2.0}}
+        padDimensions = {3:{"L":[0.47,0.8], "N":[0.5,1], "M":[0.6,1.2]},\
+            5:{"L":[0.47,0.8], "N":[0.47,1], "M":[0.5,1.2]},\
+            6:{"L":[0.47,0.8], "N":[0.47,1], "M":[0.5,1.2]},\
+            8:{"L":[0.3,0.8], "N":[0.33,1], "M":[0.35,1.2]}}
+        bodyDimensions = {3:[2.2,1.35,1.0], 5:[2.2,1.35,1.0], 6:[2.2,1.35,1.0], 8:[2.2,1.35,1.0]}
+        leadDimensions = {3:[0.525,0.4,0.5], 5:[0.525,0.3,0.5], 6:[0.525,0.3,0.5], 8:[0.525,0.27,0.5]}
         # name, alternativeLibName, pinCount, pitch, padSpan, padDimensions
         super().__init__(name, alternativeLibName, pinCount, pitch[pinCount],\
             padSpan[pinCount][density], padDimensions[pinCount][density] ,\

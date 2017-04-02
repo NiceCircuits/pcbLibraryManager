@@ -49,6 +49,9 @@ class librarySTM32(libraryClass):
 # ============== STM32 LQFP48 ============== 
         path=os.path.join(os.path.dirname(__file__),"STM32_LQFP48.ods")
         self.parts.extend(icGenerator.generate_advanced(path))
+# ============== STM32 LQFP32 ============== 
+        path=os.path.join(os.path.dirname(__file__),"STM32_LQFP32.ods")
+        self.parts.extend(icGenerator.generate_advanced(path))
 
 if __name__ == "__main__":
     generateLibraries([librarySTM32()])

@@ -8,11 +8,15 @@ Created on Sun Aug  2 18:04:03 2015
 from libraryManager.library import libraryClass
 from libraryManager.part import part
 from footprints.footprintSmdQuad import footprintQfp
+from footprints.footprintSmdDualRow import footprintSot23
 from libraryManager.footprintPrimitive import *
 from libraryManager.defaults import *
 from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
 from libraries.libraryPinheaders import footprintPinheader
+from libraryManager.generateLibraries import generateLibraries
+from parts.icGenerator import icGenerator
+import os
 
 class libraryAVR(libraryClass):
     """
@@ -21,7 +25,11 @@ class libraryAVR(libraryClass):
         super().__init__("niceAVR")
         self.parts.append(partAtmega48("ATmega48", "AU"))
         self.parts.append(partAtmega48("ATmega328", "AU"))
+        self.parts.append(partAttiny10("ATtiny10-TSHR"))
         self.parts.append(partAvrProg())
+# ============== Atmega48/88/168/328 in MLF32/VFQFN32 package ============== 
+        path=os.path.join(os.path.dirname(__file__),"ATmega48_88_168_328_MLF32.ods")
+        self.parts.extend(icGenerator.generate_advanced(path))
         
 class partAtmega48(part):
     """
@@ -33,6 +41,16 @@ class partAtmega48(part):
         self.symbols.append(symbolAtmega48(name, version))
         for density in ["N", "L", "M"]:
             self.footprints.append(footprintQfp(32, 0.8, density=density))
+
+class partAttiny10(part):
+    """
+    Attiny4/5/9/10 part
+    """
+    def __init__(self, name="ATtiny10"):
+        super().__init__(name, defaults.icRefDes)
+        self.symbols.append(symbolAttiny10(name))
+        for density in ["N", "L", "M"]:
+            self.footprints.append(footprintSot23(6, density=density))
 
 class partAvrProg(part):
     """AVR programming connector part
@@ -48,7 +66,7 @@ class symbolAtmega48(symbolIC):
     """
     Atmega48/88/168/328/P/A symbol
     """
-    def __init__(self, name, version, refDes="U", showPinNames=True, showPinNumbers=True):
+    def __init__(self, name, refDes="U", showPinNames=True, showPinNumbers=True):
         pinsRight = [
 ['(PCINT0/CLKO/ICP1) PB0', 12, pinType.IO],
 ['(PCINT1/OC1A) PB1', 13, pinType.IO],
@@ -95,6 +113,25 @@ None,
         ]
         super().__init__(name, pinsLeft=pinsLeft, pinsRight=pinsRight, width=3000)
 
+class symbolAttiny10(symbolIC):
+    """
+    Attiny4/5/9/10 symbol
+    """
+    def __init__(self, name, refDes="U", showPinNames=True, showPinNumbers=True):
+        pinsRight = [
+['TPIDATA/PB0', 1, pinType.IO],
+['TPICLK/PB1', 3, pinType.IO],
+['PB2', 4, pinType.IO],
+['RESET/PB3', 6, pinType.IO]
+        ]
+        pinsLeft = [
+['VCC', 5, pinType.pwrIn],
+None,
+None,
+['GND', 2, pinType.pwrIn],
+        ]
+        super().__init__(name, pinsLeft=pinsLeft, pinsRight=pinsRight, width=1200)
+
 class symbolAvrProg(symbolIC):
     """AVR programming connector symbol symbol
     """
@@ -110,3 +147,6 @@ class symbolAvrProg(symbolIC):
 ['RST', 5, pinType.passive]
         ]
         super().__init__(name, pinsLeft=pinsLeft, pinsRight=pinsRight, width=800, refDes=refDes)
+
+if __name__ == "__main__":
+    generateLibraries([libraryAVR()])

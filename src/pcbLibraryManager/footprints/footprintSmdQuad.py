@@ -15,7 +15,7 @@ class footprintSmdQuad(footprint):
     Footprint generator for quad SMD packages.
     """
     def __init__(self, name, alternativeLibName, pinCount, pitch, padSpan, padDimensions, 
-        bodyDimensions, court, leadDimensions=None, offset = [0, 0], originMarkSize=-1):
+        bodyDimensions, court, leadDimensions=None, lead="gullwing", offset = [0, 0], originMarkSize=-1):
         if originMarkSize<0:
             originMarkSize = min(defaults.originMarkSize, bodyDimensions[0]*0.3, bodyDimensions[1]*0.3)    
         super().__init__(name, alternativeLibName=alternativeLibName, originMarkSize=originMarkSize)
@@ -30,7 +30,7 @@ class footprintSmdQuad(footprint):
                 if leadDimensions:
                     self.addLead(rotatePoints(\
                         [[(-bodyDimensions[side%2]/2-leadDimensions[0]/2), y1-pitch*y]], side*90)[0],\
-                        leadDimensions, rotation=side*90+180, lead="gullwing")
+                        leadDimensions, rotation=side*90+180, lead=lead)
         # body
         self.addSimple3Dbody([0,0], bodyDimensions)
         #first pad marker
@@ -43,7 +43,7 @@ class footprintSmdQuad(footprint):
         self.primitives.append(pcbCircle(pcbLayer.topSilk,defaults.silkWidth,\
             pos,radius))
         # courtyard
-        self.addCourtyardAndSilk([s+max(padDimensions) for s in padSpan], court, silk=False)
+        self.addCourtyardAndSilk([s+max(padDimensions) for s in padSpan], court)
         # texts
         if originMarkSize:
             y = originMarkSize + defaults.documentationTextHeight
@@ -53,7 +53,8 @@ class footprintSmdQuad(footprint):
 class footprintQfpParametrized(footprintSmdQuad):
     """
     """
-    def __init__(self, params, mechanical, footprint, variant, alternativeLibName=""):
+    def __init__(self, params, mechanical, footprint, variant, lead="gullwing", 
+                 alternativeLibName=""):
         """
         Take parameters from excel file via icGenerator
         """
@@ -69,9 +70,19 @@ class footprintQfpParametrized(footprintSmdQuad):
             padDimensions=[fp["Y"],fp["X"]],\
             bodyDimensions=[mech["D1"], mech["E1"], mech["A"]],\
             court = fp["Court"],\
-            leadDimensions=[(mech["E"]-mech["E1"])/2, mech["b"], mech["A"]*0.6])
+            leadDimensions=[(mech["E"]-mech["E1"])/2, mech["b"], mech["A"]*0.6],\
+            lead=lead)
         
-
+class footprintQfnParametrized(footprintQfpParametrized):
+    """
+    """
+    def __init__(self, params, mechanical, footprint, variant, alternativeLibName=""):
+        """
+        Take parameters from excel file via icGenerator
+        """
+        super().__init__(params, mechanical, footprint, variant, lead="cube_metal",\
+            alternativeLibName="")
+        
 class footprintQfp(footprintSmdQuad):
     """
     QFP (0.5, 0.65, 0.8, 1.0mm pitch). Based on Atmel datasheets.

@@ -14,8 +14,10 @@ from libraryManager.defaults import *
 from symbols.symbolsIC import symbolIC
 from libraryManager.symbolPrimitive import *
 from parts.icGenerator import icGenerator
+from libraryManager.footprint import footprint
 import os.path
 from libraryManager.generateLibraries import generateLibraries
+from libraries.libraryOpamps import symbolOpamp
 
 class libraryTest(libraryClass):
     """
@@ -34,6 +36,23 @@ class libraryTest(libraryClass):
         # added as footprints only 
         self.parts[0].footprints.append(footprintAXK5S60047YG())
         self.parts[0].footprints.append(footprintAXK6S60447YG())
+# ============== Dummy semiconductor for package generation ============== 
+        self.parts.append(partDummySemiconductor())
+
+class partDummySemiconductor(part):
+    """
+    Dummy part
+    """
+    def __init__(self, name="Dummy", refDes=defaults.icRefDes):
+        super().__init__(name, refDes)
+        self.symbols.append(symbolOpamp())
+        for density in ["N", "L", "M"]:
+            for pinCount in [8, 14, 16]:
+                self.footprints.append(footprintSoic(pinCount=pinCount,density=density))
+            for pinCount in [3,5,6,8]:
+                self.footprints.append(footprintSot23(pinCount=pinCount,density=density))
+                self.footprints.append(footprintSc70(pinCount=pinCount,density=density))
+
 
 class footprintAXK5S60047YG(footprintSmdDualRow):
     """
@@ -69,6 +88,22 @@ class footprintAXK6S60447YG(footprintSmdDualRow):
         pads=["%d"%(2*i+1) for i in range(30)]+["%d"%(60-2*i) for i in range(30)]
         self.renamePads(pads)
         self.addSimple3Dbody([0,0],[16.5,1.72,3.3])
+
+class pogoPin(footprint):
+    """
+    
+    """
+    def __init__(self, name="AXK5S60047YG", alternativeLibName="niceConectorsOther", density="N", wide=False):
+        super().__init__(name, alternativeLibName,\
+            pinCount=60, pitch=0.5,\
+            padSpan=4.6,padDimensions=[0.25,2.2],\
+            bodyDimensions=[18.40,4.8,3.05],\
+            leadDimensions=[0.4,0.2,0.18],\
+            court = defaults.court[density],\
+            leadStyle="cube_metal")
+        pads=["%d"%(2*i+1) for i in range(30)]+["%d"%(60-2*i) for i in range(30)]
+        self.renamePads(pads)
+
 
 if __name__ == "__main__":
     generateLibraries([libraryTest()])

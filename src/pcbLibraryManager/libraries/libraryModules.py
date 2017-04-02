@@ -16,7 +16,9 @@ class libraryModules(libraryClass):
         super().__init__("niceModules")
         self.parts.append(partsEsp8266.partEsp07())
         self.parts.append(partsEsp8266.partEsp01())
+        self.parts.append(partsEsp8266.partEsp03())
         self.parts.append(partsDcDcConverters.partDcDcDsun3A())
+        self.parts.append(partsDisplays.partTFT_1_8_ST7735())
         for mnt in [False, True]:
             self.parts.append(partsDisplays.partOled128x64(mnt))
 

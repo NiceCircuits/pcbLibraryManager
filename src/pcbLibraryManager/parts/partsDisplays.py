@@ -88,4 +88,69 @@ class footprintOled128x64(footprintPinheader):
             donor=footprintSmdChip("0603","N","")
             donor.movePrimitives([0.87*y,-0.1, h],[0,180,90])
             self.primitives.extend(donor.get3DBody())
+
+class partTFT_1_8_ST7735(part):
+    """
+    1.8" SPI 128X160 TFT LCD with ST7735 driver
+    """
+    def __init__(self):
+        name="TFT_1_8_ST7735"
+        super().__init__(name, defaults.icRefDes)
+        self.symbols.append(symbolTFT_1_8_ST7735(name))
+        for density in ["N", "L", "M"]:
+            self.footprints.append(footprintTFT_1_8_ST7735(density = density,\
+                alternativeLibName = "niceModules"))
+
+class symbolTFT_1_8_ST7735(symbolIC):
+    """
+    1.8" SPI 128X160 TFT LCD with ST7735 driver
+    """
+    def __init__(self, name=""):
+        if not name:
+            name="TFT_1_8_ST7735"
+        pinsLeft=[
+['NC', 1, pinType.NC],
+['GND', 2, pinType.pwrIn],
+['LED-', 3, pinType.passive],
+['LED+', 4, pinType.passive],
+['GND', 5, pinType.pwrIn],
+['/RST', 6, pinType.input],
+['A0', 7, pinType.input],
+['SDA', 8, pinType.IO],
+['SCK', 9, pinType.input],
+['VCC', 10, pinType.pwrIn],
+['VCCIO', 11, pinType.pwrIn],
+['CS', 12, pinType.input],
+['GND', 13, pinType.pwrIn],
+['NC', 14, pinType.NC]
+        ]
+        pinsRight=[
+        ]
+        super().__init__(name, pinsLeft, pinsRight, width=600)
+
+class footprintTFT_1_8_ST7735(footprint):
+    """
+    1.8" SPI 128X160 TFT LCD with ST7735 driver
+    """
+    def __init__(self, density, alternativeLibName, name=""):
+        """
+        density: "L" - least, "N" - nominal, "M" - most
+        """
+        if not name:
+            name="TFT_1_8_ST7735_%s" %(density)
+        super().__init__(name, alternativeLibName)
+        # body
+        self.addSimple3Dbody([0,0,0.2], [46.9, 34.9, 2.7], file="cube_white")
+        self.addSimple3Dbody([1.2,0,1.91], [41.42,31.83,1], file="cube")
+        self.addSimple3Dbody([2.59,0,1.92], [35.04,28.03,1], file="cube_metal")
+        self.addCourtyardAndSilk([46.9, 34.9], defaults.court[density])
+        # flex
+        self.addSimple3Dbody([-18.45, 1.2,0], [10, 27.3, 0.1], file="cube_orange")
+        # pins
+        size={"L":[2.5, 0.45], "N":[3, 0.45], "M":[4, 0.5]}
+        x={"L":-14.15, "N":-14, "M":-13.65}
+        for y in range(14):
+            self.primitives.append(pcbSmtPad(pcbLayer.topCopper, \
+                position=[x[density], (y-6.5)*0.8],\
+                dimensions=size[density], name=str(y+1)))
         

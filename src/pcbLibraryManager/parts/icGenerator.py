@@ -10,7 +10,7 @@ from libraryManager.symbolPrimitive import *
 from libraryManager.defaults import defaults
 from libraryManager.part import part
 from symbols.symbolsIC import *
-from footprints.footprintSmdQuad import footprintQfp, footprintQfpParametrized
+from footprints.footprintSmdQuad import *
 from libraryManager.footprintPrimitive import *
 import pyexcel_ods3
 import numpy as np
@@ -55,11 +55,13 @@ class icGenerator():
             startString="Mechanical", stopString="Footprint", vector=False, dictionary=True)
         footprint = icGenerator.load_ods_section(fileName, "Footprint", \
             startString="Footprint", vector=False, dictionary=True)
-        if params["Type"]=="QFP":
-            for variant in footprint.keys():
+        for variant in footprint.keys():
+            if params["Type"]=="QFP":            
                 ret.append(footprintQfpParametrized(params, mechanical, footprint, variant))
-        else:
-            raise ValueError("Footprint type %s found in %s unsupported" % (params["Type"], fileName))
+            if params["Type"]=="QFN":            
+                ret.append(footprintQfnParametrized(params, mechanical, footprint, variant))
+            else:
+                raise ValueError("Footprint type %s found in %s unsupported" % (params["Type"], fileName))
         return ret
     
     def test_load_footprints_advanced():

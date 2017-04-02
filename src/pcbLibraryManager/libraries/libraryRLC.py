@@ -141,6 +141,7 @@ class symbolC(symbol):
 
 class footprintSmdChip(footprint):
     """Chip component (0603, 0805, SMA, SMB etc.)
+    TODO: read from excel
     """
     def __init__(self, size, density, alternativeLibName="niceRLC", body="C"):
         """
@@ -188,7 +189,7 @@ class footprintSmdChip(footprint):
             'Tantal_C':[0.2, 2.3, 1.4],
             'Tantal_D':[0.2, 2.5, 1.55],
             'Tantal_E':[0.2, 4.2, 1.9],
-            'Tantal_X':[0.2, 2.5, 4.15]}
+            'Tantal_X':[0.2, 2.5, 2.15]}
         padSize = {'0402':{'L':[0.4, 0.6], 'N':[0.5, 0.65], 'M':[0.6, 0.75]},
             '0603':{'L':[0.8, 0.85], 'N':[1, 0.95], 'M':[1.2, 1.1]},  
             '0805':{'L':[1, 1.35], 'N':[1.2, 1.45], 'M':[1.4, 1.55]}, 

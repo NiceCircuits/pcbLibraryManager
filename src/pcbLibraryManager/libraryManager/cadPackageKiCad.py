@@ -249,7 +249,7 @@ class KiCad(cadPackage):
             justifyText = r" (justify" + alignText + mirrorText + ")"
         else:
             justifyText = ""
-        print(r"""  (fp_text %s %s (at %1.3f %1.3f  %1.1f) (layer %s)%s
+        print(r"""  (fp_text %s "%s" (at %1.3f %1.3f  %1.1f) (layer %s)%s
     (effects (font (size %1.3f %1.3f) (thickness %1.3f))%s)
   )""" % (textType, primitive.text, primitive.position[0], -primitive.position[1],\
             primitive.rotation, self.layerNames[primitive.layer],\
